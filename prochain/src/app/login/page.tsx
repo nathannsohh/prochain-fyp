@@ -4,17 +4,17 @@ import LoginHeader from '@/components/LoginHeader';
 import { HStack, Text, Box, VStack, Button, Center } from '@chakra-ui/react'
 import WorkingWoman from '../../images/WorkingWoman.png'
 import Image from 'next/image';
+import Link from 'next/link';
 import { useMetamask } from '@/hooks/useMetamask';
-import { useListen } from '@/hooks/useListen';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Login() {
     const {
         dispatch,
-        state: { status, isMetamaskInstalled, wallet, balance },
+        state: { status, isMetamaskInstalled },
     } = useMetamask();
-    const listen = useListen();
+
     const router = useRouter()
 
     useEffect(() => {
@@ -28,11 +28,6 @@ export default function Login() {
     
           const local = window.localStorage.getItem("metamaskState");
     
-          // user was previously connected, start listening to MM
-          if (local) {
-            listen();
-          }
-    
           // local could be null if not present in LocalStorage
           const { wallet, balance } = local
             ? JSON.parse(local)
@@ -40,27 +35,45 @@ export default function Login() {
               { wallet: null, balance: null };
     
           dispatch({ type: "pageLoaded", isMetamaskInstalled, wallet, balance });
-    
-          if (!wallet) {
-            router.push('/login');
-          } else {
-            router.push('/feed')
-          }
         }
       }, []);
     
-    
-    
     const showInstallMetamask = status !== "pageNotLoaded" && !isMetamaskInstalled;
-    const showConnectButton = status !== "pageNotLoaded" && isMetamaskInstalled && !wallet;
+
+    const handleConnect = async () => {
+        dispatch({ type: "loading" });
+        const accounts = await window.ethereum.request({
+            method: "eth_requestAccounts",
+        });
+    
+        if (accounts.length > 0) {
+            const balance = await window.ethereum!.request({
+                method: "eth_getBalance",
+                params: [accounts[0], "latest"],
+            });
+            dispatch({ type: "connect", wallet: accounts[0], balance });
+            router.back();
+        }
+    }
 
     return(
         <>
-            <LoginHeader metamaskIsInstalled={showInstallMetamask}/>
+            <LoginHeader metamaskIsInstalled={isMetamaskInstalled} handleConnect={handleConnect}/>
             <HStack height="full">
                 <VStack width="50%" pl="8%" pr="8%">
                     <Text fontSize='4xl' as='b'>Welcome to your gateway to Decentralised Professional Networking</Text>
-                    <Button width="100%" mt="70px">Log in with Metamask</Button>
+                    {
+                        showInstallMetamask ? 
+                        <>  
+                            <Box>
+                                <Link href="https://metamask.io/download/">
+                                    <Button width="100%" mt="70px">Install Metamask</Button> 
+                                </Link>
+                                <Text>Please install the Metamask extension in order to use ProChain.</Text>
+                            </Box>
+                        </> :
+                        <Button width="100%" mt="70px" onClick={handleConnect} isLoading={status === "loading"}>Log in with Metamask</Button>
+                    }
                 </VStack>
                 <Box width="50%">
                     <Center mt="5%">

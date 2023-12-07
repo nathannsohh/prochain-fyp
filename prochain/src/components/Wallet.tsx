@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useMetamask } from "../hooks/useMetamask";
 import { Button, Text } from "@chakra-ui/react"
 import { useListen } from "@/hooks/useListen";
+import { useRouter } from "next/navigation";
 
 
 export default function Wallet() {
@@ -10,6 +11,7 @@ export default function Wallet() {
         state: { status, isMetamaskInstalled, wallet, balance },
     } = useMetamask();
     const listen = useListen();
+    const router = useRouter();
 
     const showInstallMetamask = status !== "pageNotLoaded" && !isMetamaskInstalled;
     const showConnectButton = status !== "pageNotLoaded" && isMetamaskInstalled && !wallet;
@@ -31,6 +33,7 @@ export default function Wallet() {
 
             // we can register an event listener for changes to the users wallet
             listen();
+            router.back()
         }
     }
 

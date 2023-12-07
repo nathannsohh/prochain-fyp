@@ -1,7 +1,8 @@
 "use client"
 import React, { useEffect, type PropsWithChildren } from "react";
+import { BrowserProvider, ethers, JsonRpcSigner } from "ethers";
 
-type ConnectAction = { type: "connect"; wallet: string; balance: string };
+type ConnectAction = { type: "connect"; wallet: string; balance: string, provider: BrowserProvider, signer: JsonRpcSigner };
 type DisconnectAction = { type: "disconnect" };
 type PageLoadedAction = {
   type: "pageLoaded";
@@ -9,6 +10,7 @@ type PageLoadedAction = {
   wallet: string | null;
   balance: string | null;
 };
+
 type LoadingAction = { type: "loading" };
 type IdleAction = { type: "idle" };
 
@@ -28,6 +30,8 @@ type State = {
   isMetamaskInstalled: boolean;
   status: Status;
   balance: string | null;
+  signer: JsonRpcSigner | null;
+  provider: BrowserProvider | null;
 };
 
 const initialState: State = {
@@ -35,6 +39,8 @@ const initialState: State = {
   isMetamaskInstalled: false,
   status: "loading",
   balance: null,
+  signer: null,
+  provider: null
 } as const;
 
 function metamaskReducer(state: State, action: Action): State {

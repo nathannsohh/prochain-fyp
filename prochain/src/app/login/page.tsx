@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useMetamask } from '@/hooks/useMetamask';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { ethers } from "ethers";
 
 export default function Login() {
     const {
@@ -42,16 +43,16 @@ export default function Login() {
 
     const handleConnect = async () => {
         dispatch({ type: "loading" });
-        const accounts = await window.ethereum.request({
-            method: "eth_requestAccounts",
-        });
-    
+        const { ethereum } = window;
+
+        const provider = new ethers.BrowserProvider(ethereum);
+
+        const accounts = await provider.send("eth_requestAccounts", []);
+        
         if (accounts.length > 0) {
-            const balance = await window.ethereum!.request({
-                method: "eth_getBalance",
-                params: [accounts[0], "latest"],
-            });
-            dispatch({ type: "connect", wallet: accounts[0], balance });
+            const signer = await provider.getSigner();
+            const balance = await provider.send("eth_getBalance", [accounts[0], "latest"])
+            dispatch({ type: "connect", wallet: accounts[0], balance, provider, signer });
             router.back();
         }
     }

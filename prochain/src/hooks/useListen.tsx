@@ -2,7 +2,7 @@
 import { useMetamask } from "./useMetamask";
 
 export const useListen = () => {
-  const { dispatch } = useMetamask();
+  const { dispatch, state: { provider, signer } } = useMetamask();
 
   return () => {
     window.ethereum.on("accountsChanged", async (newAccounts: string[]) => {
@@ -17,6 +17,8 @@ export const useListen = () => {
           type: "connect",
           wallet: newAccounts[0],
           balance: newBalance,
+          provider: provider!,
+          signer: signer!
         });
       } else {
         // if the length is 0, then the user has disconnected from the wallet UI

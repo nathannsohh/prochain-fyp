@@ -46,8 +46,8 @@ const initialState: State = {
 function metamaskReducer(state: State, action: Action): State {
   switch (action.type) {
     case "connect": {
-      const { wallet, balance } = action;
-      const newState = { ...state, wallet, balance, status: "idle" } as State;
+      const { wallet, balance, provider, signer } = action;
+      const newState = { ...state, wallet, balance, status: "idle", provider, signer } as State;
       const info = JSON.stringify(newState);
       window.localStorage.setItem("metamaskState", info);
 

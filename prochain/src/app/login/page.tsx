@@ -9,6 +9,7 @@ import { useMetamask } from '@/hooks/useMetamask';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ethers } from "ethers";
+import useUserManangerContract from '@/hooks/useUserManagerContract';
 
 export default function Login() {
     const {
@@ -17,6 +18,7 @@ export default function Login() {
     } = useMetamask();
 
     const router = useRouter()
+    const userManagerContract = useUserManangerContract();
 
     useEffect(() => {
         if (typeof window !== undefined) {
@@ -34,26 +36,39 @@ export default function Login() {
             ? JSON.parse(local)
             : // backup if local storage is empty
               { wallet: null, balance: null };
-    
+            
           dispatch({ type: "pageLoaded", isMetamaskInstalled, wallet, balance });
+          if (userManagerContract != null && wallet != null) {
+              checkUserExistence();
+          }
         }
-      }, []);
+      }, [userManagerContract]);
     
     const showInstallMetamask = status !== "pageNotLoaded" && !isMetamaskInstalled;
+
+    const checkUserExistence = async () => {
+        try {
+            const response = await userManagerContract!!.doesUserExist();
+            if (response === true) {
+                router.push('/');
+            } else {
+                router.push('/login/new');
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const handleConnect = async () => {
         dispatch({ type: "loading" });
         const { ethereum } = window;
-
         const provider = new ethers.BrowserProvider(ethereum);
-
         const accounts = await provider.send("eth_requestAccounts", []);
         
         if (accounts.length > 0) {
             const signer = await provider.getSigner();
             const balance = await provider.send("eth_getBalance", [accounts[0], "latest"])
             dispatch({ type: "connect", wallet: accounts[0], balance, provider, signer });
-            router.back();
         }
     }
 

@@ -16,7 +16,7 @@ export default function LoginHeader(props: LoginHeaderProps) {
             paddingTop={3}
             paddingBottom={3}
             paddingLeft="8%"
-            paddingRight="7%"
+            paddingRight="8%"
         >
             <HStack>
                 <Image src={ProChainLogo} alt="ProChain logo" width={170}/>

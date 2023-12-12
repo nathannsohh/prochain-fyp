@@ -44,19 +44,22 @@ export default function NewUser() {
     } = useForm<Inputs>()
 
     const listen = useListen()
-    const { state } = useMetamask()
+    const { state: { wallet, status } } = useMetamask()
     const router = useRouter()
     const userManagerContract = useUserManangerContract()
 
     useEffect(() => {
+        if (status === "idle" && wallet === null) {
+            router.push('/login')
+        }
         handleUserExistence()
-    }, [])
+    }, [wallet, status])
 
     const handleUserExistence = async () => {
         try {
             const response: boolean = await userManagerContract!!.doesUserExist()
             if (response) {
-                router.push('/login')
+                router.push('/profile')
             }
         } catch (e) {
 

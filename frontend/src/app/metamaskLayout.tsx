@@ -19,7 +19,6 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
             const isMetamaskInstalled = ethereumProviderInjected && Boolean(window.ethereum.isMetaMask);
       
             const local = window.localStorage.getItem("metamaskState");
-            console.log(local)
             // user was previously connected, start listening to MM
             if (local) {
               listen();
@@ -30,7 +29,6 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
               ? JSON.parse(local)
               : // backup if local storage is empty
                 { wallet: null, balance: null, provider: null, signer: null };
-      
             dispatch({ type: "pageLoaded", isMetamaskInstalled, wallet, balance, provider, signer });
           }
     }, [])

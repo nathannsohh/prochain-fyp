@@ -49,21 +49,12 @@ export default function NewUser() {
     const userManagerContract = useUserManangerContract()
 
     useEffect(() => {
-        if (typeof window !== undefined) {
-            listen()
-            
-            if (state.wallet == null && state.status === "idle") {
-                router.push('/login');
-            } 
-            handleUserExistence()
-
-        }
-    }, [listen])
+        handleUserExistence()
+    }, [])
 
     const handleUserExistence = async () => {
         try {
             const response: boolean = await userManagerContract!!.doesUserExist()
-            // console.log(response);
             if (response) {
                 router.push('/login')
             }

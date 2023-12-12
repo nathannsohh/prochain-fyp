@@ -10,37 +10,21 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ethers } from "ethers";
 import useUserManangerContract from '@/hooks/useUserManagerContract';
+import { useListen } from '@/hooks/useListen';
 
 export default function Login() {
     const {
         dispatch,
-        state: { status, isMetamaskInstalled },
+        state: { status, isMetamaskInstalled, wallet },
     } = useMetamask();
 
     const router = useRouter()
     const userManagerContract = useUserManangerContract();
+    const listen = useListen()
 
     useEffect(() => {
-        if (typeof window !== undefined) {
-          // start by checking if window.ethereum is present, indicating a wallet extension
-          const ethereumProviderInjected = typeof window.ethereum !== "undefined";
-          // this could be other wallets so we can verify if we are dealing with metamask
-          // using the boolean constructor to be explecit and not let this be used as a falsy value (optional)
-          const isMetamaskInstalled =
-            ethereumProviderInjected && Boolean(window.ethereum.isMetaMask);
-    
-          const local = window.localStorage.getItem("metamaskState");
-    
-          // local could be null if not present in LocalStorage
-          const { wallet, balance } = local
-            ? JSON.parse(local)
-            : // backup if local storage is empty
-              { wallet: null, balance: null };
-            
-          dispatch({ type: "pageLoaded", isMetamaskInstalled, wallet, balance });
-          if (userManagerContract != null && wallet != null) {
-              checkUserExistence();
-          }
+        if (wallet != null && status === "idle") {
+            router.push('/')
         }
       }, [userManagerContract]);
     
@@ -69,6 +53,8 @@ export default function Login() {
             const signer = await provider.getSigner();
             const balance = await provider.send("eth_getBalance", [accounts[0], "latest"])
             dispatch({ type: "connect", wallet: accounts[0], balance, provider, signer });
+
+            listen()
         }
     }
 

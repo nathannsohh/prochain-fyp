@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { Providers } from './provider'
 import { MetamaskProvider } from "../hooks/useMetamask";
+import MetamaskLayout from './metamaskLayout';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,7 +22,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <MetamaskProvider>
           <Providers>
-            {children}
+            <MetamaskLayout>
+              {children}
+            </MetamaskLayout>
           </Providers>
         </MetamaskProvider>
         </body>

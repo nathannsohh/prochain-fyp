@@ -9,6 +9,8 @@ type PageLoadedAction = {
   isMetamaskInstalled: boolean;
   wallet: string | null;
   balance: string | null;
+  provider: BrowserProvider | null;
+  signer: JsonRpcSigner | null;
 };
 
 type LoadingAction = { type: "loading" };
@@ -61,8 +63,8 @@ function metamaskReducer(state: State, action: Action): State {
       return { ...state, wallet: null, balance: null };
     }
     case "pageLoaded": {
-      const { isMetamaskInstalled, balance, wallet } = action;
-      return { ...state, isMetamaskInstalled, status: "idle", wallet, balance };
+      const { isMetamaskInstalled, balance, wallet, provider, signer } = action;
+      return { ...state, isMetamaskInstalled, status: "idle", wallet, balance, provider, signer };
     }
     case "loading": {
       return { ...state, status: "loading" };

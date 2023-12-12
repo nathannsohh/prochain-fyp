@@ -2,11 +2,13 @@
 
 import { useListen } from "@/hooks/useListen";
 import { useMetamask } from "@/hooks/useMetamask";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
     const { dispatch } = useMetamask();
     const listen = useListen();
+    const router = useRouter();
 
     useEffect(() => {
         if (typeof window !== undefined) {
@@ -24,12 +26,12 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
             }
     
             // local could be null if not present in LocalStorage
-            const { wallet, balance } = local
+            const { wallet, balance, provider, signer } = local
               ? JSON.parse(local)
               : // backup if local storage is empty
-                { wallet: null, balance: null };
+                { wallet: null, balance: null, provider: null, signer: null };
       
-            dispatch({ type: "pageLoaded", isMetamaskInstalled, wallet, balance });
+            dispatch({ type: "pageLoaded", isMetamaskInstalled, wallet, balance, provider, signer });
           }
     }, [])
 

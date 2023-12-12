@@ -26,7 +26,7 @@ export default function Login() {
         if (wallet != null && status === "idle") {
             router.push('/')
         }
-      }, [userManagerContract]);
+      }, [wallet]);
     
     const showInstallMetamask = status !== "pageNotLoaded" && !isMetamaskInstalled;
 

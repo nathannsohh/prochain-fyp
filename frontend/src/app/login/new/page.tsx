@@ -22,6 +22,10 @@ import {
     Center 
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
+import { useEffect } from 'react';
+import { useListen } from '@/hooks/useListen';
+import { useMetamask } from '@/hooks/useMetamask';
+import { useRouter } from 'next/navigation';
 
 type Inputs = {
     firstName: string,
@@ -37,6 +41,18 @@ export default function NewUser() {
         register,
         formState: { errors, isSubmitting },
     } = useForm<Inputs>()
+
+    const listen = useListen()
+    const { state } = useMetamask()
+    const router = useRouter()
+    
+    useEffect(() => {
+        listen()
+        if (state.wallet == null ) {
+            router.push('/login');
+        }
+
+    }, [listen])
 
     function onSubmit(values: Inputs) {
         console.log(values);

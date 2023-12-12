@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 export default function Home() {
   const {
     dispatch,
-    state: { status, isMetamaskInstalled, wallet, balance },
+    state: { status, wallet },
   } = useMetamask();
   const listen = useListen();
   const router = useRouter();
@@ -20,10 +20,10 @@ export default function Home() {
       if (wallet == null) {
         router.push('/login')
       } else {
-        router.push('/login/new')
+        router.push('/profile/new')
       }
     }
-  }, [wallet]);
+  }, [wallet, status]);
 
 
 

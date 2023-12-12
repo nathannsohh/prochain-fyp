@@ -26,6 +26,7 @@ import { useEffect } from 'react';
 import { useListen } from '@/hooks/useListen';
 import { useMetamask } from '@/hooks/useMetamask';
 import { useRouter } from 'next/navigation';
+import useUserManangerContract from '@/hooks/useUserManagerContract';
 
 type Inputs = {
     firstName: string,
@@ -45,14 +46,31 @@ export default function NewUser() {
     const listen = useListen()
     const { state } = useMetamask()
     const router = useRouter()
-    
-    useEffect(() => {
-        listen()
-        if (state.wallet == null ) {
-            router.push('/login');
-        }
+    const userManagerContract = useUserManangerContract()
 
+    useEffect(() => {
+        if (typeof window !== undefined) {
+            listen()
+            
+            if (state.wallet == null && state.status === "idle") {
+                router.push('/login');
+            } 
+            handleUserExistence()
+
+        }
     }, [listen])
+
+    const handleUserExistence = async () => {
+        try {
+            const response: boolean = await userManagerContract!!.doesUserExist()
+            // console.log(response);
+            if (response) {
+                router.push('/login')
+            }
+        } catch (e) {
+
+        }
+    }
 
     function onSubmit(values: Inputs) {
         console.log(values);

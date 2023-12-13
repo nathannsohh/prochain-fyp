@@ -3,13 +3,13 @@
 import { useListen } from "@/hooks/useListen";
 import { useMetamask } from "@/hooks/useMetamask";
 import { ethers } from "ethers";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import MainHeader from "@/components/MainHeader";
+import { Box } from "@chakra-ui/react";
 
 const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
-    const { dispatch } = useMetamask();
+    const { dispatch, state: { wallet, status } } = useMetamask();
     const listen = useListen();
-    const router = useRouter();
 
     useEffect(() => {
         if (typeof window !== undefined) {
@@ -37,11 +37,14 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
                 dispatch({ type: "pageLoaded", isMetamaskInstalled, wallet, balance, provider, signer });
             }
           }
-    }, [])
+    }, [wallet, status])
 
     return (
         <>
+            { wallet !== null && status === "idle" && <MainHeader /> }
+            <Box bg={ wallet !== null && status === "idle" ? "#F6F6F6" : "#FFFFFF" } minHeight='100vh' pt={16} pl="25%" pr="25%">
             {children}
+            </Box>
         </>
     )
 }

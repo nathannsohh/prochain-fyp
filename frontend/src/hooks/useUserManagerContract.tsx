@@ -3,7 +3,7 @@ import { useMemo } from "react"
 import { useMetamask } from "./useMetamask"
 import ABI from "@/../../artifacts/contracts/UserManager.sol/UserManager.json";
 
-const address = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+const address = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
 
 const useUserManangerContract = () => {
     const { state } = useMetamask();

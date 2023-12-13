@@ -20,7 +20,7 @@ export default function Home() {
       if (wallet == null) {
         router.push('/login')
       } else {
-        router.push('/profile/new')
+        router.push('/feed')
       }
     }
   }, [wallet, status]);

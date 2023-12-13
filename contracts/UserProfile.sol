@@ -3,9 +3,9 @@ pragma solidity ^0.8.23;
 
 contract UserProfile {
     address public walletAddress;
-    string public profileImageIPFSHash;
-    string public profileHeaderIPFSHash;
-    string public profileDataIPFSHash;
+    string public profileImageHash;
+    string public profileHeaderHash;
+    string public profileDataHash;
 
     address[] public connections;
     address[] public pendingConnections;
@@ -17,20 +17,21 @@ contract UserProfile {
         _;
     }
 
-    constructor (address _walletAddress) {
+    constructor (address _walletAddress, string memory _hash) {
         walletAddress = _walletAddress;
+        profileDataHash = _hash;
     }
 
     function setProfileImageHash(string memory _hash) public {
-        profileImageIPFSHash = _hash;
+        profileImageHash = _hash;
     }
 
     function setProfileHeaderHash(string memory _hash) public {
-        profileHeaderIPFSHash = _hash;
+        profileHeaderHash = _hash;
     }
 
     function setProfileDataHash(string memory _hash) public {
-        profileDataIPFSHash = _hash;
+        profileDataHash = _hash;
     }
 
     function acceptConnection(address _connectionAddress) public onlyUser(walletAddress) {

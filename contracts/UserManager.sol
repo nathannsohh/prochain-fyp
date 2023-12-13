@@ -8,10 +8,10 @@ contract UserManager {
 
     event UserRegistered(address indexed user, address profile);
 
-    function registerUser() public {
-        require(users[msg.sender] != address(0), "User already registered");
+    function registerUser(string memory _hash) public {
+        require(users[msg.sender] == address(0), "User already registered");
         
-        UserProfile newUser = new UserProfile(msg.sender);
+        UserProfile newUser = new UserProfile(msg.sender, _hash);
         users[msg.sender] = address(newUser);
 
         emit UserRegistered(msg.sender, address(newUser));

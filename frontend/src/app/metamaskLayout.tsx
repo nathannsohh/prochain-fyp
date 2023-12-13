@@ -2,6 +2,7 @@
 
 import { useListen } from "@/hooks/useListen";
 import { useMetamask } from "@/hooks/useMetamask";
+import { ethers } from "ethers";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -23,13 +24,18 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
             if (local) {
               listen();
             }
-    
+            
             // local could be null if not present in LocalStorage
-            const { wallet, balance, provider, signer } = local
-              ? JSON.parse(local)
-              : // backup if local storage is empty
-                { wallet: null, balance: null, provider: null, signer: null };
-            dispatch({ type: "pageLoaded", isMetamaskInstalled, wallet, balance, provider, signer });
+            if (local) {
+                const { wallet, balance } = JSON.parse(local);
+                const provider = new ethers.BrowserProvider(window.ethereum);
+                provider.getSigner().then((signer) => {
+                    dispatch({ type: "pageLoaded", isMetamaskInstalled, wallet, balance, provider, signer });
+                })
+            } else {
+                const { wallet, balance, provider, signer } = { wallet: null, balance: null, provider: null, signer: null}
+                dispatch({ type: "pageLoaded", isMetamaskInstalled, wallet, balance, provider, signer });
+            }
           }
     }, [])
 

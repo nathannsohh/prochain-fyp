@@ -23,10 +23,10 @@ import {
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react';
-import { useListen } from '@/hooks/useListen';
 import { useMetamask } from '@/hooks/useMetamask';
 import { useRouter } from 'next/navigation';
 import useUserManangerContract from '@/hooks/useUserManagerContract';
+import axios from 'axios';
 
 type Inputs = {
     firstName: string,
@@ -43,7 +43,6 @@ export default function NewUser() {
         formState: { errors, isSubmitting },
     } = useForm<Inputs>()
 
-    const listen = useListen()
     const { state: { wallet, status } } = useMetamask()
     const router = useRouter()
     const userManagerContract = useUserManangerContract()
@@ -66,8 +65,25 @@ export default function NewUser() {
         }
     }
 
-    function onSubmit(values: Inputs) {
-        console.log(values);
+    const onSubmit = async (values: Inputs) => {
+        let response;
+        try {
+            const body = {...values, walletAddress: wallet}
+            response = await axios.post('http://localhost:8000/user', body)
+            if (response.data.success) {
+                await userManagerContract!!.registerUser(response.data.hash)
+                router.push('/profile')
+            }
+        } catch (err) {
+            if (response && response.data.success) {
+                try {
+                    await axios.delete(`http://localhost:8000/user/${response.data.hash}`)
+                } catch (e) {
+                    console.error(err);
+                }
+            }
+            console.error(err)
+        }
     }
 
     return (

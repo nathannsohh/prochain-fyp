@@ -14,7 +14,7 @@ export default function IconButton(props) {
                 <Box height="60%" mt={2}>
                     {props.icon}
                 </Box>
-                <Text fontSize="12" mb={1}>{props.label}</Text>
+                <Text fontSize="12" mb={1} width="100%">{props.label}</Text>
             </VStack>
         </Box>
     )

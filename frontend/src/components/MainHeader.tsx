@@ -30,7 +30,7 @@ export default function MainHeader() {
                         <InputLeftElement>
                             <FiSearch />
                         </InputLeftElement>
-                        <Input variant="filled" width={350} placeholder='Search' height={10}/>
+                        <Input variant="filled" maxWidth={350} minWidth={100} placeholder='Search' height={10}/>
                     </InputGroup>
                 </HStack>
                 <Spacer />

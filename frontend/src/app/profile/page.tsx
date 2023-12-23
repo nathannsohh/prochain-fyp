@@ -1,5 +1,5 @@
 'use client'
-import MainHeader from "@/components/MainHeader"
+import ProfileHead from "@/components/ProfileHead";
 import { useMetamask } from "@/hooks/useMetamask";
 import useUserManangerContract from "@/hooks/useUserManagerContract";
 import { Box } from "@chakra-ui/react"
@@ -26,7 +26,7 @@ export default function ProfilePage() {
 
     return (
         <Box bg="#F6F6F6">
-            <div>Profile!</div>
+            <ProfileHead />
         </Box>
     )
 }

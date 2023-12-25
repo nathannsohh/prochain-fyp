@@ -3,13 +3,29 @@
 import { useListen } from "@/hooks/useListen";
 import { useMetamask } from "@/hooks/useMetamask";
 import { ethers } from "ethers";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import MainHeader from "@/components/MainHeader";
 import { Box } from "@chakra-ui/react";
+import useUserManangerContract from "@/hooks/useUserManagerContract";
 
 const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
     const { dispatch, state: { wallet, status } } = useMetamask();
     const listen = useListen();
+    const userManagerContract = useUserManangerContract();
+    const [isNewUser, setIsNewUser] = useState<Boolean | null>(null)
+
+    const handleUserExistence = async () => {
+        try {
+            const response: Boolean | null = await userManagerContract?.doesUserExist()
+            console.log(response);
+            setIsNewUser(!response)
+            // if (response) {
+            //     router.push('/profile')
+            // }
+        } catch (e) {
+
+        }
+    }
 
     useEffect(() => {
         if (typeof window !== undefined) {
@@ -36,13 +52,21 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
                 const { wallet, balance, provider, signer } = { wallet: null, balance: null, provider: null, signer: null}
                 dispatch({ type: "pageLoaded", isMetamaskInstalled, wallet, balance, provider, signer });
             }
+            handleUserExistence()
           }
     }, [wallet, status])
 
+    const loggedIn: Boolean = wallet !== null && status === "idle" && !isNewUser
+
     return (
         <>
-            { wallet !== null && status === "idle" && <MainHeader /> }
-            <Box bg={ wallet !== null && status === "idle" ? "#F6F6F6" : "#FFFFFF" } minHeight='100vh' pt={16} pl="25%" pr="25%">
+            {loggedIn && <MainHeader /> }
+            <Box 
+            bg={ loggedIn ? "#F6F6F6" : "#FFFFFF" } 
+            minHeight='100vh' 
+            pt={loggedIn ? 16 : 0} 
+            pl={loggedIn ? "25%" : ""}
+            pr={loggedIn ? "25%" : ""}>
             {children}
             </Box>
         </>

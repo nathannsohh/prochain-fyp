@@ -8,7 +8,7 @@ import { BsFillSuitcaseLgFill } from "react-icons/bs";
 import { BiSolidMessageDetail } from "react-icons/bi";
 import { IoNotificationsSharp } from "react-icons/io5";
 import { FaUserCircle } from "react-icons/fa";
-import IconButton from './IconButton.js'
+import RoutingButton from './RoutingButton.js'
 
 export default function MainHeader() {
 
@@ -34,12 +34,12 @@ export default function MainHeader() {
                     </InputGroup>
                 </HStack>
                 <Spacer />
-                <IconButton icon={<AiFillHome size={25}/>} label="Home" route="/feed"/>
-                <IconButton icon={<FaUserFriends size={26}/>} label="My Network" route="/network"/>
-                <IconButton icon={<BsFillSuitcaseLgFill size={25}/>} label="Jobs" route="jobs"/>
-                <IconButton icon={<BiSolidMessageDetail size={25}/>} label="Messages" route="/feed"/>
-                <IconButton icon={<IoNotificationsSharp size={25}/>} label="Notifications" route="feed"/>
-                <IconButton icon={<FaUserCircle size={25}/>} label="Me" route="/profile"/>
+                <RoutingButton icon={<AiFillHome size={25}/>} label="Home" route="/feed"/>
+                <RoutingButton icon={<FaUserFriends size={26}/>} label="My Network" route="/network"/>
+                <RoutingButton icon={<BsFillSuitcaseLgFill size={25}/>} label="Jobs" route="jobs"/>
+                <RoutingButton icon={<BiSolidMessageDetail size={25}/>} label="Messages" route="/feed"/>
+                <RoutingButton icon={<IoNotificationsSharp size={25}/>} label="Notifications" route="feed"/>
+                <RoutingButton icon={<FaUserCircle size={25}/>} label="Me" route="/profile"/>
             </HStack> 
         </Box>
     )

@@ -1,7 +1,7 @@
 import { Box, VStack, Text } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 
-export default function IconButton(props) {
+export default function RoutingButton(props) {
     const router = useRouter()
 
     const onClickHandler = () => {

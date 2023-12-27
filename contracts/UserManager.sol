@@ -20,7 +20,7 @@ contract UserManager {
     function getUserProfile() public view returns (address) {
         return users[msg.sender];
     }
-
+    
     function doesUserExist() public view returns (bool) {
         return users[msg.sender] != address(0);
     }

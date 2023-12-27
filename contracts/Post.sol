@@ -6,11 +6,16 @@ import './Comment.sol';
 contract Post {
     string public postImageHash;
     string public postContentHash;
-    address[] public likedBy;
+
+    mapping(address => bool) hasLiked;
+    address[] likedBy;
     uint likeMilestone;
     address[] public comments;
     uint commentMilestone;
     address owner;
+
+    event CommentCreated(address indexed _commentAddress);
+    event PostLiked(address indexed _likerAddress);
 
     constructor(string memory _imageHash, string memory _contentHash, address _ownerAddress) {
         postImageHash = _imageHash;
@@ -21,9 +26,9 @@ contract Post {
     }
 
     function likePost() public {
-        require(checkIfLikedAlready(msg.sender) == false, 'User has already liked this post!');
+        require(!hasLiked[msg.sender], 'User has already liked this post!');
         
-        likedBy.push(msg.sender);
+        hasLiked[msg.sender] = true;
         
         if (likedBy.length >= 20 && likedBy.length % 10 > likeMilestone) {
             // Make sure that users cannot like and unlike to get reward
@@ -31,11 +36,13 @@ contract Post {
 
             // TODO: Transfer tokens to user as reward
         }
+        emit PostLiked(msg.sender);
     }
 
     function unlikePost() public {
-        require(checkIfLikedAlready(msg.sender) == true, 'User has not liked this post!');
+        require(hasLiked[msg.sender] == true, 'User has not liked this post!');
 
+        hasLiked[msg.sender] = false;
         for (uint i = 0; i < likedBy.length; i++) {
             if (likedBy[i] == msg.sender) {
                 likedBy[i] = likedBy[likedBy.length - 1];
@@ -54,6 +61,7 @@ contract Post {
             
             // TODO: Transfer tokens to user as reward
         }
+        emit CommentCreated(address(newComment));
     }
 
     function uncomment(address _commentAddress) public {
@@ -65,15 +73,6 @@ contract Post {
             comments[i] = comments[i+1];
         }
         comments.pop();
-    }
-
-    function checkIfLikedAlready(address _user) public view returns (bool) {
-        for (uint i = 0; i < likedBy.length; i++) {
-            if (likedBy[i] == _user) {
-                return true;
-            }
-        }
-        return false;
     }
 
     function _getIndexOfComment(address _commentAddress) private view returns (int) {

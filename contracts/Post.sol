@@ -54,8 +54,15 @@ contract Post {
         }
     }
 
-    function uncomment() public {
-        
+    function uncomment(address _commentAddress) public {
+        int addressIndex = _getIndexOfComment(_commentAddress);
+
+        require(addressIndex != -1, "This comment does not exist!");
+
+        for (uint i = uint(addressIndex); i < comments.length - 1; i++) {
+            comments[i] = comments[i+1];
+        }
+        comments.pop();
     }
 
     function checkIfLikedAlready(address _user) public view returns (bool) {
@@ -65,5 +72,14 @@ contract Post {
             }
         }
         return false;
+    }
+
+    function _getIndexOfComment(address _commentAddress) private view returns (int) {
+        for (uint i = 0; i < comments.length; i++) {
+            if (comments[i] == _commentAddress) {
+                return int(i);
+            }
+        }
+        return -1;
     }
 }

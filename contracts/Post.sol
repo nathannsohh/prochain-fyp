@@ -10,12 +10,14 @@ contract Post {
     uint likeMilestone;
     address[] public comments;
     uint commentMilestone;
+    address owner;
 
-    constructor(string memory _imageHash, string memory _contentHash) {
+    constructor(string memory _imageHash, string memory _contentHash, address _ownerAddress) {
         postImageHash = _imageHash;
         postContentHash = _contentHash;
         likeMilestone = 0;
         commentMilestone = 0;
+        owner = _ownerAddress;
     }
 
     function likePost() public {
@@ -44,7 +46,7 @@ contract Post {
     }
 
     function comment(string memory _message) public {
-        Comment newComment = new Comment(_message);
+        Comment newComment = new Comment(_message, msg.sender);
         comments.push(address(newComment));
 
         if (comments.length >= 20 && comments.length % 10 > commentMilestone) {

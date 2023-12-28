@@ -2,6 +2,7 @@
 pragma solidity ^0.8.23;
 
 import './Comment.sol';
+import './ProCoinToken.sol';
 
 contract Post {
     string public postImageHash;
@@ -13,16 +14,19 @@ contract Post {
     address[] public comments;
     uint commentMilestone;
     address owner;
+    
+    ProCoinToken procoin;
 
     event CommentCreated(address indexed _commentAddress);
     event PostLiked(address indexed _likerAddress);
 
-    constructor(string memory _imageHash, string memory _contentHash, address _ownerAddress) {
+    constructor(string memory _imageHash, string memory _contentHash, address _ownerAddress, address _procoinAddress) {
         postImageHash = _imageHash;
         postContentHash = _contentHash;
         likeMilestone = 0;
         commentMilestone = 0;
         owner = _ownerAddress;
+        procoin = ProCoinToken(_procoinAddress);
     }
 
     function likePost() public {
@@ -34,7 +38,8 @@ contract Post {
             // Make sure that users cannot like and unlike to get reward
             likeMilestone = likedBy.length % 10;
 
-            // TODO: Transfer tokens to user as reward
+            // Transfer tokens to user
+            _distributeReward();
         }
         emit PostLiked(msg.sender);
     }
@@ -59,7 +64,8 @@ contract Post {
         if (comments.length >= 20 && comments.length % 10 > commentMilestone) {
             commentMilestone = comments.length % 10;
             
-            // TODO: Transfer tokens to user as reward
+            // Transfer reward to owner
+            _distributeReward();
         }
         emit CommentCreated(address(newComment));
     }
@@ -82,5 +88,9 @@ contract Post {
             }
         }
         return -1;
+    }
+
+    function _distributeReward() internal {
+        procoin.transfer(owner, 10);
     }
 }

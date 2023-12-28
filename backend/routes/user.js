@@ -23,6 +23,29 @@ exports.userRoutes = (app) => {
         }
     })
 
+    app.get('/user/:id', async (req, res) => {
+        let response;
+        try {
+            const query = {
+                text: "SELECT * FROM users WHERE id = $1",
+                values: [req.params.id]
+            }
+            const result = await db.query(query)
+
+            response = {
+                success: true,
+                user: result.rows[0]
+            }
+            res.status(200).send(response)
+        } catch (e) {
+            response = {
+                success: false,
+                message: e.message
+            }
+            res.status(400).send(response)
+        }
+    })
+
     app.delete('/user/:id', async (req, res) => {
         let response;
         try {

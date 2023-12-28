@@ -2,21 +2,22 @@ const hre = require("hardhat");
 
 async function main() {
 
+    // User Manager
     const userManagerContract = await hre.ethers.deployContract('UserManager')
-
-    // const start = hre.ethers.parseEther('0.0001')
-    // const decrease = hre.ethers.parseEther('0.000000041')
-    // const totalSupply = 100000
-    // // const floorPrice = hre.ethers.parseEther('0.01')
-
-    // const auctionContract = await hre.ethers.deployContract("DutchAuction", [start, decrease, totalSupply]);
-
     await userManagerContract.waitForDeployment();
 
+    // ProCoin Token
+    const initialSupply = 10000000;
+    const procoinTokenContract = await hre.ethers.deployContract('ProCoinToken', [initialSupply])
+    await procoinTokenContract.waitForDeployment();
 
-    console.log(
-        `UserManager deployed to ${userManagerContract.target}`
-    );
+    // Post Factory
+    const postFactoryContract = await hre.ethers.deployContract('PostFactory', [procoinTokenContract.target])
+    await postFactoryContract.waitForDeployment();
+
+    console.log(`UserManager deployed to ${userManagerContract.target}`);
+    console.log(`ProCoinToken deployed to ${procoinTokenContract.target}`);
+    console.log(`PostFactory deployed to ${postFactoryContract.target}`);
 }
 main().catch((error) => {
     console.error(error);

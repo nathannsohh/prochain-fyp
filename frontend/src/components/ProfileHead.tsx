@@ -33,6 +33,7 @@ export default function ProfileHead(props: ProfileHeadProps) {
         borderColor="#C5C1C1" 
         overflow="hidden" 
         mt={2} 
+        mb={4}
         position="relative">
             <Center>
                 <Box 

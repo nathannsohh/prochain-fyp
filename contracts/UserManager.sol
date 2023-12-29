@@ -24,4 +24,7 @@ contract UserManager {
     function doesUserExist() public view returns (bool) {
         return users[msg.sender] != address(0);
     }
+
+    fallback() external payable {}
+    receive() external payable {}
 }

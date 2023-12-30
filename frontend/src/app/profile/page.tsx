@@ -1,8 +1,10 @@
 'use client'
 import ProfileHead from "@/components/ProfileHead";
+import ProfileNewPostModal from "@/components/ProfileNewPostModal";
+import ProfilePostCard from "@/components/ProfilePostCard";
 import { useMetamask } from "@/hooks/useMetamask";
 import useUserManangerContract from "@/hooks/useUserManagerContract";
-import { Box } from "@chakra-ui/react"
+import { Box, useDisclosure, useToast } from "@chakra-ui/react"
 import { Contract } from "ethers";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -21,6 +23,8 @@ export default function ProfilePage() {
     const { state: { wallet, status } } = useMetamask();
     const router = useRouter()
     const userManagerContract: Contract | null = useUserManangerContract();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const toast = useToast()
 
     useEffect(() => {
         if (status === "idle") {
@@ -34,9 +38,20 @@ export default function ProfilePage() {
         }
     }, [wallet, status])
 
+    const triggerToast = (title: string, description: string, status: "loading" | "info" | "warning" | "success" | "error" | undefined) => {
+        toast({
+            title: title,
+            description: description,
+            status: status,
+            duration: 4000,
+        })
+    }
+
     return (
         <Box bg="#F6F6F6">
             <ProfileHead userData={DUMMY_DATA}/>
+            <ProfilePostCard posts={[]} ownProfile={true} onNewPost={onOpen}/>
+            <ProfileNewPostModal isOpen={isOpen} onClose={onClose} profileName={DUMMY_DATA.first_name + ' ' + DUMMY_DATA.last_name} triggerToast={triggerToast}/>
         </Box>
     )
 }

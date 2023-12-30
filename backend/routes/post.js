@@ -67,4 +67,26 @@ exports.postRoutes = (app) => {
             res.status(400).send(response)
         }
     })
+
+    app.delete('/post/:id', async (req, res) => {
+        let response;
+        try {
+            const query = {
+                text: "DELETE FROM posts WHERE id = $1",
+                values: [req.params.id]
+            }
+            await db.query(query)
+            response = {
+                success: true,
+                message: `Post ${req.params.id} deleted!`
+            }
+            res.status(200).send(response)
+        } catch (e) {
+            response = {
+                success: false,
+                message: e.message
+            }
+            res.status(400).send(response)
+        }
+    })
 }

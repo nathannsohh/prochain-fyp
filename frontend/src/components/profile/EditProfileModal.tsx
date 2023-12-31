@@ -10,7 +10,8 @@ interface EditProfileModalProps {
     isOpen: boolean,
     onClose: () => void,
     triggerToast: (title: string, description: string, status: "loading" | "info" | "warning" | "success" | "error" | undefined) => void
-    userData: UserType | null
+    userData: UserType | null,
+    updateUserData: (userData: UserType) => void
 }
 
 export default function EditProfileModal(props: EditProfileModalProps) {
@@ -26,9 +27,15 @@ export default function EditProfileModal(props: EditProfileModalProps) {
 
     const submitHandler = async (values: UserType) => {
         try {
-            console.log(values);
-            const response = await axios.put('http://localhost:8000/user', {...values, wallet_address: props.userData?.wallet_address})
+            const body = {...values, wallet_address: props.userData?.wallet_address!}
+            if (Object.entries(body).toString() === Object.entries(props.userData!).toString()) {
+                props.onClose() 
+                return;
+            }
+
+            const response = await axios.put('http://localhost:8000/user', body)
             if (response.data.success) {
+                props.updateUserData(body)
                 props.onClose()
                 props.triggerToast("Success", "Your profile has been updated.", "success")
             }

@@ -1,7 +1,7 @@
 'use client'
-import ProfileHead from "@/components/ProfileHead";
-import ProfileNewPostModal from "@/components/ProfileNewPostModal";
-import ProfilePostCard from "@/components/ProfilePostCard";
+import ProfileHead from "@/components/profile/ProfileHead";
+import ProfileNewPostModal from "@/components/profile/ProfileNewPostModal";
+import ProfilePostCard from "@/components/profile/ProfilePostCard";
 import { useMetamask } from "@/hooks/useMetamask";
 import useUserManangerContract from "@/hooks/useUserManagerContract";
 import { Box, useDisclosure, useToast } from "@chakra-ui/react"
@@ -10,7 +10,7 @@ import { Contract, ethers } from "ethers";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ABI from "@/../../artifacts/contracts/UserProfile.sol/UserProfile.json";
-import EditProfileModal from "@/components/EditProfileModal";
+import EditProfileModal from "@/components/profile/EditProfileModal";
 import { UserType } from "@/util/types";
 
 
@@ -61,6 +61,10 @@ export default function ProfilePage() {
         }
     }
 
+    const updateUserData = (userData: UserType) => {
+        setUserData(userData)
+    }
+
     const triggerToast = (title: string, description: string, status: "loading" | "info" | "warning" | "success" | "error" | undefined) => {
         toast({
             title: title,
@@ -77,7 +81,7 @@ export default function ProfilePage() {
             <ProfileHead userData={userData} onEditProfile={editProfileModalOnOpen}/>
             <ProfilePostCard posts={[]} ownProfile={true} onNewPost={newPostModalOnOpen}/>
             {newPostModalIsOpen && <ProfileNewPostModal isOpen={newPostModalIsOpen} onClose={newPostModalOnClose} profileName={userData?.first_name + ' ' + userData?.last_name} triggerToast={triggerToast}/>}
-            {editProfileModalIsOpen && <EditProfileModal isOpen={editProfileModalIsOpen} onClose={editProfileModalOnClose} triggerToast={triggerToast} userData={userData} />}
+            {editProfileModalIsOpen && <EditProfileModal isOpen={editProfileModalIsOpen} onClose={editProfileModalOnClose} triggerToast={triggerToast} userData={userData} updateUserData={updateUserData}/>}
         </Box>
     )
 }

@@ -5,21 +5,24 @@ import DefaultProfileImage from "@/images/DefaultProfilePicture.jpeg"
 import { MdEdit } from "react-icons/md";
 
 interface ProfileHeadProps {
-    userData: ProfileType
+    userData: UserType | null,
+    onEditProfile: () => void
 }
 
-type ProfileType = {
-    first_name: String,
-    last_name: String,
-    pronouns?: String,
-    email: String,
-    wallet_address: String,
-    bio?: String,
-    location?: String
+interface UserType {
+    first_name: string,
+    last_name: string,
+    pronouns: string | null,
+    email: string,
+    wallet_address: string,
+    bio: string | null,
+    location: string | null
 }
 
-const formatAddress = (address: String): String => {
-    return address.slice(0, 5) + "..." + address.slice(-4)
+const formatAddress = (address: String | undefined): String | null => {
+    if (address === undefined) return null
+
+    return address!.slice(0, 5) + "..." + address!.slice(-4)
 }
 
 export default function ProfileHead(props: ProfileHeadProps) {
@@ -52,20 +55,22 @@ export default function ProfileHead(props: ProfileHeadProps) {
             <Box height="50%" position="relative">
                 <Image src={TestImage} alt="profile banner" layout="fill" objectFit="cover"/>
             </Box>
-            <VStack p={5} mt={2} width="100%">
-                <Text fontSize="30px" fontWeight="Bold" position="absolute">{`${props.userData.first_name} ${props.userData.last_name}`}</Text>
+            <VStack p={5} mt={2} width="100%" height="50%">
+                <Text fontSize="30px" fontWeight="Bold" position="absolute">{`${props.userData?.first_name} ${props.userData?.last_name}`}</Text>
                 <HStack width="100%" mb={2} alignItems="center">
                 <Box bg="#EEEEEE" p={1} borderRadius="10px" pl="20px" pr="20px">
                     <Text fontSize="16px" color="#555353"><b>504</b> Connections</Text>
                 </Box>
                     <Spacer />
-                    <IconButton onClick={() => { } } icon={<MdEdit />} aria-label=""/>
+                    <IconButton onClick={ props.onEditProfile } icon={<MdEdit />} aria-label=""/>
                 </HStack>
                 <Box bg="#C6EAFF" p={1} borderRadius="20px" pl="20px" pr="20px">
-                    <Text fontSize="13px" fontWeight="bold" color="#818181">{formatAddress(props.userData.wallet_address)}</Text>
+                    <Text fontSize="13px" fontWeight="bold" color="#818181">{formatAddress(props.userData?.wallet_address)}</Text>
                 </Box>
-                <Text>{props.userData.bio}</Text>
-                <Button mt={9} variant="link">More Info +</Button>
+                <Text>{props.userData?.bio}</Text>
+                <Text fontWeight="700" color="#5F5F5F" fontSize="15px">{props.userData?.location}</Text>
+                <Spacer />
+                <Button variant="link">More Info +</Button>
             </VStack>
         </Box>
     )

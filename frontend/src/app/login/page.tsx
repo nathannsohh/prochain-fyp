@@ -30,19 +30,6 @@ export default function Login() {
     
     const showInstallMetamask = status !== "pageNotLoaded" && !isMetamaskInstalled;
 
-    const checkUserExistence = async () => {
-        try {
-            const response = await userManagerContract!!.doesUserExist();
-            if (response === true) {
-                router.push('/');
-            } else {
-                router.push('/login/new');
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
     const handleConnect = async () => {
         dispatch({ type: "loading" });
         const { ethereum } = window;
@@ -60,8 +47,7 @@ export default function Login() {
 
     return(
         <>
-            <LoginHeader metamaskIsInstalled={isMetamaskInstalled} handleConnect={handleConnect}/>
-            <HStack height="full">
+            <HStack mt={10}>
                 <VStack width="50%" pl="8%" pr="8%">
                     <Text fontSize='4xl' as='b'>Welcome to your gateway to Decentralised Professional Networking</Text>
                     {

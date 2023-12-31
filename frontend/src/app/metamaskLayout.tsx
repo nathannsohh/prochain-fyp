@@ -5,11 +5,12 @@ import { useMetamask } from "@/hooks/useMetamask";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import MainHeader from "@/components/MainHeader";
-import { Box } from "@chakra-ui/react";
+import { Box, Flex, HStack, Spacer } from "@chakra-ui/react";
 import useUserManangerContract from "@/hooks/useUserManagerContract";
+import LoginHeader from "@/components/LoginHeader";
 
 const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
-    const { dispatch, state: { wallet, status } } = useMetamask();
+    const { dispatch, state: { wallet, status, isMetamaskInstalled } } = useMetamask();
     const listen = useListen();
     const userManagerContract = useUserManangerContract();
     const [isNewUser, setIsNewUser] = useState<Boolean | null>(null)
@@ -56,18 +57,40 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
           }
     }, [wallet, status])
 
+    const handleConnect = async () => {
+        dispatch({ type: "loading" });
+        const { ethereum } = window;
+        const provider = new ethers.BrowserProvider(ethereum);
+        const accounts = await provider.send("eth_requestAccounts", []);
+        
+        if (accounts.length > 0) {
+            const signer = await provider.getSigner();
+            const balance = await provider.send("eth_getBalance", [accounts[0], "latest"])
+            dispatch({ type: "connect", wallet: accounts[0], balance, provider, signer });
+
+            listen()
+        }
+    }
+
     const loggedIn: Boolean = wallet !== null && status === "idle" && !isNewUser
 
     return (
         <>
-            {loggedIn && <MainHeader /> }
+            {loggedIn ? <MainHeader /> : <LoginHeader metamaskIsInstalled={isMetamaskInstalled} handleConnect={handleConnect}/>}
             <Box 
-            bg={ loggedIn ? "#F6F6F6" : "#FFFFFF" } 
-            minHeight='100vh' 
-            pt={loggedIn ? 16 : 0} 
-            pl={loggedIn ? "25%" : ""}
-            pr={loggedIn ? "25%" : ""}>
-            {children}
+                bg={ loggedIn ? "#F6F6F6" : "#FFFFFF" } 
+                minHeight='100vh'
+                pt={loggedIn ? 16 : 0} 
+                // pl={loggedIn ? "25%" : ""}
+                // pr={loggedIn ? "25%" : ""}
+            >
+                <Flex width="100%">
+                    <Spacer />
+                    <Box width={loggedIn ? "900px" : "1500px"}>
+                        {children}
+                    </Box>
+                    <Spacer />
+                </Flex>
             </Box>
         </>
     )

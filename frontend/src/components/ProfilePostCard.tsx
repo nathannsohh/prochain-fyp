@@ -1,6 +1,5 @@
 import usePostFactoryContract from "@/hooks/usePostFactoryContract";
 import { Button, Card, CardBody, CardHeader, Center, Heading, HStack, Spacer, Text } from "@chakra-ui/react";
-import { Contract } from "ethers";
 
 interface ProfilePostCardProps {
     posts: Posts[],
@@ -17,7 +16,7 @@ export default function ProfilePostCard(props: ProfilePostCardProps) {
     const hasPosts: Boolean = props.posts.length > 0
 
     return ( 
-        <Card p={2} borderRadius="20px">
+        <Card p={2} borderRadius="20px" height="300px">
             <CardHeader>
                 <HStack>
                     <Heading fontSize="23px" fontWeight="600">Posts</Heading>

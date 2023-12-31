@@ -15,32 +15,35 @@ export default function MainHeader() {
     return (
         <Box 
             bg="#FFFFFF"
-            paddingLeft="25%"
-            paddingRight="25%"
             borderBottom="1px"
             borderColor="#DDDCDC"
-            display={"grid"}
+            display="grid"
             position="absolute"
             width= "100%"
+            minWidth="100%"
         >
-            <HStack spacing={0}>
-                <HStack mt={2} mb={2}>
-                    <Image src={ProChainLogo} alt="ProChain logo" width={35}/>
-                    <InputGroup ml={2}>
-                        <InputLeftElement>
-                            <FiSearch />
-                        </InputLeftElement>
-                        <Input variant="filled" maxWidth={350} minWidth={100} placeholder='Search' height={10}/>
-                    </InputGroup>
-                </HStack>
+            <HStack>
                 <Spacer />
-                <RoutingButton icon={<AiFillHome size={25}/>} label="Home" route="/feed"/>
-                <RoutingButton icon={<FaUserFriends size={26}/>} label="My Network" route="/network"/>
-                <RoutingButton icon={<BsFillSuitcaseLgFill size={25}/>} label="Jobs" route="jobs"/>
-                <RoutingButton icon={<BiSolidMessageDetail size={25}/>} label="Messages" route="/feed"/>
-                <RoutingButton icon={<IoNotificationsSharp size={25}/>} label="Notifications" route="feed"/>
-                <RoutingButton icon={<FaUserCircle size={25}/>} label="Me" route="/profile"/>
-            </HStack> 
+                <HStack spacing={0} width="950px">
+                    <HStack mt={2} mb={2}>
+                        <Image src={ProChainLogo} alt="ProChain logo" width={35}/>
+                        <InputGroup ml={2}>
+                            <InputLeftElement>
+                                <FiSearch />
+                            </InputLeftElement>
+                            <Input variant="filled" maxWidth={350} minWidth={100} placeholder='Search' height={10}/>
+                        </InputGroup>
+                    </HStack>
+                    <Spacer />
+                    <RoutingButton icon={<AiFillHome size={25}/>} label="Home" route="/feed"/>
+                    <RoutingButton icon={<FaUserFriends size={26}/>} label="My Network" route="/network"/>
+                    <RoutingButton icon={<BsFillSuitcaseLgFill size={25}/>} label="Jobs" route="jobs"/>
+                    <RoutingButton icon={<BiSolidMessageDetail size={25}/>} label="Messages" route="/feed"/>
+                    <RoutingButton icon={<IoNotificationsSharp size={25}/>} label="Notifications" route="feed"/>
+                    <RoutingButton icon={<FaUserCircle size={25}/>} label="Me" route="/profile"/>
+                </HStack> 
+                <Spacer />
+            </HStack>
         </Box>
     )
 }

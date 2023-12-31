@@ -1,6 +1,5 @@
 'use client'
 
-import LoginHeader from '@/components/LoginHeader';
 import { HStack, Text, Box, VStack, Button, Center } from '@chakra-ui/react'
 import WorkingWoman from '../../images/WorkingWoman.png'
 import Image from 'next/image';
@@ -9,7 +8,6 @@ import { useMetamask } from '@/hooks/useMetamask';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ethers } from "ethers";
-import useUserManangerContract from '@/hooks/useUserManagerContract';
 import { useListen } from '@/hooks/useListen';
 
 export default function Login() {
@@ -19,7 +17,6 @@ export default function Login() {
     } = useMetamask();
 
     const router = useRouter()
-    const userManagerContract = useUserManangerContract();
     const listen = useListen()
 
     useEffect(() => {
@@ -70,6 +67,5 @@ export default function Login() {
                 </Box>
             </HStack>
         </>
-
     ) 
 }

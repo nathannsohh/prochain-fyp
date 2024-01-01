@@ -10,7 +10,11 @@ import { IoNotificationsSharp } from "react-icons/io5";
 import { FaUserCircle } from "react-icons/fa";
 import RoutingButton from './RoutingButton.js'
 
-export default function MainHeader() {
+interface MainHeaderProps {
+    wallet: string
+}
+
+export default function MainHeader(props: MainHeaderProps) {
 
     return (
         <Box 
@@ -39,8 +43,8 @@ export default function MainHeader() {
                     <RoutingButton icon={<FaUserFriends size={26}/>} label="My Network" route="/network"/>
                     <RoutingButton icon={<BsFillSuitcaseLgFill size={25}/>} label="Jobs" route="jobs"/>
                     <RoutingButton icon={<BiSolidMessageDetail size={25}/>} label="Messages" route="/feed"/>
-                    <RoutingButton icon={<IoNotificationsSharp size={25}/>} label="Notifications" route="feed"/>
-                    <RoutingButton icon={<FaUserCircle size={25}/>} label="Me" route="/profile"/>
+                    <RoutingButton icon={<IoNotificationsSharp size={25}/>} label="Notifications" route="/feed"/>
+                    <RoutingButton icon={<FaUserCircle size={25}/>} label="Me" route={`/profile/${props.wallet}`}/>
                 </HStack> 
                 <Spacer />
             </HStack>

@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { Providers } from './provider'
+import { ChakraProviders } from '../providers/chakraProvider'
 import { MetamaskProvider } from "../hooks/useMetamask";
 import MetamaskLayout from './metamaskLayout';
+import { ReduxProvider } from '@/providers/reduxProvider';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,11 +22,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <MetamaskProvider>
-          <Providers>
-            <MetamaskLayout>
-              {children}
-            </MetamaskLayout>
-          </Providers>
+          <ChakraProviders>
+              <ReduxProvider>
+                <MetamaskLayout>
+                    {children}
+                </MetamaskLayout>
+              </ReduxProvider>
+          </ChakraProviders>
         </MetamaskProvider>
         </body>
     </html>

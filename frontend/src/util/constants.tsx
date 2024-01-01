@@ -249,3 +249,10 @@ export const countryList: string[] = [
 	"Zimbabwe",
 	"Åland Islands"
 ];
+
+export const pronouns: string[] = [
+    "He/Him",
+    "She/Her",
+    "They/Them",
+    "Not Applicable"
+]

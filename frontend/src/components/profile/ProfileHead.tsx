@@ -6,7 +6,8 @@ import { MdEdit } from "react-icons/md";
 
 interface ProfileHeadProps {
     userData: UserType | null,
-    onEditProfile: () => void
+    onEditProfile: () => void,
+    connections: Number | null
 }
 
 interface UserType {
@@ -56,10 +57,10 @@ export default function ProfileHead(props: ProfileHeadProps) {
                 <Image src={TestImage} alt="profile banner" layout="fill" objectFit="cover"/>
             </Box>
             <VStack p={5} mt={2} width="100%" height="50%">
-                <Text fontSize="30px" fontWeight="Bold" position="absolute">{`${props.userData?.first_name} ${props.userData?.last_name}`}</Text>
+                <Text fontSize="28px" fontWeight="Bold" position="absolute">{`${props.userData?.first_name} ${props.userData?.last_name}`}</Text>
                 <HStack width="100%" mb={2} alignItems="center">
                 <Box bg="#EEEEEE" p={1} borderRadius="10px" pl="20px" pr="20px">
-                    <Text fontSize="16px" color="#555353"><b>504</b> Connections</Text>
+                    <Text fontSize="16px" color="#555353"><b>{props.connections?.toString()}</b> Connections</Text>
                 </Box>
                     <Spacer />
                     <IconButton onClick={ props.onEditProfile } icon={<MdEdit />} aria-label=""/>

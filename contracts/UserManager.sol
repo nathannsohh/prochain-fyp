@@ -17,8 +17,8 @@ contract UserManager {
         emit UserRegistered(msg.sender, address(newUser));
     }
 
-    function getUserProfile() public view returns (address) {
-        return users[msg.sender];
+    function getUserProfile(address _userWallet) public view returns (address) {
+        return users[_userWallet];
     }
     
     function doesUserExist() public view returns (bool) {

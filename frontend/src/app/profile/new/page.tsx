@@ -27,9 +27,10 @@ import { useMetamask } from '@/hooks/useMetamask';
 import { useRouter } from 'next/navigation';
 import useUserManangerContract from '@/hooks/useUserManagerContract';
 import axios from 'axios';
+import { countryList, pronouns } from '@/util/constants';
 
 type Inputs = {
-    firstName: string,
+    first_name: string,
     lastName: string,
     pronouns: string, 
     email: string,
@@ -41,7 +42,7 @@ export default function NewUser() {
         handleSubmit,
         register,
         formState: { errors, isSubmitting },
-    } = useForm<Inputs>()
+    } = useForm<UserType>()
 
     const { state: { wallet, status } } = useMetamask()
     const router = useRouter()
@@ -65,14 +66,16 @@ export default function NewUser() {
         }
     }
 
-    const onSubmit = async (values: Inputs) => {
+    const onSubmit = async (values: UserType) => {
         let response;
         try {
             const body = {...values, walletAddress: wallet}
             response = await axios.post('http://localhost:8000/user', body)
             if (response.data.success) {
-                await userManagerContract!!.registerUser(response.data.hash)
-                router.push('/profile')
+                await userManagerContract!.registerUser(response.data.hash.toString())
+                setTimeout(() => {
+                    router.push('/profile')
+                }, 4000)
             }
         } catch (err) {
             if (response && response.data.success) {
@@ -101,62 +104,72 @@ export default function NewUser() {
                         <Divider />
                         <CardBody width="100%">
                             <form onSubmit={handleSubmit(onSubmit)}>
-                                <HStack width="100%">
-                                    <FormControl isRequired isInvalid={errors.firstName != null}>
+                                <HStack width="100%" mb={3}>
+                                    <FormControl isRequired isInvalid={errors.first_name != null}>
                                         <FormLabel>First Name</FormLabel>
                                         <Input 
                                         placeholder='First Name' 
-                                        {...register('firstName', {
+                                        {...register('first_name', {
                                             required: 'This is required'
                                         })}
                                         />
                                         <FormErrorMessage>
-                                        {errors.firstName && errors.firstName.message}
+                                        {errors.first_name && errors.first_name.message}
                                         </FormErrorMessage>
                                     </FormControl>
-                                    <FormControl isRequired isInvalid={errors.lastName != null}>
+                                    <FormControl isRequired isInvalid={errors.last_name != null}>
                                         <FormLabel>Last Name</FormLabel>
                                         <Input 
                                         placeholder='Last Name'
-                                        {...register('lastName', {
+                                        {...register('last_name', {
                                             required: 'This is required'
                                         })}
                                         />
                                         <FormErrorMessage>
-                                        {errors.lastName && errors.lastName.message}
+                                        {errors.last_name && errors.last_name.message}
                                         </FormErrorMessage>
                                     </FormControl>
                                 </HStack>
-                                <HStack width="100%">
+                                <HStack width="100%" mb={3}>
                                     <FormControl width="20%">
                                         <FormLabel>Pronouns</FormLabel>
                                         <Select 
                                         placeholder='Pronouns'
                                         {...register('pronouns')}
                                         >
-                                            <option value='He/Him'>He/Him</option>
-                                            <option value='He/Him'>She/Her</option>
-                                            <option value='He/Him'>They/Them</option>
-                                            <option value='NA'>Not Applicable</option>
+                                            {pronouns.map((pronoun: string, index: number) => {
+                                                return <option key={index} value={pronoun}>{pronoun}</option>
+                                            })}
                                         </Select>
                                     </FormControl>
-                                    <FormControl isRequired isInvalid={errors.email != null}>
-                                        <FormLabel>Email</FormLabel>
-                                        <Input 
-                                        placeholder='Email'
-                                        {...register('email', {
-                                            required: 'This is required',
-                                            pattern: {
-                                                value: /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/,
-                                                message: "Please key in a valid email address!"
-                                            }
-                                        })}
-                                        />
-                                        <FormErrorMessage>
-                                        {errors.email && errors.email.message}
-                                        </FormErrorMessage>
+                                    <FormControl width="20%">
+                                        <FormLabel>Location</FormLabel>
+                                        <Select
+                                        placeholder='Location'
+                                        {...register('location')}
+                                        >
+                                            {countryList.map((country: string, index: number) => {
+                                                return <option key={index} value={country}>{country}</option>
+                                            })}
+                                        </Select>
                                     </FormControl>
                                 </HStack>
+                                <FormControl isRequired isInvalid={errors.email != null} mb={3}>
+                                    <FormLabel>Email</FormLabel>
+                                    <Input 
+                                    placeholder='Email'
+                                    {...register('email', {
+                                        required: 'This is required',
+                                        pattern: {
+                                            value: /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/,
+                                            message: "Please key in a valid email address!"
+                                        }
+                                    })}
+                                    />
+                                    <FormErrorMessage>
+                                    {errors.email && errors.email.message}
+                                    </FormErrorMessage>
+                                </FormControl>
                                 <FormControl>
                                     <FormLabel>Bio</FormLabel>
                                     <Textarea 
@@ -166,7 +179,7 @@ export default function NewUser() {
                                     />
                                 </FormControl>
                                 <Center>
-                                    <Button mt={5} width="40%" type="submit" isLoading={isSubmitting}>Done</Button>
+                                    <Button mt={5} width="40%" type="submit" isLoading={isSubmitting} colorScheme='blue'>Done</Button>
                                 </Center>
                             </form>
                         </CardBody>

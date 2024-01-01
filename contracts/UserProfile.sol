@@ -22,6 +22,10 @@ contract UserProfile {
         profileDataHash = _hash;
     }
 
+    function getNumberOfConnections() public view returns (uint) {
+        return connections.length;
+    }
+
     function setProfileImageHash(string memory _hash) public {
         profileImageHash = _hash;
     }

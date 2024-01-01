@@ -2,8 +2,7 @@ import { Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, ModalFooter,
 import { useEffect } from "react";
 import axios from "axios";
 import { useForm } from 'react-hook-form'
-import { UserType } from "@/util/types";
-import { countryList } from "@/util/constants";
+import { countryList, pronouns } from "@/util/constants";
 
 
 interface EditProfileModalProps {
@@ -88,10 +87,9 @@ export default function EditProfileModal(props: EditProfileModalProps) {
                                 defaultValue={props.userData?.pronouns === null ? undefined : props.userData!.pronouns!}
                                 {...register('pronouns')}
                                 >
-                                    <option value='He/Him'>He/Him</option>
-                                    <option value='He/Him'>She/Her</option>
-                                    <option value='He/Him'>They/Them</option>
-                                    <option value='NA'>Not Applicable</option>
+                                    {pronouns.map((pronoun: string, index: number) => {
+                                        return <option key={index} value={pronoun}>{pronoun}</option>
+                                    })}
                                 </Select>
                             </FormControl>
                             <FormControl width="20%">

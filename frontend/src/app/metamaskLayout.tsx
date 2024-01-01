@@ -18,13 +18,11 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
     const handleUserExistence = async () => {
         try {
             const response: Boolean | null = await userManagerContract?.doesUserExist()
-            console.log(response);
-            setIsNewUser(!response)
-            // if (response) {
-            //     router.push('/profile')
-            // }
+            if (response !== undefined && response !== null) {
+                setIsNewUser(!response)
+            }
         } catch (e) {
-
+            console.error(e)
         }
     }
 
@@ -72,21 +70,19 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
         }
     }
 
-    const loggedIn: Boolean = wallet !== null && status === "idle" && !isNewUser
+    const loggedIn: Boolean = wallet !== null && status === "idle" && isNewUser === false
 
     return (
         <>
-            {loggedIn ? <MainHeader /> : <LoginHeader metamaskIsInstalled={isMetamaskInstalled} handleConnect={handleConnect}/>}
+            {loggedIn ? <MainHeader wallet={wallet!}/> : wallet === null && <LoginHeader metamaskIsInstalled={isMetamaskInstalled} handleConnect={handleConnect}/>}
             <Box 
-                bg={ loggedIn ? "#F6F6F6" : "#FFFFFF" } 
+                bg={ wallet !== null ? "#F6F6F6" : "#FFFFFF" } 
                 minHeight='100vh'
-                pt={loggedIn ? 16 : 0} 
-                // pl={loggedIn ? "25%" : ""}
-                // pr={loggedIn ? "25%" : ""}
+                pt={loggedIn ? 16 : 0}
             >
                 <Flex width="100%">
-                    <Spacer />
-                    <Box width={loggedIn ? "900px" : "1500px"}>
+                    <Spacer/>
+                    <Box width={loggedIn ? "950px" : "1500px"}>
                         {children}
                     </Box>
                     <Spacer />

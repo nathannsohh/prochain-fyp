@@ -6,18 +6,18 @@ import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import MainHeader from "@/components/MainHeader";
 import { Box, Flex, HStack, Spacer } from "@chakra-ui/react";
-import useUserManangerContract from "@/hooks/useUserManagerContract";
+import useUserFactoryContract from "@/hooks/useUserFactoryContract";
 import LoginHeader from "@/components/LoginHeader";
 
 const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
     const { dispatch, state: { wallet, status, isMetamaskInstalled } } = useMetamask();
     const listen = useListen();
-    const userManagerContract = useUserManangerContract();
+    const userFactoryContract = useUserFactoryContract();
     const [isNewUser, setIsNewUser] = useState<Boolean | null>(null)
 
     const handleUserExistence = async () => {
         try {
-            const response: Boolean | null = await userManagerContract?.doesUserExist()
+            const response: Boolean | null = await userFactoryContract?.doesUserExist(wallet)
             if (response !== undefined && response !== null) {
                 setIsNewUser(!response)
             }

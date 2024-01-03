@@ -2,9 +2,17 @@ const hre = require("hardhat");
 
 async function main() {
 
+    // User Library
+    const userLibrary = await hre.ethers.deployContract('UserLibrary');
+    await userLibrary.waitForDeployment();
+
     // User Manager
-    const userManagerContract = await hre.ethers.deployContract('UserManager')
-    await userManagerContract.waitForDeployment();
+    const UserFactoryContract = await hre.ethers.getContractFactory('UserFactory', {
+        libraries: {
+            UserLibrary: userLibrary.target
+        }
+    })
+    const userFactoryContract = await UserFactoryContract.deploy()
 
     // ProCoin Token
     const initialSupply = 10000000;
@@ -15,7 +23,8 @@ async function main() {
     const postFactoryContract = await hre.ethers.deployContract('PostFactory', [procoinTokenContract.target])
     await postFactoryContract.waitForDeployment();
 
-    console.log(`UserManager deployed to ${userManagerContract.target}`);
+    console.log(`UserLibrary deployed to ${userLibrary.target}`)
+    console.log(`UserFactory deployed to ${await userFactoryContract.getAddress()}`);
     console.log(`ProCoinToken deployed to ${procoinTokenContract.target}`);
     console.log(`PostFactory deployed to ${postFactoryContract.target}`);
 }

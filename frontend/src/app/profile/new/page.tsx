@@ -22,10 +22,10 @@ import {
     Center 
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useMetamask } from '@/hooks/useMetamask';
 import { useRouter } from 'next/navigation';
-import useUserManangerContract from '@/hooks/useUserManagerContract';
+import useUserFactoryContract from '@/hooks/useUserFactoryContract';
 import axios from 'axios';
 import { countryList, pronouns } from '@/util/constants';
 
@@ -46,7 +46,9 @@ export default function NewUser() {
 
     const { state: { wallet, status } } = useMetamask()
     const router = useRouter()
-    const userManagerContract = useUserManangerContract()
+    const userFactoryContract = useUserFactoryContract()
+
+    const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
         if (status === "idle" && wallet === null) {
@@ -57,7 +59,7 @@ export default function NewUser() {
 
     const handleUserExistence = async () => {
         try {
-            const response: boolean = await userManagerContract!!.doesUserExist()
+            const response: boolean = await userFactoryContract!!.doesUserExist(wallet)
             if (response) {
                 router.push('/profile')
             }
@@ -72,9 +74,12 @@ export default function NewUser() {
             const body = {...values, walletAddress: wallet}
             response = await axios.post('http://localhost:8000/user', body)
             if (response.data.success) {
-                await userManagerContract!.registerUser(response.data.hash.toString())
+                console.log(response.data.hash)
+                await userFactoryContract!.registerUser(response.data.hash.toString())
+                setLoading(true)
                 setTimeout(() => {
-                    router.push('/profile')
+                    setLoading(false)
+                    router.push(`/profile/${wallet}`)
                 }, 4000)
             }
         } catch (err) {
@@ -179,7 +184,7 @@ export default function NewUser() {
                                     />
                                 </FormControl>
                                 <Center>
-                                    <Button mt={5} width="40%" type="submit" isLoading={isSubmitting} colorScheme='blue'>Done</Button>
+                                    <Button mt={5} width="40%" type="submit" isLoading={isSubmitting || loading} colorScheme='blue'>Done</Button>
                                 </Center>
                             </form>
                         </CardBody>

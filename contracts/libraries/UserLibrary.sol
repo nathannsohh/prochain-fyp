@@ -4,16 +4,16 @@ pragma solidity ^0.8.23;
 library UserLibrary {
 
     struct User {
-    address walletAddress;
-    string profileImageHash;
-    string profileHeaderHash;
-    string profileDataHash;
+        address walletAddress;
+        string profileImageHash;
+        string profileHeaderHash;
+        string profileDataHash;
 
-    address[] connections;
-    address[] pendingConnections;
+        address[] connections;
+        address[] pendingConnections;
 
-    bool exists;
-}
+        bool exists;
+    }
 
     event ConnectionRequestReceived(address indexed _from);
 

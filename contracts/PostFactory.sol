@@ -17,8 +17,14 @@ contract PostFactory {
         string _postContentHash,
         address _owner
     );
-    event CommentCreated(uint indexed _commentId);
-    event PostLiked(uint indexed _postId);
+    event CommentCreated(
+        uint indexed _commentId, 
+        string _commentContentHash, 
+        address _commentedBy, 
+        uint _postId
+    );
+    event PostLiked(uint indexed _postId, address _likedBy);
+    event PostUnliked(uint indexed _postId, address _unlikedBy);
 
     constructor(address _procoinAddress) {
         procoin = ProCoinToken(_procoinAddress);
@@ -44,36 +50,37 @@ contract PostFactory {
     }
 
     // ###################### POST FUNCTIONS ###########################
-    function likePost(uint _id) public {
-        PostLibrary.likePost(posts[_id]);
+    function likePost(uint _postId) public {
+        PostLibrary.likePost(posts[_postId]);
 
-        if (posts[_id].likedBy.length >= 1
+        if (posts[_postId].likedBy.length >= 1
         // TODO: Uncomment after testing the automatic distributeReward function 
         // && posts[_id].likedBy.length / 10 > posts[_id].likeMilestone
         ) {
             // Make sure that users cannot like and unlike to get reward
-            posts[_id].likeMilestone = posts[_id].likedBy.length / 10;
+            posts[_postId].likeMilestone = posts[_postId].likedBy.length / 10;
 
             // Transfer tokens to user
-            distributeReward(posts[_id].owner);
+            distributeReward(posts[_postId].owner);
         }
-        emit PostLiked(_id);
+        emit PostLiked(_postId, msg.sender);
     }
 
-    function unlikePost(uint _id) public {
-        PostLibrary.unlikePost(posts[_id]);
+    function unlikePost(uint _postId) public {
+        PostLibrary.unlikePost(posts[_postId]);
+        emit PostUnliked(_postId, msg.sender);
     }
 
-    function comment(uint _id, string memory _commentHash) public {
-        PostLibrary.comment(posts[_id], _commentHash);
+    function comment(uint _postId, string memory _commentHash) public {
+        uint commentId = PostLibrary.comment(posts[_postId], _commentHash);
 
-        if (posts[_id].comments.length >= 10 && posts[_id].comments.length / 10 > posts[_id].commentMilestone) {
-            posts[_id].commentMilestone = posts[_id].comments.length / 10;
+        if (posts[_postId].comments.length >= 10 && posts[_postId].comments.length / 10 > posts[_postId].commentMilestone) {
+            posts[_postId].commentMilestone = posts[_postId].comments.length / 10;
 
             // Transfer tokens to user
-            distributeReward(posts[_id].owner);
+            distributeReward(posts[_postId].owner);
         }
-        emit CommentCreated(_id);
+        emit CommentCreated(commentId, _commentHash, msg.sender, _postId);
     }
 
     function uncomment(uint _id, uint _commentId) public {

@@ -45,10 +45,11 @@ library PostLibrary {
         }
     }
 
-    function comment(Post storage self, string memory _commentHash) public {
+    function comment(Post storage self, string memory _commentHash) public returns (uint) {
         self.commentCount++;
         Comment memory newComment = Comment(_commentHash, msg.sender, self.commentCount);
         self.comments.push(newComment);
+        return self.commentCount;
     }
 
     function uncomment(Post storage self, uint _id) public {

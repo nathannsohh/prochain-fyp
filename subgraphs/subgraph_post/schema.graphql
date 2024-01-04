@@ -1,0 +1,16 @@
+# Entities
+type Post @entity {
+  id: ID!
+  postImageHash: String!
+  postContentHash: String!
+  owner: Bytes!
+  likedBy: [Bytes!]!
+  comments: [Comment!]! @derivedFrom(field: "post")
+}
+
+type Comment @entity {
+    id: ID!
+    commentContentHash: String!
+    owner: Bytes!
+    post: Post!
+}

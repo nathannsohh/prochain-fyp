@@ -1,0 +1,32 @@
+specVersion: 0.0.4
+description: Post Subgraph
+
+schema:
+  file: ./schema.graphql
+
+dataSources:
+- kind: ethereum/contract
+  name: PostFactory
+  network: localhost
+  source:
+    address: '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9'
+    abi: PostFactory
+  mapping:
+    kind: ethereum/events
+    language: wasm/assemblyscript
+    apiVersion: 0.0.6
+    entities:
+      - PostFactory
+    abis:
+      - name: PostFactory
+        file: ./../../artifacts/contracts/PostFactory.sol/PostFactory.json
+    eventHandlers:
+      - event: PostCreated(uint256,string,string,address)
+        handler: handlePostCreated
+      - event: CommentCreated(indexed uint256,string,address,uint256)
+        handler: handleCommentCreated
+      - event: PostLiked(indexed uint256,address)
+        handler: handlePostLiked
+      - event: PostUnliked(indexed uint256,address)
+        handler: handlePostUnliked
+    file: ./mapping.ts

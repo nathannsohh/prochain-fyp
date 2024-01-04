@@ -4,6 +4,7 @@ import { useState } from "react";
 import usePostFactoryContract from "@/hooks/usePostFactoryContract";
 import { Contract } from "ethers";
 import axios from "axios";
+import { API_URL } from "@/util/constants";
 
 interface ProfileNewPostModalProps {
     isOpen: boolean,
@@ -25,11 +26,11 @@ export default function ProfileNewPostModal(props: ProfileNewPostModalProps) {
         let response;
         try {
             setLoading(true)
-            response = await axios.post('http://localhost:8000/post', {
+            response = await axios.post(`${API_URL}/post`, {
                 content: postContent
             })
             if (response.data.success) {
-                await postFactoryContract?.createPost("", response.data.hash)
+                await postFactoryContract?.createPost("", response.data.hash.toString())
             }
             setLoading(false)
             props.onClose()
@@ -37,7 +38,7 @@ export default function ProfileNewPostModal(props: ProfileNewPostModalProps) {
         } catch (e) {
             if (response && response.data.success) {
                 try {
-                    await axios.delete(`http://localhost:8000/post/${response.data.hash}`)
+                    await axios.delete(`${API_URL}/post/${response.data.hash}`)
                 } catch (err) {
                     console.error(err)
                 }

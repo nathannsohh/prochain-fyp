@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import EditProfileModal from "@/components/profile/EditProfileModal";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { updateSelf } from "../profileSlice";
+import { API_URL } from "@/util/constants";
 
 
 export default function ProfilePage({ params }: { params: { wallet_address: string } }) {
@@ -47,7 +48,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
     const getUserDetails = async (wallet_address: string | null) => {
         try {
             const [user, numOfConnections] = await Promise.all([userFactoryContract?.getUserProfile(wallet_address), userFactoryContract?.getNumberOfConnections(wallet_address)])
-            const result = await axios.get(`http://localhost:8000/user/${user.profileDataHash}`)
+            const result = await axios.get(`${API_URL}/user/${user.profileDataHash}`)
             if (result.data.success) {
                 const user: UserType = result.data.user
                 const userDetails = {

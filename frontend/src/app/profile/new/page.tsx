@@ -27,15 +27,7 @@ import { useMetamask } from '@/hooks/useMetamask';
 import { useRouter } from 'next/navigation';
 import useUserFactoryContract from '@/hooks/useUserFactoryContract';
 import axios from 'axios';
-import { countryList, pronouns } from '@/util/constants';
-
-type Inputs = {
-    first_name: string,
-    lastName: string,
-    pronouns: string, 
-    email: string,
-    bio: string
-}
+import { countryList, pronouns, API_URL } from '@/util/constants';
 
 export default function NewUser() {
     const {
@@ -72,7 +64,7 @@ export default function NewUser() {
         let response;
         try {
             const body = {...values, walletAddress: wallet}
-            response = await axios.post('http://localhost:8000/user', body)
+            response = await axios.post(`${API_URL}/user`, body)
             if (response.data.success) {
                 console.log(response.data.hash)
                 await userFactoryContract!.registerUser(response.data.hash.toString())
@@ -85,7 +77,7 @@ export default function NewUser() {
         } catch (err) {
             if (response && response.data.success) {
                 try {
-                    await axios.delete(`http://localhost:8000/user/${response.data.hash}`)
+                    await axios.delete(`${API_URL}/user/${response.data.hash}`)
                 } catch (e) {
                     console.error(err);
                 }

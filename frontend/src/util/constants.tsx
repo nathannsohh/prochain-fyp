@@ -256,3 +256,5 @@ export const pronouns: string[] = [
     "They/Them",
     "Not Applicable"
 ]
+
+export const API_URL: string = "http://localhost:8002"

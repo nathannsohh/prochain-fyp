@@ -2,3 +2,7 @@ node_modules
 artifacts
 cache
 .env
+
+subgraphs/data
+subgraphs/subgraph_post/artifacts
+subgraphs/subgraph_post/build

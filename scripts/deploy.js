@@ -18,15 +18,23 @@ async function main() {
     const initialSupply = 10000000;
     const procoinTokenContract = await hre.ethers.deployContract('ProCoinToken', [initialSupply])
     await procoinTokenContract.waitForDeployment();
+    
+    // Post Library
+    const postLibrary = await hre.ethers.deployContract('PostLibrary');
+    await postLibrary.waitForDeployment();
 
     // Post Factory
-    const postFactoryContract = await hre.ethers.deployContract('PostFactory', [procoinTokenContract.target])
-    await postFactoryContract.waitForDeployment();
+    const PostFactoryContract = await hre.ethers.getContractFactory('PostFactory', {
+        libraries: {
+            PostLibrary: postLibrary.target
+        }
+    })
+    const postFactoryContract = await PostFactoryContract.deploy(procoinTokenContract.target);
 
     console.log(`UserLibrary deployed to ${userLibrary.target}`)
     console.log(`UserFactory deployed to ${await userFactoryContract.getAddress()}`);
     console.log(`ProCoinToken deployed to ${procoinTokenContract.target}`);
-    console.log(`PostFactory deployed to ${postFactoryContract.target}`);
+    console.log(`PostFactory deployed to ${await postFactoryContract.getAddress()}`);
 }
 main().catch((error) => {
     console.error(error);

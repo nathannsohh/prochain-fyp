@@ -9,7 +9,7 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
-const port = 8000
+const port = 8002
 
 app.get('/', (req, res) => {
   res.send('Hello World!')

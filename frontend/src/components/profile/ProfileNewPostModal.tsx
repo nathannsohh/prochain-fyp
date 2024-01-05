@@ -10,7 +10,8 @@ interface ProfileNewPostModalProps {
     isOpen: boolean,
     onClose: () => void,
     profileName: string,
-    triggerToast: (title: string, description: string, status: "loading" | "info" | "warning" | "success" | "error" | undefined) => void
+    triggerToast: (title: string, description: string, status: "loading" | "info" | "warning" | "success" | "error" | undefined) => void,
+    loadUserPosts: () => void
 }
 
 export default function ProfileNewPostModal(props: ProfileNewPostModalProps) {
@@ -35,6 +36,10 @@ export default function ProfileNewPostModal(props: ProfileNewPostModalProps) {
             setLoading(false)
             props.onClose()
             props.triggerToast("Post Created", "Your new post is now viewable by everyone!", "success")
+            setTimeout(
+                props.loadUserPosts,
+                2000
+            )
         } catch (e) {
             if (response && response.data.success) {
                 try {

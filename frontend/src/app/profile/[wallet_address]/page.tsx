@@ -14,12 +14,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { updateSelf } from "../profileSlice";
 import { API_URL, THE_GRAPH_URL } from "@/util/constants";
 
-interface PostType {
-    id: string,
-    postContentHash: string,
-    postImageHash: string
-}
-
 export default function ProfilePage({ params }: { params: { wallet_address: string } }) {
     const { state: { wallet, status } } = useMetamask();
     const ownProfile = useAppSelector((state) => state.ownProfile.value)
@@ -27,6 +21,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
     const userFactoryContract: Contract | null = useUserFactoryContract();
     const toast = useToast()
     const [userData, setUserData] = useState<UserType | null>(params.wallet_address === wallet ? ownProfile : null)
+    const [userPosts, setUserPosts] = useState<Array<PostType> | null>(null)
     const [connections, setConnections] = useState<Number | null>(params.wallet_address === wallet ? ownProfile?.connections! : null)
 
     const dispatch = useAppDispatch()
@@ -45,41 +40,22 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                     if (params.wallet_address === wallet) {
                         if (ownProfile === null) getUserDetails()
                     }
+                    getPostData()
                 }
             })
         }
     }, [wallet, status])
 
-    const getArrayOfPostContentHashes = (postData: Array<PostType>): Array<Number>  => {
-        let postHashArray = []
-        for (const post of postData) {
-            postHashArray.push(Number(post.postContentHash))
-        }
-        return postHashArray
-    }
-
+    
     const getUserDetails = async () => {
-        const graphqlQuery = {
-            "operationName": "getPosts",
-            "query": `query getPosts { posts (where: { owner: "${params.wallet_address}", postContentHash_not: ""}) { postContentHash postImageHash id } }`,
-            "variables": {}
-        }
-
         try {
-            const [user, numOfConnections, posts] = await Promise.all([
+            const [user, numOfConnections] = await Promise.all([
                 userFactoryContract?.getUserProfile(params.wallet_address), 
-                userFactoryContract?.getNumberOfConnections(params.wallet_address),
-                axios.post(`${THE_GRAPH_URL}/posts`, graphqlQuery)
+                userFactoryContract?.getNumberOfConnections(params.wallet_address)
             ])
-
-            const allPosts = posts.data.data.posts
-            const postHashes = getArrayOfPostContentHashes(allPosts)
-
-            const [userResult, postResult] = await Promise.all([
-                axios.get(`${API_URL}/user/${user.profileDataHash}`),
-                axios.get(`${API_URL}/post/[${postHashes}]`)
-            ])
-
+            
+            const userResult = await axios.get(`${API_URL}/user/${user.profileDataHash}`)
+            
             if (userResult.data.success) {
                 const user: UserType = userResult.data.user
                 const userDetails = {
@@ -95,8 +71,41 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                 setConnections(numOfConnections)
                 dispatch(updateSelf({... userDetails, connections: numOfConnections}))
             }
+        } catch (e) {
+            console.error(e)
+        }
+    }
 
-            
+    const getArrayOfPostContentHashes = (postData: any): Array<Number>  => {
+        let postHashArray = []
+        for (const post of postData) {
+            postHashArray.push(Number(post.postContentHash))
+        }
+        return postHashArray
+    }
+
+    const getPostData = async () => {
+        const graphqlQuery = {
+            "operationName": "getPosts",
+            "query": `query getPosts {
+                         posts (
+                            where: { owner: "${params.wallet_address}", postContentHash_not: ""}, 
+                            orderBy: postId,
+                            orderDirection: desc,
+                            first: 2
+                        ) { postContentHash postImageHash id likedBy comments { commentContentHash } } }`,
+            "variables": {}
+        }
+        try {
+            const posts = await axios.post(`${THE_GRAPH_URL}/posts`, graphqlQuery)
+            const allPosts = posts.data.data.posts.reverse()
+            const postHashes = getArrayOfPostContentHashes(allPosts)
+            const postResult = await axios.get(`${API_URL}/post/[${postHashes}]`)
+
+            const consolidatedPosts = allPosts.map((post: any, index: number) => {
+                return {...post, content: postResult.data.posts[index].content}
+            })
+            setUserPosts(consolidatedPosts)
         } catch (e) {
             console.error(e)
         }
@@ -121,13 +130,14 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
     return (
         <Box bg="#F6F6F6">
             <ProfileHead userData={userData} onEditProfile={editProfileModalOnOpen} connections={connections}/>
-            <ProfilePostCard posts={[]} ownProfile={true} onNewPost={newPostModalOnOpen}/>
+            <ProfilePostCard posts={userPosts} profileName={userData?.first_name + ' ' + userData?.last_name} ownProfile={true} onNewPost={newPostModalOnOpen}/>
             {newPostModalIsOpen && 
                 <ProfileNewPostModal 
                     isOpen={newPostModalIsOpen} 
                     onClose={newPostModalOnClose} 
                     profileName={userData?.first_name + ' ' + userData?.last_name} 
-                    triggerToast={triggerToast}/>}
+                    triggerToast={triggerToast}
+                    loadUserPosts={getPostData}/>}
 
             {editProfileModalIsOpen && 
                 <EditProfileModal 

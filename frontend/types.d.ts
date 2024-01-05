@@ -35,3 +35,18 @@ interface UserStateType  {
   location: string | null,
   connections: Number
 }
+
+interface CommentType {
+  id: string,
+  commentContentHash: string
+  content: string
+}
+
+interface PostType {
+  id: string,
+  postContentHash: string,
+  postImageHash: string,
+  likedBy: Array<string>,
+  comments: Array<CommentType>,
+  content: string
+}

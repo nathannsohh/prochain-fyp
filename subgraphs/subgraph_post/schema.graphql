@@ -1,6 +1,7 @@
 # Entities
 type Post @entity {
   id: ID!
+  postId: BigInt!
   postImageHash: String!
   postContentHash: String!
   owner: Bytes!

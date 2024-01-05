@@ -50,6 +50,19 @@ export class Post extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get postId(): BigInt {
+    let value = this.get("postId");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set postId(value: BigInt) {
+    this.set("postId", Value.fromBigInt(value));
+  }
+
   get postImageHash(): string {
     let value = this.get("postImageHash");
     if (!value || value.kind == ValueKind.NULL) {

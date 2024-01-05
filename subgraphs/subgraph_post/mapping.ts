@@ -4,6 +4,7 @@ import { Post, Comment } from "./generated/schema"
 export function handlePostCreated(event: PostCreated): void {
     let post = new Post(event.params._id.toString())
 
+    post.postId = event.params._id;
     post.postImageHash = event.params._postImageHash.toString();
     post.postContentHash = event.params._postContentHash.toString();
     post.owner = event.params._owner;

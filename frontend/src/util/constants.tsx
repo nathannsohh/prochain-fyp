@@ -258,3 +258,4 @@ export const pronouns: string[] = [
 ]
 
 export const API_URL: string = "http://localhost:8002"
+export const THE_GRAPH_URL: string = "http://127.0.0.1:8000/subgraphs/name"

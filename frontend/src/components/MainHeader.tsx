@@ -22,7 +22,7 @@ export default function MainHeader(props: MainHeaderProps) {
             borderBottom="1px"
             borderColor="#DDDCDC"
             display="grid"
-            position="absolute"
+            position="fixed"
             width= "100%"
             minWidth="100%"
         >

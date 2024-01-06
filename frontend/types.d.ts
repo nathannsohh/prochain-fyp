@@ -50,5 +50,6 @@ interface PostType {
   postImageHash: string,
   likedBy: Array<string>,
   comments: Array<CommentType>,
-  content: string
+  content: string,
+  time_posted: string
 }

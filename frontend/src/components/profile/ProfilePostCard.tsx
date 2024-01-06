@@ -31,7 +31,7 @@ export default function ProfilePostCard(props: ProfilePostCardProps) {
                 {hasPosts && 
                 <>
                     {props.posts?.map((post) => {
-                        return <ProfilePost post={post} profileName={props.profileName}/>
+                        return <ProfilePost key={post.postContentHash} post={post} profileName={props.profileName}/>
                     })}
                 </>
             }

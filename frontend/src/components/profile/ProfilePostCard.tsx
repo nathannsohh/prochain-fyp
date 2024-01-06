@@ -13,7 +13,7 @@ export default function ProfilePostCard(props: ProfilePostCardProps) {
     const hasPosts: Boolean = props.posts === null ? false : props.posts.length > 0 
 
     return ( 
-        <Card pt={2} pb={0} borderRadius="20px" minHeight="230px" maxHeight="450px" mb={3}>
+        <Card pt={2} pb={0} borderRadius="20px" minHeight="230px" maxHeight="450px" mb={3} overflow="hidden">
             <CardHeader pb={0} pl={6} pr={6}>
                 <HStack>
                     <Heading fontSize="23px" fontWeight="600">Posts</Heading>
@@ -36,7 +36,7 @@ export default function ProfilePostCard(props: ProfilePostCardProps) {
                 </>
             }
             {hasPosts && 
-                <Center height="45px" width="100%" as="button">
+                <Center height="45px" width="100%" as="button" _hover={{bg: "#FAFAFA"}}>
                     <Text color="#4F4F4F" fontWeight="semibold">Show all posts ➞</Text>
                 </Center>
             }

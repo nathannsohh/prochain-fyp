@@ -23,7 +23,16 @@ interface UserType {
 }
 
 interface ProfileState {
-  value: UserStateType | null
+  first_name: string | null,
+  last_name: string | null,
+  pronouns: string | null,
+  email: string | null,
+  wallet_address: string | null,
+  bio: string | null,
+  location: string | null,
+  connections: Number | null,
+  content_hash: string | null,
+  posts: Array<PostType> | null
 }
 
 interface UserStateType  {

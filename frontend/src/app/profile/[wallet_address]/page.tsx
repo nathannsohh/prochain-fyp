@@ -11,18 +11,46 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import EditProfileModal from "@/components/profile/EditProfileModal";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
-import { updateSelf } from "../profileSlice";
+import { updateSelf, updatePosts } from "../profileSlice";
 import { API_URL, THE_GRAPH_URL } from "@/util/constants";
 
 export default function ProfilePage({ params }: { params: { wallet_address: string } }) {
     const { state: { wallet, status } } = useMetamask();
-    const ownProfile = useAppSelector((state) => state.ownProfile.value)
+    const ownProfile: ProfileState = useAppSelector((state) => state.ownProfile)
+    const {posts, connections, ...profile}: ProfileState = ownProfile
+
+    const isOwnProfile: Boolean = profile.wallet_address !== null && profile.wallet_address === params.wallet_address
+    
+    const [userData, setUserData] = useState<UserType | null>(isOwnProfile ? {
+        first_name: profile.first_name!,
+            last_name: profile.last_name!,
+            pronouns: profile.pronouns,
+            email: profile.email!,
+            wallet_address: profile.email!,
+            bio: profile.bio,
+            location: profile.location,
+            content_hash: profile.content_hash!
+    } : null)
+    const [userPosts, setUserPosts] = useState<Array<PostType> | null>(isOwnProfile ? posts : null)
+    const [userConnections, setUserConnections] = useState<Number | null>(isOwnProfile ? connections : null)
+
+    // if (params.wallet_address === wallet) {
+    //     setUserPosts(posts)
+    //     setUserConnections(connections)
+    //     setUserData({
+    //         first_name: rest.first_name!,
+    //         last_name: rest.last_name!,
+    //         pronouns: rest.pronouns,
+    //         email: rest.email!,
+    //         wallet_address: rest.email!,
+    //         bio: rest.bio,
+    //         location: rest.location,
+    //         content_hash: rest.content_hash!
+    //     })
+    // }
     const router = useRouter()
     const userFactoryContract: Contract | null = useUserFactoryContract();
     const toast = useToast()
-    const [userData, setUserData] = useState<UserType | null>(params.wallet_address === wallet ? ownProfile : null)
-    const [userPosts, setUserPosts] = useState<Array<PostType> | null>(null)
-    const [connections, setConnections] = useState<Number | null>(params.wallet_address === wallet ? ownProfile?.connections! : null)
 
     const dispatch = useAppDispatch()
     
@@ -38,7 +66,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                     router.push('/profile/new')
                 } else {
                     if (params.wallet_address === wallet) {
-                        if (ownProfile === null) getUserDetails()
+                        if (userData === null) getUserDetails()
                     }
                     getPostData()
                 }
@@ -69,7 +97,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                     content_hash: user.content_hash
                 }
                 setUserData(userDetails)
-                setConnections(numOfConnections)
+                setUserConnections(numOfConnections)
                 dispatch(updateSelf({... userDetails, connections: numOfConnections}))
             }
         } catch (e) {
@@ -107,6 +135,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                 return {...post, content: postResult.data.posts[index].content, time_posted: postResult.data.posts[index].time_posted}
             })
             setUserPosts(consolidatedPosts)
+            dispatch(updatePosts(consolidatedPosts))
         } catch (e) {
             console.error(e)
         }
@@ -130,7 +159,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
 
     return (
         <Box bg="#F6F6F6">
-            <ProfileHead userData={userData} onEditProfile={editProfileModalOnOpen} connections={connections}/>
+            <ProfileHead userData={userData} onEditProfile={editProfileModalOnOpen} connections={userConnections}/>
             <ProfilePostCard posts={userPosts} profileName={userData?.first_name + ' ' + userData?.last_name} ownProfile={true} onNewPost={newPostModalOnOpen}/>
             {newPostModalIsOpen && 
                 <ProfileNewPostModal 

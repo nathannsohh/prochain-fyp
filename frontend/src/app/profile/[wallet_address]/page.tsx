@@ -104,7 +104,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
             const postResult = await axios.get(`${API_URL}/post/[${postHashes}]`)
 
             const consolidatedPosts = allPosts.map((post: any, index: number) => {
-                return {...post, content: postResult.data.posts[index].content}
+                return {...post, content: postResult.data.posts[index].content, time_posted: postResult.data.posts[index].time_posted}
             })
             setUserPosts(consolidatedPosts)
         } catch (e) {

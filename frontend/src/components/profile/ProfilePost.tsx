@@ -8,6 +8,17 @@ interface ProfilePostProps {
     profileName: string
 }
 
+const formatDateString = (dateString: string): string => {
+    const dateObject: Date = new Date(dateString);
+
+    const formattedDateString: string = dateObject.toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    });
+    return formattedDateString
+}
+
 export default function ProfilePost(props: ProfilePostProps) {
     return (
         <Box fontSize="14px" mb={0} mt={2}>
@@ -15,7 +26,7 @@ export default function ProfilePost(props: ProfilePostProps) {
                 <Box cursor="pointer">
                     <HStack color="#616161" fontSize="15px" mb={1}>
                         <Text fontWeight="semibold" mr={1}>{props.profileName}</Text>
-                        <Text>5 Jan 2024</Text>
+                        <Text>{formatDateString(props.post.time_posted)}</Text>
                     </HStack>
                     <Text noOfLines={3}>{props.post.content}</Text>
                 </Box>

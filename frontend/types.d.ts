@@ -18,7 +18,8 @@ interface UserType {
   email: string,
   wallet_address: string,
   bio: string | null,
-  location: string | null
+  location: string | null,
+  content_hash: string
 }
 
 interface ProfileState {
@@ -33,7 +34,8 @@ interface UserStateType  {
   wallet_address: string,
   bio: string | null,
   location: string | null,
-  connections: Number
+  connections: Number,
+  content_hash: string
 }
 
 interface CommentType {

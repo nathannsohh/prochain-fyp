@@ -9,7 +9,7 @@ interface EditProfileModalProps {
     isOpen: boolean,
     onClose: () => void,
     triggerToast: (title: string, description: string, status: "loading" | "info" | "warning" | "success" | "error" | undefined) => void
-    userData: UserType | null,
+    userData: UserType,
     updateUserData: (userData: UserType) => void
 }
 
@@ -19,14 +19,10 @@ export default function EditProfileModal(props: EditProfileModalProps) {
         register,
         formState: { errors, isSubmitting },
     } = useForm<UserType>()
-
-    useEffect(() => {
-        console.log(props.userData)
-    }, [])
-
+    
     const submitHandler = async (values: UserType) => {
         try {
-            const body = {...values, wallet_address: props.userData?.wallet_address!}
+            const body = {...values, wallet_address: props.userData?.wallet_address!, content_hash: props.userData?.content_hash}
             if (Object.entries(body).toString() === Object.entries(props.userData!).toString()) {
                 props.onClose() 
                 return;

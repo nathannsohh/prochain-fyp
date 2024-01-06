@@ -31,7 +31,7 @@ export default function ProfileNewPostModal(props: ProfileNewPostModalProps) {
                 content: postContent
             })
             if (response.data.success) {
-                await postFactoryContract?.createPost("", response.data.hash.toString())
+                await postFactoryContract?.createPost("", response.data.hash)
             }
             setLoading(false)
             props.onClose()

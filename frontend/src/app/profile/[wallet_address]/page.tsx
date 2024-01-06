@@ -65,7 +65,8 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                     email: user.email,
                     wallet_address: user.wallet_address,
                     bio: user.bio,
-                    location: user.location
+                    location: user.location,
+                    content_hash: user.content_hash
                 }
                 setUserData(userDetails)
                 setConnections(numOfConnections)
@@ -76,10 +77,10 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
         }
     }
 
-    const getArrayOfPostContentHashes = (postData: any): Array<Number>  => {
+    const getArrayOfPostContentHashes = (postData: any): Array<string>  => {
         let postHashArray = []
         for (const post of postData) {
-            postHashArray.push(Number(post.postContentHash))
+            postHashArray.push(`"${post.postContentHash}"`)
         }
         return postHashArray
     }
@@ -144,7 +145,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                     isOpen={editProfileModalIsOpen} 
                     onClose={editProfileModalOnClose} 
                     triggerToast={triggerToast} 
-                    userData={userData} 
+                    userData={userData!} 
                     updateUserData={updateUserData}/>}
         </Box>
     )

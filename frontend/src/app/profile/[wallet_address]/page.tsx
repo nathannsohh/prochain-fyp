@@ -26,28 +26,13 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
             last_name: profile.last_name!,
             pronouns: profile.pronouns,
             email: profile.email!,
-            wallet_address: profile.email!,
+            wallet_address: profile.wallet_address!,
             bio: profile.bio,
             location: profile.location,
             content_hash: profile.content_hash!
     } : null)
     const [userPosts, setUserPosts] = useState<Array<PostType> | null>(isOwnProfile ? posts : null)
     const [userConnections, setUserConnections] = useState<Number | null>(isOwnProfile ? connections : null)
-
-    // if (params.wallet_address === wallet) {
-    //     setUserPosts(posts)
-    //     setUserConnections(connections)
-    //     setUserData({
-    //         first_name: rest.first_name!,
-    //         last_name: rest.last_name!,
-    //         pronouns: rest.pronouns,
-    //         email: rest.email!,
-    //         wallet_address: rest.email!,
-    //         bio: rest.bio,
-    //         location: rest.location,
-    //         content_hash: rest.content_hash!
-    //     })
-    // }
     const router = useRouter()
     const userFactoryContract: Contract | null = useUserFactoryContract();
     const toast = useToast()

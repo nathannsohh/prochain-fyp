@@ -13,7 +13,6 @@ const Feed = () => {
     useEffect(() => {
         if (status === "idle") {
             if (wallet === null) router.push('/login')
-            console.log(userFactoryContract);
             userFactoryContract!.doesUserExist(wallet).then((result) => {
                 if (!result) {
                     router.push('/profile/new')

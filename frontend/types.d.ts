@@ -19,7 +19,9 @@ interface UserType {
   wallet_address: string,
   bio: string | null,
   location: string | null,
-  content_hash: string
+  content_hash: string,
+  profile_picture_hash: string,
+  profile_banner_hash: string
 }
 
 interface ProfileState {
@@ -32,6 +34,8 @@ interface ProfileState {
   location: string | null,
   connections: Number | null,
   content_hash: string | null,
+  profile_picture_hash: string | null,
+  profile_banner_hash: string | null,
   posts: Array<PostType> | null
 }
 
@@ -44,7 +48,9 @@ interface UserStateType  {
   bio: string | null,
   location: string | null,
   connections: Number,
-  content_hash: string
+  content_hash: string,
+  profile_picture_hash: string,
+  profile_banner_hash: string
 }
 
 interface CommentType {

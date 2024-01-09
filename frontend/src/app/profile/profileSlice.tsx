@@ -12,6 +12,8 @@ export const profileSlice = createSlice({
         location: null,
         connections: null,
         content_hash: null,
+        profile_picture_hash: null,
+        profile_banner_hash: null,
         posts: null
     } as ProfileState,
     reducers: {

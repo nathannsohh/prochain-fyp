@@ -13,7 +13,7 @@ contract UserFactory {
         _;
     }
 
-    function registerUser(string memory _hash) public {
+    function registerUser(string memory _profileDataHash, string memory _profileImageHash, string memory _profileHeaderHash) public {
         require(users[msg.sender].exists != true, "User already registered");
 
         address[] memory connections;
@@ -21,9 +21,9 @@ contract UserFactory {
 
         UserLibrary.User memory newUser = UserLibrary.User(
             msg.sender, 
-            "0", 
-            "0", 
-            _hash, 
+            _profileImageHash, 
+            _profileHeaderHash, 
+            _profileDataHash, 
             connections, 
             pendingConnections, 
             true

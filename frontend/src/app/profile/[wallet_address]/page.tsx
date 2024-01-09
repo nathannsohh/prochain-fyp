@@ -29,7 +29,9 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
             wallet_address: profile.wallet_address!,
             bio: profile.bio,
             location: profile.location,
-            content_hash: profile.content_hash!
+            content_hash: profile.content_hash!,
+            profile_picture_hash: profile.profile_picture_hash!,
+            profile_banner_hash: profile.profile_banner_hash!
     } : null)
     const [userPosts, setUserPosts] = useState<Array<PostType> | null>(isOwnProfile ? posts : null)
     const [userConnections, setUserConnections] = useState<Number | null>(isOwnProfile ? connections : null)
@@ -62,13 +64,13 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
     
     const getUserDetails = async () => {
         try {
-            const [user, numOfConnections] = await Promise.all([
+            const [userProfile, numOfConnections] = await Promise.all([
                 userFactoryContract?.getUserProfile(params.wallet_address), 
                 userFactoryContract?.getNumberOfConnections(params.wallet_address)
             ])
             
-            const userResult = await axios.get(`${API_URL}/user/${user.profileDataHash}`)
-            
+            const userResult = await axios.get(`${API_URL}/user/${userProfile.profileDataHash}`)
+            console.log(userProfile.profileImageHash)
             if (userResult.data.success) {
                 const user: UserType = userResult.data.user
                 const userDetails = {
@@ -79,7 +81,9 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                     wallet_address: user.wallet_address,
                     bio: user.bio,
                     location: user.location,
-                    content_hash: user.content_hash
+                    content_hash: user.content_hash,
+                    profile_picture_hash: userProfile.profileImageHash,
+                    profile_banner_hash: userProfile.profileHeaderHash
                 }
                 setUserData(userDetails)
                 setUserConnections(numOfConnections)

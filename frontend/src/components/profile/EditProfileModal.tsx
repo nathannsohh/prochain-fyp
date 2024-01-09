@@ -19,7 +19,7 @@ export default function EditProfileModal(props: EditProfileModalProps) {
         register,
         formState: { errors, isSubmitting },
     } = useForm<UserType>()
-    
+
     const submitHandler = async (values: UserType) => {
         try {
             const body = {...values, wallet_address: props.userData?.wallet_address!, content_hash: props.userData?.content_hash}

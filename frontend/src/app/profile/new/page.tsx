@@ -27,7 +27,7 @@ import { useMetamask } from '@/hooks/useMetamask';
 import { useRouter } from 'next/navigation';
 import useUserFactoryContract from '@/hooks/useUserFactoryContract';
 import axios from 'axios';
-import { countryList, pronouns, API_URL } from '@/util/constants';
+import { countryList, pronouns, API_URL, DEFAULT_PROFILE_PIC_HASH, DEFAULT_PROFILE_BANNER_HASH } from '@/util/constants';
 
 export default function NewUser() {
     const {
@@ -67,7 +67,7 @@ export default function NewUser() {
             response = await axios.post(`${API_URL}/user`, body)
             if (response.data.success) {
                 console.log(response.data.hash)
-                await userFactoryContract!.registerUser(response.data.hash.toString())
+                await userFactoryContract!.registerUser(response.data.hash, DEFAULT_PROFILE_PIC_HASH, DEFAULT_PROFILE_BANNER_HASH)
                 setLoading(true)
                 setTimeout(() => {
                     setLoading(false)

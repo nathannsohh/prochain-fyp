@@ -10,16 +10,6 @@ interface ProfileHeadProps {
     connections: Number | null
 }
 
-interface UserType {
-    first_name: string,
-    last_name: string,
-    pronouns: string | null,
-    email: string,
-    wallet_address: string,
-    bio: string | null,
-    location: string | null
-}
-
 const formatAddress = (address: String | undefined): String | null => {
     if (address === undefined) return null
 
@@ -50,11 +40,11 @@ export default function ProfileHead(props: ProfileHeadProps) {
                 borderColor="#FFFFFF" 
                 zIndex="1"
                 mt="350px">
-                    <Image src={DefaultProfileImage} alt="profile banner" layout="fill" objectFit="contain"/>
+                    <Image src={`http://127.0.0.1:8080/ipfs/${props.userData?.profile_picture_hash}`} alt="profile picture" layout="fill" objectFit="contain"/>
                 </Box>
             </Center>
             <Box height="50%" position="relative">
-                <Image src={TestImage} alt="profile banner" layout="fill" objectFit="cover"/>
+                <Image src={`http://127.0.0.1:8080/ipfs/${props.userData?.profile_banner_hash}`} alt="profile banner" layout="fill" objectFit="cover"/>
             </Box>
             <VStack p={5} mt={2} width="100%" height="50%">
                 <Text fontSize="28px" fontWeight="Bold" position="absolute">{`${props.userData?.first_name} ${props.userData?.last_name}`}</Text>

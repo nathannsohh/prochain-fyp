@@ -25,6 +25,7 @@ export default function MainHeader(props: MainHeaderProps) {
             position="fixed"
             width= "100%"
             minWidth="100%"
+            zIndex={1000}
         >
             <HStack>
                 <Spacer />

@@ -259,6 +259,7 @@ export const pronouns: string[] = [
 
 export const API_URL: string = "http://localhost:8002"
 export const THE_GRAPH_URL: string = "http://127.0.0.1:8000/subgraphs/name"
+export const IPFS_URL: string = "http://127.0.0.1:5001/api/v0"
 
 export const DEFAULT_PROFILE_PIC_HASH = "QmRnu9BT3BPeYg8oB6Zj85N1E5njT99U8TfQgTJ2Ew53bE"
 export const DEFAULT_PROFILE_BANNER_HASH = "Qmc2Tv4mmoJQya6dMNNdKvEA2HiJ3Jigmg8etshtK1vKZv"

@@ -1,10 +1,14 @@
-import { Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, ModalFooter, Button, ModalCloseButton, Textarea, Avatar, HStack, Text } from "@chakra-ui/react";
+import { Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, ModalFooter, Button, ModalCloseButton, Textarea, Avatar, HStack, Text, IconButton, Menu, MenuButton, MenuList, MenuItem, Spacer } from "@chakra-ui/react";
 import DefaultProfileImage from "@/images/DefaultProfilePicture.jpeg"
 import { useState } from "react";
 import usePostFactoryContract from "@/hooks/usePostFactoryContract";
 import { Contract } from "ethers";
 import axios from "axios";
 import { API_URL } from "@/util/constants";
+import Picker from 'emoji-picker-react'
+import { CgAttachment } from "react-icons/cg";
+import { BsEmojiGrin } from "react-icons/bs";
+
 
 interface ProfileNewPostModalProps {
     isOpen: boolean,
@@ -15,7 +19,7 @@ interface ProfileNewPostModalProps {
 }
 
 export default function ProfileNewPostModal(props: ProfileNewPostModalProps) {
-    const [postContent, setPostContent] = useState<String>("")
+    const [postContent, setPostContent] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
     const postFactoryContract: Contract | null  = usePostFactoryContract();
     
@@ -54,6 +58,10 @@ export default function ProfileNewPostModal(props: ProfileNewPostModalProps) {
         }
     }
 
+    const handleEmojiClick = (emojiObject: any, _: Event) => {
+        setPostContent(prevContent => prevContent + emojiObject.emoji)
+    }
+
     return(
         <Modal isOpen={props.isOpen} onClose={props.onClose}>
             <ModalOverlay />
@@ -69,10 +77,34 @@ export default function ProfileNewPostModal(props: ProfileNewPostModalProps) {
                     placeholder="What would you like to say?" 
                     height="300px" 
                     resize="none"
+                    value={postContent}
                     onChange={handlePostChange}/>
                 </ModalBody>
                 <ModalFooter>
+                <HStack>
+                        <IconButton aria-label={"attachment"} icon={<CgAttachment size={20}/>} variant="link"/>
+                        <Menu closeOnSelect={false}>
+                        {({ isOpen }) => (
+                            <>
+                                <MenuButton as={IconButton} aria-label={"emojis"} icon={<BsEmojiGrin size={20}/>} variant="link" isActive={isOpen}/>
+                                <MenuList p={0}>
+                                    <MenuItem p={0}>
+                                        <Picker 
+                                            width="100%" 
+                                            height={275} 
+                                            previewConfig={{ showPreview: false }} 
+                                            searchDisabled={true} 
+                                            onEmojiClick={handleEmojiClick}
+                                        />
+                                    </MenuItem>
+                                </MenuList>
+                            </>
+                        )}
+                            
+                        </Menu>
+                        <Spacer />
                     <Button colorScheme="blue" isDisabled={postContent === ""} onClick={submitHandler} isLoading={loading}>Post</Button>
+                    </HStack>
                 </ModalFooter>
             </ModalContent>
         </Modal>

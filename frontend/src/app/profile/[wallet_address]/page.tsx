@@ -70,7 +70,6 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
             ])
             
             const userResult = await axios.get(`${API_URL}/user/${userProfile.profileDataHash}`)
-            console.log(userProfile.profileImageHash)
             if (userResult.data.success) {
                 const user: UserType = userResult.data.user
                 const userDetails = {
@@ -148,7 +147,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
 
     return (
         <Box bg="#F6F6F6">
-            <ProfileHead userData={userData} onEditProfile={editProfileModalOnOpen} connections={userConnections}/>
+            <ProfileHead userData={userData} onEditProfile={editProfileModalOnOpen} connections={userConnections} ownProfile={isOwnProfile}/>
             <ProfilePostCard posts={userPosts} profileName={userData?.first_name + ' ' + userData?.last_name} ownProfile={true} onNewPost={newPostModalOnOpen}/>
             {newPostModalIsOpen && 
                 <ProfileNewPostModal 
@@ -164,7 +163,8 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                     onClose={editProfileModalOnClose} 
                     triggerToast={triggerToast} 
                     userData={userData!} 
-                    updateUserData={updateUserData}/>}
+                    updateUserData={updateUserData}
+                    connections={userConnections}/>}
         </Box>
     )
 }

@@ -1,13 +1,12 @@
 import { Box, VStack, HStack, Text, IconButton, Button, Spacer, Center } from "@chakra-ui/react"
 import Image from "next/image"
-import TestImage from "@/images/test.jpg"
-import DefaultProfileImage from "@/images/DefaultProfilePicture.jpeg"
 import { MdEdit } from "react-icons/md";
 
 interface ProfileHeadProps {
     userData: UserType | null,
     onEditProfile: () => void,
-    connections: Number | null
+    connections: Number | null,
+    ownProfile: Boolean
 }
 
 const formatAddress = (address: String | undefined): String | null => {
@@ -53,7 +52,7 @@ export default function ProfileHead(props: ProfileHeadProps) {
                     <Text fontSize="16px" color="#555353"><b>{props.connections?.toString()}</b> Connections</Text>
                 </Box>
                     <Spacer />
-                    <IconButton onClick={ props.onEditProfile } icon={<MdEdit />} aria-label=""/>
+                    {props.ownProfile && <IconButton onClick={ props.onEditProfile } icon={<MdEdit />} aria-label=""/>}
                 </HStack>
                 <Box bg="#C6EAFF" p={1} borderRadius="20px" pl="20px" pr="20px">
                     <Text fontSize="13px" fontWeight="bold" color="#818181">{formatAddress(props.userData?.wallet_address)}</Text>

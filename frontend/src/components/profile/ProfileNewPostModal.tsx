@@ -1,19 +1,22 @@
-import { Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, ModalFooter, Button, ModalCloseButton, Textarea, Avatar, HStack, Text, IconButton, Menu, MenuButton, MenuList, MenuItem, Spacer } from "@chakra-ui/react";
+import { Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, ModalFooter, Button, ModalCloseButton, Textarea, Avatar, HStack, Text, IconButton, Menu, MenuButton, MenuList, MenuItem, Spacer, Box } from "@chakra-ui/react";
 import DefaultProfileImage from "@/images/DefaultProfilePicture.jpeg"
-import { useState } from "react";
+import { useState, useRef, ChangeEvent } from "react";
 import usePostFactoryContract from "@/hooks/usePostFactoryContract";
 import { Contract } from "ethers";
 import axios from "axios";
-import { API_URL } from "@/util/constants";
+import { API_URL, IPFS_URL } from "@/util/constants";
 import Picker from 'emoji-picker-react'
 import { CgAttachment } from "react-icons/cg";
 import { BsEmojiGrin } from "react-icons/bs";
+import { RxCross2 } from "react-icons/rx";
+import Image from 'next/image'
 
 
 interface ProfileNewPostModalProps {
     isOpen: boolean,
     onClose: () => void,
     profileName: string,
+    profilePictureHash: string,
     triggerToast: (title: string, description: string, status: "loading" | "info" | "warning" | "success" | "error" | undefined) => void,
     loadUserPosts: () => void
 }
@@ -21,21 +24,65 @@ interface ProfileNewPostModalProps {
 export default function ProfileNewPostModal(props: ProfileNewPostModalProps) {
     const [postContent, setPostContent] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
+    const [imageSrc, setImageSrc] = useState<string | null>(null)
+    const [imageFile, setImageFile] = useState<File | null>(null)
     const postFactoryContract: Contract | null  = usePostFactoryContract();
+    const attachmentInputRef = useRef<HTMLInputElement | null>(null);
+
+    const handleAttachmentClick = () => {
+        // Trigger the click event of the hidden file input
+        if (attachmentInputRef.current) {
+            attachmentInputRef.current.click();
+        }
+    }
+    const handlePictureFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        // Handle the selected file here
+        const selectedFile = event.target.files && event.target.files[0];
+
+        if (selectedFile) {
+            setImageFile(selectedFile)
+            // Read the contents of the selected file
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                // Set the image source with the read data URL
+                setImageSrc(e.target?.result as string);
+            };
+            reader.readAsDataURL(selectedFile);
+        }
+    };
     
+    const handleRemoveImage = () => {
+        setImageSrc(null)
+    }
+
     function handlePostChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
         setPostContent(event.target.value);
     }
 
+
     const submitHandler = async () => {
         let response;
+        let imageHash = ""
         try {
             setLoading(true)
+            if (imageFile) {
+                const formData = new FormData();
+                formData.append('file', imageFile);
+
+                const ipfsResponse = await axios.post(`${IPFS_URL}/add`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+
+                if (ipfsResponse.data.Hash) imageHash = ipfsResponse.data.Hash
+            }
+
             response = await axios.post(`${API_URL}/post`, {
                 content: postContent
             })
             if (response.data.success) {
-                await postFactoryContract?.createPost("", response.data.hash)
+                await postFactoryContract?.createPost(imageHash, response.data.hash)
             }
             setLoading(false)
             props.onClose()
@@ -70,7 +117,7 @@ export default function ProfileNewPostModal(props: ProfileNewPostModalProps) {
                 <ModalCloseButton />
                 <ModalBody>
                     <HStack mb={4}>
-                        <Avatar src={DefaultProfileImage.src} mr={1}/>
+                        <Avatar src={`http://127.0.0.1:8080/ipfs/${props.profilePictureHash}`} mr={1}/>
                         <Text fontWeight="500">{props.profileName}</Text>
                     </HStack>
                     <Textarea 
@@ -79,10 +126,27 @@ export default function ProfileNewPostModal(props: ProfileNewPostModalProps) {
                     resize="none"
                     value={postContent}
                     onChange={handlePostChange}/>
+                    {imageSrc && 
+                    <Box 
+                        position="relative"
+                        mt={4}
+                        style={{ width: '350px', aspectRatio: '4/3' }}
+                    >
+                        <IconButton aria-label={""} icon={<RxCross2 />} position="absolute" isRound={true} width="5px" right={0} onClick={handleRemoveImage} zIndex={2}/>
+                        <Image src={imageSrc} alt="profile picture" layout='fill' objectFit='contain'/>
+                    </Box>
+                    }
                 </ModalBody>
                 <ModalFooter>
                 <HStack>
-                        <IconButton aria-label={"attachment"} icon={<CgAttachment size={20}/>} variant="link"/>
+                        <IconButton aria-label={"attachment"} icon={<CgAttachment size={20}/>} variant="link" onClick={handleAttachmentClick}/>
+                        <input
+                            ref={attachmentInputRef}
+                            type="file"
+                            style={{ display: 'none' }}
+                            accept="image/*"
+                            onChange={handlePictureFileChange}
+                        />
                         <Menu closeOnSelect={false}>
                         {({ isOpen }) => (
                             <>

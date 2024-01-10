@@ -154,6 +154,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                     isOpen={newPostModalIsOpen} 
                     onClose={newPostModalOnClose} 
                     profileName={userData?.first_name + ' ' + userData?.last_name} 
+                    profilePictureHash={userData?.profile_picture_hash!}
                     triggerToast={triggerToast}
                     loadUserPosts={getPostData}/>}
 

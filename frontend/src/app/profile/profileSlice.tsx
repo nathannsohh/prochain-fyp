@@ -28,6 +28,8 @@ export const profileSlice = createSlice({
             state.location = user.location
             state.connections = user.connections
             state.content_hash = user.content_hash
+            state.profile_banner_hash = user.profile_banner_hash
+            state.profile_picture_hash = user.profile_picture_hash
         },
         removeSelf: (state) => {
             state.first_name = null
@@ -40,6 +42,8 @@ export const profileSlice = createSlice({
             state.connections = null
             state.content_hash = null
             state.posts = null
+            state.profile_banner_hash = null
+            state.profile_picture_hash = null
         },
         updatePosts: (state, action: PayloadAction<Array<PostType>>) => {
             state.posts = action.payload

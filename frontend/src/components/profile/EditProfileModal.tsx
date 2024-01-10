@@ -1,8 +1,12 @@
-import { Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, ModalFooter, Button, ModalCloseButton, Textarea, Avatar, HStack, Text, FormControl, FormErrorMessage, Input, FormLabel, Select, Spacer } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, ModalFooter, Button, ModalCloseButton, Textarea, HStack, Text, FormControl, FormErrorMessage, Input, FormLabel, Select, Spacer, Center } from "@chakra-ui/react";
 import axios from "axios";
 import { useForm } from 'react-hook-form'
-import { countryList, pronouns } from "@/util/constants";
+import { countryList, pronouns, API_URL } from "@/util/constants";
+import ProfileHeadPreview from "./ProfileHeadPreview";
+import { useEffect, useState } from "react";
+import useUserFactoryContract from "@/hooks/useUserFactoryContract";
+import { Contract } from "ethers";
+import _ from "lodash";
 
 
 interface EditProfileModalProps {
@@ -10,30 +14,102 @@ interface EditProfileModalProps {
     onClose: () => void,
     triggerToast: (title: string, description: string, status: "loading" | "info" | "warning" | "success" | "error" | undefined) => void
     userData: UserType,
-    updateUserData: (userData: UserType) => void
+    updateUserData: (userData: UserType) => void,
+    connections: Number | null
 }
 
 export default function EditProfileModal(props: EditProfileModalProps) {
     const {
         handleSubmit,
         register,
+        watch,
         formState: { errors, isSubmitting },
     } = useForm<UserType>()
+    const userFactoryContract: Contract | null = useUserFactoryContract()
+
+    const [displayedUserData, setDisplayedUserData] = useState<UserType>(props.userData)
+    const [newProfileImage, setNewProfileImage] = useState<File | null>(null)
+    const [newProfileBanner, setNewProfileBanner] = useState<File | null>(null)
+
+    useEffect(() => {
+        const subscription = watch((value: any) =>
+            setDisplayedUserData({
+                ...value,
+                wallet_address: props.userData?.wallet_address!, 
+                content_hash: props.userData?.content_hash,
+                profile_banner_hash: props.userData?.profile_banner_hash,
+                profile_picture_hash: props.userData?.profile_picture_hash
+            }))
+            return () => subscription.unsubscribe()
+        }, [watch])
+
+    const updateNewProfileImage = (image: File | null) => {
+        setNewProfileImage(image)
+    }
+
+    const updateNewProfileBanner = (image: File | null) => {
+        setNewProfileBanner(image)
+    }
 
     const submitHandler = async (values: UserType) => {
+        let showToast = false
         try {
-            const body = {...values, wallet_address: props.userData?.wallet_address!, content_hash: props.userData?.content_hash}
-            if (Object.entries(body).toString() === Object.entries(props.userData!).toString()) {
-                props.onClose() 
-                return;
+            // handle update of user details
+            let body: UserType = {
+                ...values, 
+                wallet_address: props.userData?.wallet_address!, 
+                content_hash: props.userData?.content_hash,
+                profile_picture_hash: props.userData?.profile_picture_hash,
+                profile_banner_hash: props.userData?.profile_banner_hash,
+            }
+            
+            if (!_.isEqual(body, props.userData)) {
+                const response = await axios.put(`${API_URL}/user`, body)
+                if (response.data.success) {
+                    showToast = true
+                    props.updateUserData(body)
+                }
             }
 
-            const response = await axios.put('http://localhost:8000/user', body)
-            if (response.data.success) {
-                props.updateUserData(body)
-                props.onClose()
+            // handle update of profile picture
+            if (newProfileImage) {
+                const formData = new FormData();
+                formData.append('file', newProfileImage);
+
+                const response = await axios.post('http://127.0.0.1:5001/api/v0/add', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                if (response.data.Hash) {
+                    await userFactoryContract?.setProfileImageHash(props.userData.wallet_address, response.data.Hash)
+                    showToast = true
+                    body = {...body, profile_picture_hash: response.data.Hash}
+                }
+            }
+            
+            // handle update of profile banner
+            if (newProfileBanner) {
+                const formData = new FormData();
+                formData.append('file', newProfileBanner);
+
+                const response = await axios.post('http://127.0.0.1:5001/api/v0/add', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                if (response.data.Hash) {
+                    await userFactoryContract?.setProfileHeaderHash(props.userData.wallet_address, response.data.Hash)
+                    showToast = true
+                    body = {...body, profile_banner_hash: response.data.Hash}
+                }
+            }
+            props.updateUserData(body)
+
+            if (showToast) {
                 props.triggerToast("Success", "Your profile has been updated.", "success")
             }
+            props.onClose()
         } catch (e) {
             props.triggerToast("Error", "Something went wrong and your profile was not updated.", "error")
         }
@@ -47,6 +123,17 @@ export default function EditProfileModal(props: EditProfileModalProps) {
                 <ModalCloseButton />
                 <form onSubmit={handleSubmit(submitHandler)}>
                     <ModalBody>
+                        <Center>
+                            <Text fontWeight="semibold">Preview</Text>
+                        </Center>
+                        <Center mb={2}>
+                            <ProfileHeadPreview 
+                                userData={displayedUserData} 
+                                connections={props.connections}
+                                updateProfileImage={updateNewProfileImage}
+                                updateProfileBanner={updateNewProfileBanner} 
+                            />
+                        </Center>
                         <HStack width="100%" mb={3}>
                             <FormControl isRequired isInvalid={errors.first_name != null}>
                                 <FormLabel>First Name</FormLabel>

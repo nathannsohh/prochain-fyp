@@ -1,7 +1,7 @@
 import { Modal, ModalOverlay, ModalContent, ModalBody, ModalHeader, ModalFooter, Button, ModalCloseButton, Textarea, HStack, Text, FormControl, FormErrorMessage, Input, FormLabel, Select, Spacer, Center } from "@chakra-ui/react";
 import axios from "axios";
 import { useForm } from 'react-hook-form'
-import { countryList, pronouns, API_URL } from "@/util/constants";
+import { countryList, pronouns, API_URL, IPFS_URL } from "@/util/constants";
 import ProfileHeadPreview from "./ProfileHeadPreview";
 import { useEffect, useState } from "react";
 import useUserFactoryContract from "@/hooks/useUserFactoryContract";
@@ -76,7 +76,7 @@ export default function EditProfileModal(props: EditProfileModalProps) {
                 const formData = new FormData();
                 formData.append('file', newProfileImage);
 
-                const response = await axios.post('http://127.0.0.1:5001/api/v0/add', formData, {
+                const response = await axios.post(`${IPFS_URL}/add`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -93,7 +93,7 @@ export default function EditProfileModal(props: EditProfileModalProps) {
                 const formData = new FormData();
                 formData.append('file', newProfileBanner);
 
-                const response = await axios.post('http://127.0.0.1:5001/api/v0/add', formData, {
+                const response = await axios.post(`${IPFS_URL}/add`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }

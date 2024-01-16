@@ -1,7 +1,8 @@
 import { Card, CardBody, HStack, Avatar, VStack, Text, Box } from '@chakra-ui/react'
 
 interface NewPostCardProps {
-    userData: UserType | null
+    userData: UserType | null,
+    onNewPost: () => void
 }
 
 export default function NewPostCard(props: NewPostCardProps) {
@@ -15,7 +16,7 @@ export default function NewPostCard(props: NewPostCardProps) {
                         <Text fontSize={15} color="#7D7D7D">{props.userData?.bio}</Text>
                     </VStack>
                 </HStack>
-                <Box width="100%" bg="#F3F3F3" mt={4} p={3} borderRadius="20px" borderWidth="1px" borderColor="#C5C1C1" cursor="pointer" _hover={{"bg": "#E9E9E9"}}>
+                <Box width="100%" bg="#F3F3F3" mt={4} p={3} borderRadius="20px" borderWidth="1px" borderColor="#C5C1C1" cursor="pointer" _hover={{"bg": "#E9E9E9"}} onClick={props.onNewPost}>
                     <Text ml={4} color="#4F4F4F" fontWeight="semibold">Make a new post +</Text>
                 </Box>
             </CardBody>

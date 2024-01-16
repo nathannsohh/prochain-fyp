@@ -11,6 +11,7 @@ import { API_URL } from "@/util/constants";
 import { updateSelf } from "../profile/profileSlice";
 import { useDisclosure, useToast, Divider } from '@chakra-ui/react'
 import ProfileNewPostModal from "@/components/profile/ProfileNewPostModal";
+import Post from "@/components/feed/Post";
 
 const Feed = () => {
     const { state: { wallet, status } } = useMetamask();
@@ -102,6 +103,7 @@ const Feed = () => {
                 triggerToast={triggerToast}
                 loadUserPosts={() => {}}/>}
                 <Divider mt={3} borderColor="#C8C8C8"/>
+            <Post />
         </>
     )
 }

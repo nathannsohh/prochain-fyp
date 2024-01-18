@@ -68,3 +68,9 @@ interface PostType {
   content: string,
   time_posted: string
 }
+
+interface FeedPostType extends PostType {
+  name: string,
+  bio: string,
+  profileImageHash: string
+}

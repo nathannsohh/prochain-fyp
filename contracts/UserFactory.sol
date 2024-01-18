@@ -6,7 +6,9 @@ import './libraries/UserLibrary.sol';
 contract UserFactory {
     mapping(address => UserLibrary.User) public users;
 
-    event UserRegistered(address indexed user);
+    event UserRegistered(address indexed user, string _profileDataHash, string _profileImageHash, string _profileHeaderHash);
+    event UserUpdated(address indexed _user, string _profileImageHash, string _profileHeaderHash);
+    event UserConnectionsUpdated(address indexed _user, address[] connections, address[] pendingConnections);
 
     modifier userMustExist(address _walletAddress) {
         require(users[_walletAddress].exists, "User does not exist!");
@@ -30,7 +32,7 @@ contract UserFactory {
         );
         users[msg.sender] = newUser;
 
-        emit UserRegistered(msg.sender);
+        emit UserRegistered(msg.sender, _profileDataHash, _profileImageHash, _profileHeaderHash);
     }
 
     function getUserProfile(address _userWallet) public view returns (UserLibrary.User memory) {
@@ -49,10 +51,17 @@ contract UserFactory {
 
     function setProfileImageHash(address _userWallet, string memory _hash) public userMustExist(_userWallet) {
         UserLibrary.setProfileImageHash(users[_userWallet], _hash);
+        emit UserUpdated(_userWallet, users[_userWallet].profileImageHash, _hash);
     }
 
     function setProfileHeaderHash(address _userWallet, string memory _hash) public userMustExist(_userWallet){
         UserLibrary.setProfileHeaderHash(users[_userWallet], _hash);
+        emit UserUpdated(_userWallet, _hash, users[_userWallet].profileHeaderHash);
+    }
+
+    function setProfileHeaderAndImageHash(address _userWallet, string memory _profileImageHash, string memory _profileHeaderHash) public userMustExist(_userWallet) {
+        UserLibrary.setProfileHeaderAndImageHash(users[_userWallet], _profileImageHash, _profileHeaderHash);
+        emit UserUpdated(_userWallet, _profileImageHash, _profileHeaderHash);
     }
 
     function setProfileDataHash(address _userWallet,  string memory _hash) public userMustExist(_userWallet) {
@@ -62,10 +71,12 @@ contract UserFactory {
     function acceptConnection(address _userWallet, address _connectionAddress) public userMustExist(_userWallet) {
         UserLibrary.acceptConnection(users[_userWallet], _connectionAddress);
         users[_connectionAddress].connections.push(_userWallet);
+        emit UserConnectionsUpdated(_userWallet, users[_userWallet].connections, users[_userWallet].pendingConnections);
     }
 
     function addConnectionRequest(address _userWallet, address _connectionAddress) public userMustExist(_userWallet) {
         UserLibrary.addConnectionRequest(users[_userWallet], _connectionAddress);
+        emit UserConnectionsUpdated(_userWallet, users[_userWallet].connections, users[_userWallet].pendingConnections);
     }
 
     function removeConnectionFromConnections(address _userWallet, address _connectionAddress) public userMustExist(_userWallet) {
@@ -73,9 +84,11 @@ contract UserFactory {
 
         UserLibrary.removeConnectionFromConnections(users[_userWallet], _connectionAddress);
         UserLibrary.removeConnectionFromConnections(users[_connectionAddress], _userWallet);
+        emit UserConnectionsUpdated(_userWallet, users[_userWallet].connections, users[_userWallet].pendingConnections);
     }
 
     function removeConnectionFromPendingConnections(address _userWallet, address _connectionAddress) public userMustExist(_userWallet) {
         UserLibrary.removeConnectionFromPendingConnections(users[_userWallet], _connectionAddress);
+        emit UserConnectionsUpdated(_userWallet, users[_userWallet].connections, users[_userWallet].pendingConnections);
     }
 }

@@ -7,7 +7,7 @@ interface NewPostCardProps {
 
 export default function NewPostCard(props: NewPostCardProps) {
     return (
-        <Card width="100%" mt={2} borderRadius="20px" p={2}>
+        <Card width="100%" mt={2} borderRadius="20px" p={2} pt={0}>
             <CardBody>
                 <HStack>
                     <Avatar mr={2} height="55px" width="55px" src={`http://127.0.0.1:8080/ipfs/${props.userData?.profile_picture_hash}`}/>

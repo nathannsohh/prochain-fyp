@@ -1,0 +1,9 @@
+type User @entity {
+  id: ID!
+  userAddress: Bytes!
+  profileDataHash: String!
+  profileImageHash: String!
+  profileHeaderHash: String!
+  connections: [Bytes!]!
+  pendingConnections: [Bytes!]!
+}

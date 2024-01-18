@@ -38,6 +38,11 @@ library UserLibrary {
         self.profileDataHash = _hash;
     }
 
+    function setProfileHeaderAndImageHash(User storage self, string memory _profileImageHash, string memory _profileHeaderHash) public onlyUser(self.walletAddress) {
+        self.profileImageHash = _profileImageHash;
+        self.profileHeaderHash = _profileHeaderHash;
+    }
+
     function acceptConnection(User storage self, address _connectionAddress) public onlyUser(self.walletAddress) {
         self.connections.push(_connectionAddress);
         removeConnectionFromPendingConnections(self, _connectionAddress);

@@ -59,6 +59,29 @@ exports.userRoutes = (app) => {
         }
     })
 
+    app.get('/users/:hash', async (req, res) => {
+        let response;
+        try {
+            const hashArray = JSON.parse(req.params.hash)
+            const query = {
+                text: "SELECT * FROM users WHERE content_hash = ANY ($1)",
+                values: [hashArray]
+            }
+            const result = await db.query(query)
+            response = {
+                success: true,
+                users: result.rows
+            }
+            res.status(200).send(response)
+        } catch (e) {
+            response = {
+                success: false,
+                message: e.message
+            }
+            res.status(400).send(response)
+        }
+    }),
+
     app.delete('/user/:hash', async (req, res) => {
         let response;
         try {

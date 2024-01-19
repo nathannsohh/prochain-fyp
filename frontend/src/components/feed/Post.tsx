@@ -3,6 +3,9 @@ import { BiLike } from "react-icons/bi";
 import { FaRegCommentAlt } from "react-icons/fa";
 import { useRef, useEffect, useState } from 'react'
 import usePostFactoryContract from '@/hooks/usePostFactoryContract';
+import CommentInput from './CommentInput';
+import axios from 'axios'
+import { API_URL } from '@/util/constants';
 
 interface PostProps {
     data: FeedPostType
@@ -13,8 +16,11 @@ export default function Post(props: PostProps) {
     const [isTruncated, setIsTruncated] = useState<Boolean>(false);
     const [isSeeMore, setIsSeeMore] = useState<Boolean>(false)
     const postFactoryContract = usePostFactoryContract()
+
     const [postLikes, setPostLikes] = useState<number>(props.data.likedBy.length)
     const [liked, setLiked] = useState<Boolean>(props.data.hasLiked)
+
+    const [showComments, setShowComments] = useState<Boolean>(false);
 
     useEffect(() => {
         const container = containerRef.current;
@@ -64,6 +70,30 @@ export default function Post(props: PostProps) {
             console.error(e)
         }
     }
+
+    const toggleComment = () => {
+        setShowComments(true);
+    }
+
+    const handleComment = async (comment: string) => {
+        let commentResponse
+        try {
+            commentResponse = await axios.post(API_URL + '/comment', {
+                content: comment
+            })
+            
+            await postFactoryContract?.comment(Number(props.data.id), commentResponse.data.hash)
+        } catch (e) {
+            if (commentResponse && commentResponse.data.success) {
+                try {
+                    await axios.delete(API_URL + `/comment/${commentResponse.data.hash}`)
+                } catch (e) {
+                    console.error(e)
+                }
+            }
+            console.error(e)
+        }
+    }
     
     return (
         <Card width="100%" mt={2} borderRadius="20px" pt={0} pb={1}>
@@ -86,9 +116,15 @@ export default function Post(props: PostProps) {
                 <Divider width="100%"/>
                 <HStack pl={7} pr={7} mt={3}>
                     <Button leftIcon={<BiLike size={20} />} variant="ghost" colorScheme={liked ? "blue" : undefined} onClick={handleLikePost}> {postLikes}</Button>
-                    <Button leftIcon={<FaRegCommentAlt size={20} />} variant='ghost'>{props.data.comments.length}</Button>
+                    <Button leftIcon={<FaRegCommentAlt size={20} />} variant='ghost' onClick={toggleComment}>{props.data.comments.length}</Button>
                     <Spacer />
                 </HStack>
+                {
+                    showComments &&
+                    <>
+                        <CommentInput profileImageHash={props.data.profileImageHash} onComment={handleComment}/>
+                    </>
+                }
             </CardBody>
         </Card>
     )

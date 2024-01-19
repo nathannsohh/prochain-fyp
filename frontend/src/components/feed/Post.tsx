@@ -2,6 +2,7 @@ import { Card, CardBody, Avatar, HStack, VStack, Box, Text, Divider, Button, Spa
 import { BiLike } from "react-icons/bi";
 import { FaRegCommentAlt } from "react-icons/fa";
 import { useRef, useEffect, useState } from 'react'
+import usePostFactoryContract from '@/hooks/usePostFactoryContract';
 
 interface PostProps {
     data: FeedPostType
@@ -11,6 +12,9 @@ export default function Post(props: PostProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isTruncated, setIsTruncated] = useState<Boolean>(false);
     const [isSeeMore, setIsSeeMore] = useState<Boolean>(false)
+    const postFactoryContract = usePostFactoryContract()
+    const [postLikes, setPostLikes] = useState<number>(props.data.likedBy.length)
+    const [liked, setLiked] = useState<Boolean>(props.data.hasLiked)
 
     useEffect(() => {
         const container = containerRef.current;
@@ -44,6 +48,22 @@ export default function Post(props: PostProps) {
             return `${yearDifference}y ago`
         }
     }
+
+    const handleLikePost = async () => {
+        try {
+            if (liked) {
+                await postFactoryContract?.unlikePost(Number(props.data.id))
+                setPostLikes(prevLikes => prevLikes - 1);
+                setLiked(false)
+            } else {
+                await postFactoryContract?.likePost(Number(props.data.id))
+                setPostLikes(prevLikes => prevLikes + 1);
+                setLiked(true)
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    }
     
     return (
         <Card width="100%" mt={2} borderRadius="20px" pt={0} pb={1}>
@@ -65,7 +85,7 @@ export default function Post(props: PostProps) {
                 </Box>
                 <Divider width="100%"/>
                 <HStack pl={7} pr={7} mt={3}>
-                    <Button leftIcon={<BiLike size={20} />} variant="ghost">{props.data.likedBy.length}</Button>
+                    <Button leftIcon={<BiLike size={20} />} variant="ghost" colorScheme={liked ? "blue" : undefined} onClick={handleLikePost}> {postLikes}</Button>
                     <Button leftIcon={<FaRegCommentAlt size={20} />} variant='ghost'>{props.data.comments.length}</Button>
                     <Spacer />
                 </HStack>

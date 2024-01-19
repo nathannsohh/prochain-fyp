@@ -16,9 +16,10 @@ export function handlePostCreated(event: PostCreated): void {
 export function handlePostLiked(event: PostLiked): void {
     let post: Post | null = Post.load(event.params._postId.toString())
     if (!post) return;
+    let likedBy = post.likedBy;
+    likedBy.push(event.params._likedBy);
 
-    post.likedBy.push(event.params._likedBy)
-
+    post.likedBy = likedBy;
     post.save()
 }
 
@@ -27,7 +28,9 @@ export function handlePostUnliked(event: PostUnliked): void {
     if (!post) return;
 
     let index = post.likedBy.indexOf(event.params._unlikedBy);
-    post.likedBy.splice(index, 1);
+    let likedBy = post.likedBy;
+    likedBy.splice(index, 1);
+    post.likedBy = likedBy;
 
     post.save()
 }

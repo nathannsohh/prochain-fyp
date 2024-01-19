@@ -134,10 +134,17 @@ const Feed = () => {
             const postHashes = getArrayOfPostContentHashes(allPosts)
             const postOwners = getArrayOfPostOwner(allPosts)
             const userDetails = await getDetailsFromUserAddress(postOwners)
-            console.log(userDetails)
             const postResult = await axios.get(`${API_URL}/post/[${postHashes}]`)
             const consolidatedPosts = allPosts.map((post: any, index: number) => {
-                return {...post, content: postResult.data.posts[index].content, time_posted: postResult.data.posts[index].time_posted, name: userDetails?.get(post.owner)?.name, bio: userDetails?.get(post.owner)?.bio, profileImageHash: userDetails?.get(post.owner)?.profileImageHash}
+                return {
+                    ...post, 
+                    content: postResult.data.posts[index].content, 
+                    time_posted: postResult.data.posts[index].time_posted, 
+                    name: userDetails?.get(post.owner)?.name, 
+                    bio: userDetails?.get(post.owner)?.bio, 
+                    profileImageHash: userDetails?.get(post.owner)?.profileImageHash,
+                    hasLiked: post.likedBy.includes(wallet!)
+                }
             })
             console.log(consolidatedPosts)
             setShownPosts(prevState => prevState.concat(consolidatedPosts))
@@ -159,7 +166,7 @@ const Feed = () => {
                 loadUserPosts={() => {}}/>}
                 <Divider mt={3} borderColor="#C8C8C8"/>
             {shownPosts.map((post) => {
-                return <Post data={post}/>
+                return <Post key={post.id} data={post}/>
             })}
         </>
     )

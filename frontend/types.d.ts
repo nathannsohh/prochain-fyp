@@ -73,4 +73,5 @@ interface FeedPostType extends PostType {
   name: string,
   bio: string,
   profileImageHash: string
+  hasLiked: boolean
 }

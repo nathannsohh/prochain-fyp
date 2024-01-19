@@ -6,6 +6,7 @@ import usePostFactoryContract from '@/hooks/usePostFactoryContract';
 import CommentInput from './CommentInput';
 import axios from 'axios'
 import { API_URL } from '@/util/constants';
+import PostComment from './PostComment';
 
 interface PostProps {
     data: FeedPostType
@@ -96,7 +97,7 @@ export default function Post(props: PostProps) {
     }
     
     return (
-        <Card width="100%" mt={2} borderRadius="20px" pt={0} pb={1}>
+        <Card width="100%" mt={2} borderRadius="20px" pt={0} pb={4}>
             <CardBody pl={0} pr={0} pb={1}>
                 <Box pl={7} pr={7} mb={3}>
                     <HStack>
@@ -123,6 +124,9 @@ export default function Post(props: PostProps) {
                     showComments &&
                     <>
                         <CommentInput profileImageHash={props.data.profileImageHash} onComment={handleComment}/>
+                        {props.data.comments.map((comment) => {
+                            return <PostComment />
+                        })}
                     </>
                 }
             </CardBody>

@@ -25,10 +25,10 @@ export default function CommentInput(props: CommentInputProps) {
     }
 
     return (
-        <Box pl={7} pr={7} mt={4}>
+        <Box pl={7} pr={7} mt={4} mb={6}>
             <HStack mb={3}>
                 <Avatar size="sm"/>
-                <AutoResizeTextarea placeholder="Leave your comment here" value={commentValue} onChange={onChangeHandler}/>
+                <AutoResizeTextarea placeholder="Leave your comment here" value={commentValue} onChange={onChangeHandler} borderRadius="18px"/>
             </HStack>
             <Button size="sm" colorScheme='blue' isDisabled={disableButton} onClick={onComment} isLoading={loading}>Comment</Button>
         </Box>

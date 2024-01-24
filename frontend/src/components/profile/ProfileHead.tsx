@@ -7,7 +7,7 @@ interface ProfileHeadProps {
     onEditProfile: () => void,
     connections: Number | null,
     ownProfile: Boolean,
-    isConnected: Boolean
+    isConnected: Boolean | null
 }
 
 const formatAddress = (address: String | undefined): String | null => {
@@ -53,7 +53,11 @@ export default function ProfileHead(props: ProfileHeadProps) {
                     <Text fontSize="16px" color="#555353"><b>{props.connections?.toString()}</b> Connections</Text>
                 </Box>
                     <Spacer />
-                    {props.ownProfile ? <IconButton onClick={ props.onEditProfile } icon={<MdEdit />} aria-label=""/> : <Button colorScheme="blue" variant="ghost">Connect +</Button>}
+                    {props.ownProfile ? <IconButton onClick={ props.onEditProfile } icon={<MdEdit />} aria-label=""/> : 
+                    !props.isConnected ? <Button colorScheme="blue" variant="ghost">Connect +</Button> : 
+                    <Box bg="#EEEEEE" p={1} borderRadius="10px" pl="20px" pr="20px">
+                        <Text fontSize="16px" color="#555353">Connected</Text>
+                    </Box>}
                 </HStack>
                 <Box bg="#C6EAFF" p={1} borderRadius="20px" pl="20px" pr="20px">
                     <Text fontSize="13px" fontWeight="bold" color="#818181">{formatAddress(props.userData?.wallet_address)}</Text>

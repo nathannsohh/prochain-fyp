@@ -20,8 +20,6 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
     const {posts, connections, ...profile}: ProfileState = ownProfile
 
     const isOwnProfile: Boolean = profile.wallet_address !== null && profile.wallet_address === params.wallet_address
-    console.log(profile.wallet_address)
-    console.log(params.wallet_address)
     const [userData, setUserData] = useState<UserType | null>(isOwnProfile ? {
         first_name: profile.first_name!,
             last_name: profile.last_name!,
@@ -36,6 +34,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
     } : null)
     const [userPosts, setUserPosts] = useState<Array<PostType> | null>(isOwnProfile ? posts : null)
     const [userConnections, setUserConnections] = useState<Number | null>(isOwnProfile ? connections : null)
+    const [isConnection, setIsConnection] = useState<Boolean | null>(null)
     const router = useRouter()
     const userFactoryContract: Contract | null = useUserFactoryContract();
     const toast = useToast()
@@ -82,9 +81,16 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                     profile_picture_hash: userProfile.profileImageHash,
                     profile_banner_hash: userProfile.profileHeaderHash
                 }
+                if (wallet !== params.wallet_address) {
+                    const isConnection = await userFactoryContract?.isConnection(wallet, params.wallet_address)
+                    setIsConnection(isConnection)
+                }
                 setUserData(userDetails)
                 setUserConnections(numOfConnections)
-                if (wallet === params.wallet_address) dispatch(updateSelf({... userDetails, connections: numOfConnections}))
+                if (wallet === params.wallet_address) {
+                    dispatch(updateSelf({... userDetails, connections: numOfConnections}))
+
+                } 
             }
         } catch (e) {
             console.error(e)
@@ -145,7 +151,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
 
     return (
         <Box bg="#F6F6F6">
-            <ProfileHead userData={userData} onEditProfile={editProfileModalOnOpen} connections={userConnections} ownProfile={isOwnProfile} isConnected={false}/>
+            <ProfileHead userData={userData} onEditProfile={editProfileModalOnOpen} connections={userConnections} ownProfile={isOwnProfile} isConnected={isConnection}/>
             <ProfilePostCard posts={userPosts} profileName={userData?.first_name + ' ' + userData?.last_name} ownProfile={isOwnProfile} onNewPost={newPostModalOnOpen}/>
             {newPostModalIsOpen && 
                 <ProfileNewPostModal 

@@ -7,7 +7,8 @@ interface ProfileHeadProps {
     onEditProfile: () => void,
     connections: Number | null,
     ownProfile: Boolean,
-    isConnected: Boolean | null
+    isConnected: Boolean | null,
+    onConnect: () => void
 }
 
 const formatAddress = (address: String | undefined): String | null => {
@@ -54,7 +55,7 @@ export default function ProfileHead(props: ProfileHeadProps) {
                 </Box>
                     <Spacer />
                     {props.ownProfile ? <IconButton onClick={ props.onEditProfile } icon={<MdEdit />} aria-label=""/> : 
-                    !props.isConnected ? <Button colorScheme="blue" variant="ghost">Connect +</Button> : 
+                    !props.isConnected ? <Button colorScheme="blue" variant="ghost" onClick={props.onConnect}>Connect +</Button> : 
                     <Box bg="#EEEEEE" p={1} borderRadius="10px" pl="20px" pr="20px">
                         <Text fontSize="16px" color="#555353">Connected</Text>
                     </Box>}

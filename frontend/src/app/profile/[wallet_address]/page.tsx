@@ -13,6 +13,7 @@ import EditProfileModal from "@/components/profile/EditProfileModal";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { updateSelf, updatePosts } from "../profileSlice";
 import { API_URL, THE_GRAPH_URL } from "@/util/constants";
+import { connect } from "http2";
 
 export default function ProfilePage({ params }: { params: { wallet_address: string } }) {
     const { state: { wallet, status } } = useMetamask();
@@ -149,9 +150,20 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
         })
     }
 
+    const connectHandler = async () => {
+        try {
+            console.log("hello")
+            await userFactoryContract?.addConnectionRequest(params.wallet_address, wallet)
+            triggerToast("Request Sent!", "Your connection request has been sent to this user.", "success")
+        } catch (e) {
+            console.error(e)
+            triggerToast("Error", "Something went wrong.", "error")
+        }
+    }
+
     return (
         <Box bg="#F6F6F6">
-            <ProfileHead userData={userData} onEditProfile={editProfileModalOnOpen} connections={userConnections} ownProfile={isOwnProfile} isConnected={isConnection}/>
+            <ProfileHead userData={userData} onEditProfile={editProfileModalOnOpen} connections={userConnections} ownProfile={isOwnProfile} isConnected={isConnection} onConnect={connectHandler}/>
             <ProfilePostCard posts={userPosts} profileName={userData?.first_name + ' ' + userData?.last_name} ownProfile={isOwnProfile} onNewPost={newPostModalOnOpen}/>
             {newPostModalIsOpen && 
                 <ProfileNewPostModal 

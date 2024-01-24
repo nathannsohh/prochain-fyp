@@ -135,11 +135,16 @@ const Feed = () => {
             const postOwners = getArrayOfPostOwner(allPosts)
             const userDetails = await getDetailsFromUserAddress(postOwners)
             const postResult = await axios.get(`${API_URL}/post/[${postHashes}]`)
-            const consolidatedPosts = allPosts.map((post: any, index: number) => {
+            let postMap = new Map<String, any>()
+            for (const post of postResult.data.posts) {
+                postMap.set(post.content_hash, post)
+            }
+
+            const consolidatedPosts = allPosts.map((post: any) => {
                 return {
                     ...post, 
-                    content: postResult.data.posts[index].content, 
-                    time_posted: postResult.data.posts[index].time_posted, 
+                    content: postMap.get(post.postContentHash).content, 
+                    time_posted: postMap.get(post.postContentHash).time_posted, 
                     name: userDetails?.get(post.owner)?.name, 
                     bio: userDetails?.get(post.owner)?.bio, 
                     profileImageHash: userDetails?.get(post.owner)?.profileImageHash,

@@ -84,3 +84,10 @@ interface FeedCommentType extends CommentType {
   content: string,
   profileImageHash,
 }
+
+interface UserDetails {
+  name: string,
+  bio: string,
+  profileImageHash: string,
+  address: string
+}

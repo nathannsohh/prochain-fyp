@@ -20,7 +20,8 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
     const {posts, connections, ...profile}: ProfileState = ownProfile
 
     const isOwnProfile: Boolean = profile.wallet_address !== null && profile.wallet_address === params.wallet_address
-    
+    console.log(profile.wallet_address)
+    console.log(params.wallet_address)
     const [userData, setUserData] = useState<UserType | null>(isOwnProfile ? {
         first_name: profile.first_name!,
             last_name: profile.last_name!,
@@ -52,9 +53,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                 if (!result) {
                     router.push('/profile/new')
                 } else {
-                    if (params.wallet_address === wallet) {
-                        if (userData === null) getUserDetails()
-                    }
+                    if (userData === null) getUserDetails()
                     getPostData()
                 }
             })
@@ -68,7 +67,6 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                 userFactoryContract?.getUserProfile(params.wallet_address), 
                 userFactoryContract?.getNumberOfConnections(params.wallet_address)
             ])
-            
             const userResult = await axios.get(`${API_URL}/user/${userProfile.profileDataHash}`)
             if (userResult.data.success) {
                 const user: UserType = userResult.data.user
@@ -86,7 +84,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                 }
                 setUserData(userDetails)
                 setUserConnections(numOfConnections)
-                dispatch(updateSelf({... userDetails, connections: numOfConnections}))
+                if (wallet === params.wallet_address) dispatch(updateSelf({... userDetails, connections: numOfConnections}))
             }
         } catch (e) {
             console.error(e)
@@ -147,8 +145,8 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
 
     return (
         <Box bg="#F6F6F6">
-            <ProfileHead userData={userData} onEditProfile={editProfileModalOnOpen} connections={userConnections} ownProfile={isOwnProfile}/>
-            <ProfilePostCard posts={userPosts} profileName={userData?.first_name + ' ' + userData?.last_name} ownProfile={true} onNewPost={newPostModalOnOpen}/>
+            <ProfileHead userData={userData} onEditProfile={editProfileModalOnOpen} connections={userConnections} ownProfile={isOwnProfile} isConnected={false}/>
+            <ProfilePostCard posts={userPosts} profileName={userData?.first_name + ' ' + userData?.last_name} ownProfile={isOwnProfile} onNewPost={newPostModalOnOpen}/>
             {newPostModalIsOpen && 
                 <ProfileNewPostModal 
                     isOpen={newPostModalIsOpen} 

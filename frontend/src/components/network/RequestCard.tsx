@@ -1,16 +1,26 @@
-import { Card, CardBody, HStack, CardHeader, Heading } from "@chakra-ui/react";
+import { Card, CardBody, CardHeader, Heading } from "@chakra-ui/react";
 import ConnectionRequest from "./ConnectionRequest";
 
-export default function RequestCard() {
+interface RequestCardProps {
+    pendingConnections: Array<UserDetails>,
+    acceptRequest: (address: string) => Promise<void>,
+    ignoreRequest: (address: string) => Promise<void>
+}
+
+export default function RequestCard(props: RequestCardProps) {
+    console.log(props)
     return (
         <Card width="100%" mt={2} borderRadius="20px" p={0} pt={0}>
             <CardHeader>
                 <Heading size='md'>Connection Requests</Heading>
             </CardHeader>
             <CardBody p={0}>
-                <ConnectionRequest />
-                <ConnectionRequest />
-                <ConnectionRequest />
+                {
+                    props.pendingConnections !== undefined &&
+                    props.pendingConnections.map((user) => {
+                        return <ConnectionRequest user={user} acceptRequest={props.acceptRequest} ignoreRequest={props.ignoreRequest}/>
+                    })
+                }
             </CardBody>
         </Card>
     )

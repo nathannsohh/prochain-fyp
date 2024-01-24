@@ -26,6 +26,14 @@ library UserLibrary {
         return self.connections.length;
     }
 
+    function isConnection(User storage self, address _userAddress) public view returns (bool) {
+        bool res = false;
+        for (uint i; i < self.connections.length; i++) {
+            if (self.connections[i] == _userAddress) res = true;
+        }
+        return res;
+    }
+
     function setProfileImageHash(User storage self, string memory _hash) public onlyUser(self.walletAddress) {
         self.profileImageHash = _hash;
     }

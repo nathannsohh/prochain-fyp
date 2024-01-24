@@ -49,6 +49,10 @@ contract UserFactory {
         return UserLibrary.getNumberOfConnections(users[_userWallet]);
     }
 
+    function isConnection(address _userWallet) public view userMustExist(_userWallet) returns (bool) {
+        return UserLibrary.isConnection(users[_userWallet], _userWallet);
+    }
+
     function setProfileImageHash(address _userWallet, string memory _hash) public userMustExist(_userWallet) {
         UserLibrary.setProfileImageHash(users[_userWallet], _hash);
         emit UserUpdated(_userWallet, users[_userWallet].profileImageHash, _hash);

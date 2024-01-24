@@ -55,8 +55,8 @@ interface UserStateType  {
 
 interface CommentType {
   id: string,
-  commentContentHash: string
-  content: string
+  commentContentHash: string,
+  owner: string
 }
 
 interface PostType {
@@ -74,4 +74,12 @@ interface FeedPostType extends PostType {
   bio: string,
   profileImageHash: string
   hasLiked: boolean
+}
+
+interface FeedCommentType extends CommentType {
+  name: string,
+  bio: string,
+  time_posted: string
+  content: string,
+  profileImageHash,
 }

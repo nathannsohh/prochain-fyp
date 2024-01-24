@@ -125,7 +125,7 @@ const Feed = () => {
                             orderDirection: desc,
                             first: 15,
                             skip: ${15 * page}
-                        ) { owner postContentHash postImageHash id likedBy comments { commentContentHash } } }`,
+                        ) { owner postContentHash postImageHash id likedBy comments { owner commentContentHash } } }`,
             "variables": {}
         }
         try {

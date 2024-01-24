@@ -1,4 +1,4 @@
-import { Card, CardBody, Avatar, HStack, VStack, Box, Text, Divider, Button, Spacer } from '@chakra-ui/react'
+import { Card, CardBody, Avatar, HStack, VStack, Box, Text, Divider, Button, Spacer, Center } from '@chakra-ui/react'
 import { BiLike } from "react-icons/bi";
 import { FaRegCommentAlt } from "react-icons/fa";
 import { useRef, useEffect, useState } from 'react'
@@ -7,6 +7,7 @@ import CommentInput from './CommentInput';
 import axios from 'axios'
 import { API_URL } from '@/util/constants';
 import PostComment from './PostComment';
+import { getDetailsFromUserAddress } from '@/util/user_util';
 
 interface PostProps {
     data: FeedPostType
@@ -21,7 +22,10 @@ export default function Post(props: PostProps) {
     const [postLikes, setPostLikes] = useState<number>(props.data.likedBy.length)
     const [liked, setLiked] = useState<Boolean>(props.data.hasLiked)
 
-    const [showComments, setShowComments] = useState<Boolean>(false);
+    const [showComments, setShowComments] = useState<Boolean>(false)
+    const [loadedComments, setLoadedComments] = useState<Array<FeedCommentType>>([])
+    const [currentPage, setCurrentPage] = useState<number>(0)
+    const [numberOfComments, setNumberOfComments] = useState<number>(props.data.comments.length)
 
     useEffect(() => {
         const container = containerRef.current;
@@ -73,6 +77,9 @@ export default function Post(props: PostProps) {
     }
 
     const toggleComment = () => {
+        if (!showComments) {
+            loadComments(0)
+        }
         setShowComments(true);
     }
 
@@ -84,6 +91,7 @@ export default function Post(props: PostProps) {
             })
             
             await postFactoryContract?.comment(Number(props.data.id), commentResponse.data.hash)
+            setNumberOfComments(prevNumber => prevNumber + 1)
         } catch (e) {
             if (commentResponse && commentResponse.data.success) {
                 try {
@@ -95,9 +103,58 @@ export default function Post(props: PostProps) {
             console.error(e)
         }
     }
+
+    const loadComments = async (page: number) => {
+        try {
+            // Only going to load 3 comments at a time
+            let comments;
+            if ((page + 1) * 3 > props.data.comments.length) {
+                comments = props.data.comments.slice(page*3, props.data.comments.length)
+            } else {
+                comments = props.data.comments.slice(page*3, page*3 + 3)
+            }
+            
+            let owners = new Set<string>()
+            let commentHashes = []
+            for (const comment of comments) {
+                owners.add(`"${comment.owner}"`)
+                commentHashes.push(`"${comment.commentContentHash}"`)
+            }
+        
+            const ownerMap = await getDetailsFromUserAddress(Array.from(owners))
+            console.log(ownerMap)
+            let commentContent = await axios.get(API_URL + `/comment/[${commentHashes}]`)
+            let contentMap = new Map<string, any>()
+            for (const content of commentContent.data.posts) {
+                contentMap.set(content.content_hash, {
+                    content: content.content,
+                    edited: content.edited,
+                    time_posted: content.time_posted
+                })
+            }
+        
+            const consolidatedComments = comments.map((comment) => {
+                return {
+                    ...comment,
+                    ...contentMap.get(comment.commentContentHash),
+                    name: ownerMap!.get(comment.owner)!.name,
+                    bio: ownerMap!.get(comment.owner)!.bio,
+                    profileImageHash: ownerMap!.get(comment.owner)!.profileImageHash
+                }
+            })
+            setLoadedComments(prevComments => prevComments.concat(consolidatedComments))
+            setCurrentPage(page)
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    const handleLoadMoreComments = async () => {
+        await loadComments(currentPage + 1)
+    }
     
     return (
-        <Card width="100%" mt={2} borderRadius="20px" pt={0} pb={4}>
+        <Card width="100%" mt={2} borderRadius="20px" pt={0} pb={1} mb={2}>
             <CardBody pl={0} pr={0} pb={1}>
                 <Box pl={7} pr={7} mb={3}>
                     <HStack>
@@ -117,16 +174,21 @@ export default function Post(props: PostProps) {
                 <Divider width="100%"/>
                 <HStack pl={7} pr={7} mt={3}>
                     <Button leftIcon={<BiLike size={20} />} variant="ghost" colorScheme={liked ? "blue" : undefined} onClick={handleLikePost}> {postLikes}</Button>
-                    <Button leftIcon={<FaRegCommentAlt size={20} />} variant='ghost' onClick={toggleComment}>{props.data.comments.length}</Button>
+                    <Button leftIcon={<FaRegCommentAlt size={20} />} variant='ghost' onClick={toggleComment}>{numberOfComments}</Button>
                     <Spacer />
                 </HStack>
                 {
                     showComments &&
                     <>
                         <CommentInput profileImageHash={props.data.profileImageHash} onComment={handleComment}/>
-                        {props.data.comments.map((comment) => {
-                            return <PostComment />
+                        {loadedComments.map((comment) => {
+                            return <PostComment data={comment} />
                         })}
+                        {loadedComments.length < props.data.comments.length && 
+                            <Center m={1} mt={3}>
+                                <Button variant='link' onClick={handleLoadMoreComments}>Load more comments</Button>
+                            </Center>
+                        }
                     </>
                 }
             </CardBody>

@@ -1,4 +1,6 @@
 'use client'
+import ConnectionsCard from "@/components/network/ConnectionsCard";
+import RequestCard from "@/components/network/RequestCard";
 import { useMetamask } from "@/hooks/useMetamask";
 import useUserManangerContract from "@/hooks/useUserFactoryContract";
 import { Box } from "@chakra-ui/react"
@@ -25,7 +27,8 @@ export default function NetworkPage() {
 
     return (
         <Box bg="#F6F6F6">
-            <div>Network!</div>
+            <RequestCard />
+            <ConnectionsCard />
         </Box>
     )
 }

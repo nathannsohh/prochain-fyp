@@ -8,6 +8,7 @@ import axios from 'axios'
 import { API_URL } from '@/util/constants';
 import PostComment from './PostComment';
 import { getDetailsFromUserAddress } from '@/util/user_util';
+import { useRouter } from "next/navigation";
 
 interface PostProps {
     data: FeedPostType
@@ -26,6 +27,10 @@ export default function Post(props: PostProps) {
     const [loadedComments, setLoadedComments] = useState<Array<FeedCommentType>>([])
     const [currentPage, setCurrentPage] = useState<number>(0)
     const [numberOfComments, setNumberOfComments] = useState<number>(props.data.comments.length)
+
+    const [mouseHover, setMouseHover] = useState<Boolean>(false)
+
+    const router = useRouter()
 
     useEffect(() => {
         const container = containerRef.current;
@@ -122,7 +127,6 @@ export default function Post(props: PostProps) {
             }
         
             const ownerMap = await getDetailsFromUserAddress(Array.from(owners))
-            console.log(ownerMap)
             let commentContent = await axios.get(API_URL + `/comment/[${commentHashes}]`)
             let contentMap = new Map<string, any>()
             for (const content of commentContent.data.posts) {
@@ -152,16 +156,27 @@ export default function Post(props: PostProps) {
     const handleLoadMoreComments = async () => {
         await loadComments(currentPage + 1)
     }
+
+    const mouseEnterHandler = () => {
+        setMouseHover(true)
+    }
+    const mouseLeaveHandler = () => {
+        setMouseHover(false)
+    }
+
+    const profileOnClickHandler = () => {
+        router.push(`/profile/${props.data.owner}`)
+    }
     
     return (
         <Card width="100%" mt={2} borderRadius="20px" pt={0} pb={1} mb={2}>
             <CardBody pl={0} pr={0} pb={1}>
                 <Box pl={7} pr={7} mb={3}>
-                    <HStack>
+                    <HStack onMouseEnter={mouseEnterHandler} onMouseLeave={mouseLeaveHandler} _hover={{cursor: "pointer"}} onClick={profileOnClickHandler}>
                         <Avatar mr={2} height="55px" width="55px" src={`http://127.0.0.1:8080/ipfs/${props.data.profileImageHash}`}/>
                         <VStack alignItems="start" spacing={0}>
-                            <Text fontWeight="semibold" fontSize={14} height={5}>{props.data.name}</Text>
-                            <Text fontSize={13} color="#7D7D7D" height={5}>{props.data.bio}</Text>
+                            <Text as={mouseHover ? 'u' : undefined} fontWeight="semibold" fontSize={14} height={5}>{props.data.name}</Text>
+                            <Text as={mouseHover ? 'u' : undefined} fontSize={13} color="#7D7D7D" height={5}>{props.data.bio}</Text>
                             <Text fontSize={13} color="#7D7D7D" height={5}>{getTimeDifference(props.data.time_posted)}</Text>
                         </VStack>
                     </HStack>

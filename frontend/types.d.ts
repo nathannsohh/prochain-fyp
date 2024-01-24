@@ -73,7 +73,8 @@ interface FeedPostType extends PostType {
   name: string,
   bio: string,
   profileImageHash: string
-  hasLiked: boolean
+  hasLiked: boolean,
+  owner: string
 }
 
 interface FeedCommentType extends CommentType {

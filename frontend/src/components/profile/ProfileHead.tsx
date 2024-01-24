@@ -6,7 +6,8 @@ interface ProfileHeadProps {
     userData: UserType | null,
     onEditProfile: () => void,
     connections: Number | null,
-    ownProfile: Boolean
+    ownProfile: Boolean,
+    isConnected: Boolean
 }
 
 const formatAddress = (address: String | undefined): String | null => {
@@ -39,7 +40,7 @@ export default function ProfileHead(props: ProfileHeadProps) {
                 borderColor="#FFFFFF" 
                 zIndex="1"
                 mt="350px">
-                    <Image src={`http://127.0.0.1:8080/ipfs/${props.userData?.profile_picture_hash}`} alt="profile picture" layout="fill" objectFit="contain"/>
+                    <Image src={`http://127.0.0.1:8080/ipfs/${props.userData?.profile_picture_hash}`} alt="profile picture" layout="fill" objectFit="cover"/>
                 </Box>
             </Center>
             <Box height="50%" position="relative">
@@ -52,7 +53,7 @@ export default function ProfileHead(props: ProfileHeadProps) {
                     <Text fontSize="16px" color="#555353"><b>{props.connections?.toString()}</b> Connections</Text>
                 </Box>
                     <Spacer />
-                    {props.ownProfile && <IconButton onClick={ props.onEditProfile } icon={<MdEdit />} aria-label=""/>}
+                    {props.ownProfile ? <IconButton onClick={ props.onEditProfile } icon={<MdEdit />} aria-label=""/> : <Button colorScheme="blue" variant="ghost">Connect +</Button>}
                 </HStack>
                 <Box bg="#C6EAFF" p={1} borderRadius="20px" pl="20px" pr="20px">
                     <Text fontSize="13px" fontWeight="bold" color="#818181">{formatAddress(props.userData?.wallet_address)}</Text>

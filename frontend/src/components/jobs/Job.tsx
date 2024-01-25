@@ -1,7 +1,14 @@
 import { Avatar, Box, Divider, Flex, Text, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 
-export default function Job() {
+interface JobProps {
+    selected: boolean,
+    index: number,
+    handleJobClick: (index: number) => void
+}
+
+
+export default function Job(props: JobProps) {
     const [isHovering, setIsHovering] = useState<boolean>(false)
 
     const onMouseEnterHandler = () => {
@@ -14,7 +21,7 @@ export default function Job() {
 
     return (
         <>
-            <Box width="100%" p={4} onMouseEnter={onMouseEnterHandler} onMouseLeave={onMouseLeaveHandler} _hover={{cursor: "pointer"}}>
+            <Box width="100%" p={4} onMouseEnter={onMouseEnterHandler} onMouseLeave={onMouseLeaveHandler} _hover={{cursor: "pointer"}} bg={props.selected ? "#EDF3F8" : "#FFFFFF"} onClick={() => props.handleJobClick(props.index)}>
                 <Flex width="100%">
                     <Avatar size='md' borderRadius={2} mr={4}/>
                     <VStack align="start" spacing={0}>

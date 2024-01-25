@@ -11,11 +11,11 @@ export default function JobDescription() {
                 <Text>Singapore</Text>
            </Box>
            <HStack mt={3}>
-            <Icon as={FaSuitcase} boxSize={6} color="#7D7D7D" mr={1}/>
+            <Icon as={FaSuitcase} boxSize={6} color="#666666" mr={1}/>
             <Badge colorScheme="green">Full-Time</Badge>
            </HStack>
            <HStack mt={2}>
-            <Icon as={FaBuilding} boxSize={6} color="#7D7D7D" mr={1}/>
+            <Icon as={FaBuilding} boxSize={6} color="#666666" mr={1}/>
             <Text fontSize={14} colorScheme="green">Entertainment Providers</Text>
            </HStack>
            <Button colorScheme="blue" borderRadius={18} mt={6}>Apply</Button>

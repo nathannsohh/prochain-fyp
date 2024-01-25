@@ -1,7 +1,11 @@
 import { Card, CardBody, Grid, Box, HStack, Flex } from "@chakra-ui/react";
 import Jobs from "./Jobs";
+import { useState } from "react";
+import JobDescription from "./JobDescription";
 
 export default function JobCard() {
+    const [selected, setSelected] = useState<number>(0)
+
     return (
         <Box flex={1} height="91vh">
             <Card height="100%">
@@ -11,7 +15,7 @@ export default function JobCard() {
                             <Jobs />
                         </Box>
                         <Box width="58%">
-                            Hello2
+                            <JobDescription />
                         </Box>
                     </Flex>
                 </CardBody>

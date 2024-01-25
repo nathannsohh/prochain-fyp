@@ -151,7 +151,6 @@ const Feed = () => {
                     hasLiked: post.likedBy.includes(wallet!)
                 }
             })
-            console.log(consolidatedPosts)
             setShownPosts(prevState => prevState.concat(consolidatedPosts))
         } catch (e) {
             console.error(e)

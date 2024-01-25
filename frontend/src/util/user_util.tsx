@@ -73,10 +73,9 @@ export async function getArrayOfDetailsFromUserAddress(addresses: Array<string>)
                     ) { userAddress profileDataHash profileImageHash }}`,
         "variables": {}
     }
-    
+
     try {
         const users = await axios.post(`${THE_GRAPH_URL}/users`, graphqlQuery)
-        console.log(users)
         let dataHashArray = []
         let profileImageMap = new Map<string, string>()
         for (const user of users.data.data.users) {

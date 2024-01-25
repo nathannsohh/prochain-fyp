@@ -8,7 +8,6 @@ interface RequestCardProps {
 }
 
 export default function RequestCard(props: RequestCardProps) {
-    console.log(props)
     return (
         <Card width="100%" mt={2} borderRadius="20px" p={0} pt={0}>
             <CardHeader>

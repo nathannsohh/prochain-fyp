@@ -151,7 +151,6 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
 
     const connectHandler = async () => {
         try {
-            console.log("hello")
             await userFactoryContract?.addConnectionRequest(params.wallet_address, wallet)
             triggerToast("Request Sent!", "Your connection request has been sent to this user.", "success")
         } catch (e) {

@@ -1,4 +1,5 @@
 'use client'
+import JobCard from "@/components/jobs/JobCard";
 import { useMetamask } from "@/hooks/useMetamask";
 import useUserManangerContract from "@/hooks/useUserFactoryContract";
 import { Box } from "@chakra-ui/react"
@@ -14,7 +15,6 @@ export default function JobPage() {
     useEffect(() => {
         if (status === "idle") {
             if (wallet === null) router.push('/login')
-            console.log(userFactoryContract);
             userFactoryContract?.doesUserExist(wallet).then((result) => {
                 if (!result) {
                     router.push('/profile/new')
@@ -25,7 +25,7 @@ export default function JobPage() {
 
     return (
         <Box bg="#F6F6F6">
-            <div>Jobs!</div>
+            <JobCard />
         </Box>
     )
 }

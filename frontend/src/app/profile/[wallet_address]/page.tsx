@@ -13,7 +13,6 @@ import EditProfileModal from "@/components/profile/EditProfileModal";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { updateSelf, updatePosts } from "../profileSlice";
 import { API_URL, THE_GRAPH_URL } from "@/util/constants";
-import { connect } from "http2";
 
 export default function ProfilePage({ params }: { params: { wallet_address: string } }) {
     const { state: { wallet, status } } = useMetamask();
@@ -53,7 +52,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                 if (!result) {
                     router.push('/profile/new')
                 } else {
-                    if (userData === null) getUserDetails()
+                    getUserDetails()
                     getPostData()
                 }
             })

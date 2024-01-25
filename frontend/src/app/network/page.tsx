@@ -19,7 +19,6 @@ export default function NetworkPage() {
     useEffect(() => {
         if (status === "idle") {
             if (wallet === null) router.push('/login')
-            console.log(userFactoryContract);
             userFactoryContract?.doesUserExist(wallet).then((result) => {
                 if (!result) {
                     router.push('/profile/new')
@@ -52,14 +51,41 @@ export default function NetworkPage() {
 
     const acceptRequest = async (address: string) => {
         await userFactoryContract?.acceptConnection(wallet, address)
+        let pending = pendingConnections!
+        let accepted;
+        for (let i = 0; i < pending.length; i++) {
+            if (pending[i].address === address) {
+                accepted = pending[i]
+                pending.splice(i, 1)
+                setPendingConnections(pending)
+                break
+            }
+        }
+        setConnections((prevConnections) => [...prevConnections!, accepted!])
     }
 
     const ignoreRequest = async (address: string) => {
         await userFactoryContract?.removeConnectionFromPendingConnections(wallet, address)
+        let pending = pendingConnections!
+        for (let i = 0; i < pending.length; i++) {
+            if (pending[i].address === address) {
+                pending.splice(i, 1)
+                setPendingConnections(pending)
+                break
+            }
+        }
     }
 
     const removeConnection = async (address: string) => {
         await userFactoryContract?.removeConnectionFromConnections(wallet, address)
+        let curConnections = connections!
+        for (let i = 0; i < curConnections.length; i++) {
+            if (curConnections[i].address === address) {
+                curConnections.splice(i, 1)
+                setConnections(curConnections)
+                break
+            }
+        }
     }
 
     return (

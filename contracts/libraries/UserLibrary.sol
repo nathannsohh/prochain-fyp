@@ -99,5 +99,4 @@ library UserLibrary {
         }
         revert('This connection is not in the pending connections list');
     }
-
 }

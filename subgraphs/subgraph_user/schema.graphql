@@ -6,4 +6,14 @@ type User @entity {
   profileHeaderHash: String!
   connections: [Bytes!]!
   pendingConnections: [Bytes!]!
+  following: [Organisation!]! @derivedFrom(field: "followedBy")
+}
+
+type Organisation @entity {
+    id: ID!
+    organisationAddress: Bytes!
+    profileDataHash: String!
+    profileImageHash: String!
+    profileHeaderHash: String!
+    followedBy: [User!]!
 }

@@ -10,6 +10,106 @@ import {
   BigInt,
 } from "@graphprotocol/graph-ts";
 
+export class OrganisationFollowed extends ethereum.Event {
+  get params(): OrganisationFollowed__Params {
+    return new OrganisationFollowed__Params(this);
+  }
+}
+
+export class OrganisationFollowed__Params {
+  _event: OrganisationFollowed;
+
+  constructor(event: OrganisationFollowed) {
+    this._event = event;
+  }
+
+  get _organisationWallet(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get _followedBy(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class OrganisationRegistered extends ethereum.Event {
+  get params(): OrganisationRegistered__Params {
+    return new OrganisationRegistered__Params(this);
+  }
+}
+
+export class OrganisationRegistered__Params {
+  _event: OrganisationRegistered;
+
+  constructor(event: OrganisationRegistered) {
+    this._event = event;
+  }
+
+  get _organisationWallet(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get _profileDataHash(): string {
+    return this._event.parameters[1].value.toString();
+  }
+
+  get _profileImageHash(): string {
+    return this._event.parameters[2].value.toString();
+  }
+
+  get _profileHeaderHash(): string {
+    return this._event.parameters[3].value.toString();
+  }
+}
+
+export class OrganisationUnfollowed extends ethereum.Event {
+  get params(): OrganisationUnfollowed__Params {
+    return new OrganisationUnfollowed__Params(this);
+  }
+}
+
+export class OrganisationUnfollowed__Params {
+  _event: OrganisationUnfollowed;
+
+  constructor(event: OrganisationUnfollowed) {
+    this._event = event;
+  }
+
+  get _organisationWallet(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get _unfollowedBy(): Address {
+    return this._event.parameters[1].value.toAddress();
+  }
+}
+
+export class OrganisationUpdated extends ethereum.Event {
+  get params(): OrganisationUpdated__Params {
+    return new OrganisationUpdated__Params(this);
+  }
+}
+
+export class OrganisationUpdated__Params {
+  _event: OrganisationUpdated;
+
+  constructor(event: OrganisationUpdated) {
+    this._event = event;
+  }
+
+  get _organisationWallet(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get _profileImageHash(): string {
+    return this._event.parameters[1].value.toString();
+  }
+
+  get _profileHeaderHash(): string {
+    return this._event.parameters[2].value.toString();
+  }
+}
+
 export class UserConnectionsUpdated extends ethereum.Event {
   get params(): UserConnectionsUpdated__Params {
     return new UserConnectionsUpdated__Params(this);
@@ -92,6 +192,32 @@ export class UserUpdated__Params {
   }
 }
 
+export class UserFactory__getOrganisationProfileResultValue0Struct extends ethereum.Tuple {
+  get walletAddress(): Address {
+    return this[0].toAddress();
+  }
+
+  get profileImageHash(): string {
+    return this[1].toString();
+  }
+
+  get profileHeaderHash(): string {
+    return this[2].toString();
+  }
+
+  get profileDataHash(): string {
+    return this[3].toString();
+  }
+
+  get followedBy(): Array<Address> {
+    return this[4].toAddressArray();
+  }
+
+  get exists(): boolean {
+    return this[5].toBoolean();
+  }
+}
+
 export class UserFactory__getUserProfileResultValue0Struct extends ethereum.Tuple {
   get walletAddress(): Address {
     return this[0].toAddress();
@@ -119,6 +245,58 @@ export class UserFactory__getUserProfileResultValue0Struct extends ethereum.Tupl
 
   get exists(): boolean {
     return this[6].toBoolean();
+  }
+}
+
+export class UserFactory__organisationsResult {
+  value0: Address;
+  value1: string;
+  value2: string;
+  value3: string;
+  value4: boolean;
+
+  constructor(
+    value0: Address,
+    value1: string,
+    value2: string,
+    value3: string,
+    value4: boolean,
+  ) {
+    this.value0 = value0;
+    this.value1 = value1;
+    this.value2 = value2;
+    this.value3 = value3;
+    this.value4 = value4;
+  }
+
+  toMap(): TypedMap<string, ethereum.Value> {
+    let map = new TypedMap<string, ethereum.Value>();
+    map.set("value0", ethereum.Value.fromAddress(this.value0));
+    map.set("value1", ethereum.Value.fromString(this.value1));
+    map.set("value2", ethereum.Value.fromString(this.value2));
+    map.set("value3", ethereum.Value.fromString(this.value3));
+    map.set("value4", ethereum.Value.fromBoolean(this.value4));
+    return map;
+  }
+
+  getWalletAddress(): Address {
+    return this.value0;
+  }
+
+  getProfileImageHash(): string {
+    return this.value1;
+  }
+
+  getProfileHeaderHash(): string {
+    return this.value2;
+  }
+
+  getProfileDataHash(): string {
+    return this.value3;
+  }
+
+  getExists(): boolean {
+    return this.value4;
   }
 }
 
@@ -200,6 +378,29 @@ export class UserFactory extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
+  doesWalletExist(_walletAddress: Address): boolean {
+    let result = super.call(
+      "doesWalletExist",
+      "doesWalletExist(address):(bool)",
+      [ethereum.Value.fromAddress(_walletAddress)],
+    );
+
+    return result[0].toBoolean();
+  }
+
+  try_doesWalletExist(_walletAddress: Address): ethereum.CallResult<boolean> {
+    let result = super.tryCall(
+      "doesWalletExist",
+      "doesWalletExist(address):(bool)",
+      [ethereum.Value.fromAddress(_walletAddress)],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
   getNumberOfConnections(_userWallet: Address): BigInt {
     let result = super.call(
       "getNumberOfConnections",
@@ -223,6 +424,85 @@ export class UserFactory extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getNumberOfFollowers(_orgWallet: Address): BigInt {
+    let result = super.call(
+      "getNumberOfFollowers",
+      "getNumberOfFollowers(address):(uint256)",
+      [ethereum.Value.fromAddress(_orgWallet)],
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getNumberOfFollowers(_orgWallet: Address): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getNumberOfFollowers",
+      "getNumberOfFollowers(address):(uint256)",
+      [ethereum.Value.fromAddress(_orgWallet)],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getOrganisationProfile(
+    _walletAddress: Address,
+  ): UserFactory__getOrganisationProfileResultValue0Struct {
+    let result = super.call(
+      "getOrganisationProfile",
+      "getOrganisationProfile(address):((address,string,string,string,address[],bool))",
+      [ethereum.Value.fromAddress(_walletAddress)],
+    );
+
+    return changetype<UserFactory__getOrganisationProfileResultValue0Struct>(
+      result[0].toTuple(),
+    );
+  }
+
+  try_getOrganisationProfile(
+    _walletAddress: Address,
+  ): ethereum.CallResult<UserFactory__getOrganisationProfileResultValue0Struct> {
+    let result = super.tryCall(
+      "getOrganisationProfile",
+      "getOrganisationProfile(address):((address,string,string,string,address[],bool))",
+      [ethereum.Value.fromAddress(_walletAddress)],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      changetype<UserFactory__getOrganisationProfileResultValue0Struct>(
+        value[0].toTuple(),
+      ),
+    );
+  }
+
+  getProfileType(_walletAddress: Address): i32 {
+    let result = super.call(
+      "getProfileType",
+      "getProfileType(address):(uint8)",
+      [ethereum.Value.fromAddress(_walletAddress)],
+    );
+
+    return result[0].toI32();
+  }
+
+  try_getProfileType(_walletAddress: Address): ethereum.CallResult<i32> {
+    let result = super.tryCall(
+      "getProfileType",
+      "getProfileType(address):(uint8)",
+      [ethereum.Value.fromAddress(_walletAddress)],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toI32());
   }
 
   getUserProfile(
@@ -254,6 +534,109 @@ export class UserFactory extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(
       changetype<UserFactory__getUserProfileResultValue0Struct>(
         value[0].toTuple(),
+      ),
+    );
+  }
+
+  isConnection(_selfWallet: Address, _userWallet: Address): boolean {
+    let result = super.call(
+      "isConnection",
+      "isConnection(address,address):(bool)",
+      [
+        ethereum.Value.fromAddress(_selfWallet),
+        ethereum.Value.fromAddress(_userWallet),
+      ],
+    );
+
+    return result[0].toBoolean();
+  }
+
+  try_isConnection(
+    _selfWallet: Address,
+    _userWallet: Address,
+  ): ethereum.CallResult<boolean> {
+    let result = super.tryCall(
+      "isConnection",
+      "isConnection(address,address):(bool)",
+      [
+        ethereum.Value.fromAddress(_selfWallet),
+        ethereum.Value.fromAddress(_userWallet),
+      ],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  isFollower(_orgWallet: Address, _userWallet: Address): boolean {
+    let result = super.call(
+      "isFollower",
+      "isFollower(address,address):(bool)",
+      [
+        ethereum.Value.fromAddress(_orgWallet),
+        ethereum.Value.fromAddress(_userWallet),
+      ],
+    );
+
+    return result[0].toBoolean();
+  }
+
+  try_isFollower(
+    _orgWallet: Address,
+    _userWallet: Address,
+  ): ethereum.CallResult<boolean> {
+    let result = super.tryCall(
+      "isFollower",
+      "isFollower(address,address):(bool)",
+      [
+        ethereum.Value.fromAddress(_orgWallet),
+        ethereum.Value.fromAddress(_userWallet),
+      ],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
+  }
+
+  organisations(param0: Address): UserFactory__organisationsResult {
+    let result = super.call(
+      "organisations",
+      "organisations(address):(address,string,string,string,bool)",
+      [ethereum.Value.fromAddress(param0)],
+    );
+
+    return new UserFactory__organisationsResult(
+      result[0].toAddress(),
+      result[1].toString(),
+      result[2].toString(),
+      result[3].toString(),
+      result[4].toBoolean(),
+    );
+  }
+
+  try_organisations(
+    param0: Address,
+  ): ethereum.CallResult<UserFactory__organisationsResult> {
+    let result = super.tryCall(
+      "organisations",
+      "organisations(address):(address,string,string,string,bool)",
+      [ethereum.Value.fromAddress(param0)],
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(
+      new UserFactory__organisationsResult(
+        value[0].toAddress(),
+        value[1].toString(),
+        value[2].toString(),
+        value[3].toString(),
+        value[4].toBoolean(),
       ),
     );
   }
@@ -364,6 +747,78 @@ export class AddConnectionRequestCall__Outputs {
   }
 }
 
+export class FollowOrganisationCall extends ethereum.Call {
+  get inputs(): FollowOrganisationCall__Inputs {
+    return new FollowOrganisationCall__Inputs(this);
+  }
+
+  get outputs(): FollowOrganisationCall__Outputs {
+    return new FollowOrganisationCall__Outputs(this);
+  }
+}
+
+export class FollowOrganisationCall__Inputs {
+  _call: FollowOrganisationCall;
+
+  constructor(call: FollowOrganisationCall) {
+    this._call = call;
+  }
+
+  get _orgWallet(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _userAddress(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+}
+
+export class FollowOrganisationCall__Outputs {
+  _call: FollowOrganisationCall;
+
+  constructor(call: FollowOrganisationCall) {
+    this._call = call;
+  }
+}
+
+export class RegisterOrganisationCall extends ethereum.Call {
+  get inputs(): RegisterOrganisationCall__Inputs {
+    return new RegisterOrganisationCall__Inputs(this);
+  }
+
+  get outputs(): RegisterOrganisationCall__Outputs {
+    return new RegisterOrganisationCall__Outputs(this);
+  }
+}
+
+export class RegisterOrganisationCall__Inputs {
+  _call: RegisterOrganisationCall;
+
+  constructor(call: RegisterOrganisationCall) {
+    this._call = call;
+  }
+
+  get _profileDataHash(): string {
+    return this._call.inputValues[0].value.toString();
+  }
+
+  get _profileImageHash(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+
+  get _profileHeaderHash(): string {
+    return this._call.inputValues[2].value.toString();
+  }
+}
+
+export class RegisterOrganisationCall__Outputs {
+  _call: RegisterOrganisationCall;
+
+  constructor(call: RegisterOrganisationCall) {
+    this._call = call;
+  }
+}
+
 export class RegisterUserCall extends ethereum.Call {
   get inputs(): RegisterUserCall__Inputs {
     return new RegisterUserCall__Inputs(this);
@@ -466,6 +921,146 @@ export class RemoveConnectionFromPendingConnectionsCall__Outputs {
   _call: RemoveConnectionFromPendingConnectionsCall;
 
   constructor(call: RemoveConnectionFromPendingConnectionsCall) {
+    this._call = call;
+  }
+}
+
+export class SetOrgProfileDataHashCall extends ethereum.Call {
+  get inputs(): SetOrgProfileDataHashCall__Inputs {
+    return new SetOrgProfileDataHashCall__Inputs(this);
+  }
+
+  get outputs(): SetOrgProfileDataHashCall__Outputs {
+    return new SetOrgProfileDataHashCall__Outputs(this);
+  }
+}
+
+export class SetOrgProfileDataHashCall__Inputs {
+  _call: SetOrgProfileDataHashCall;
+
+  constructor(call: SetOrgProfileDataHashCall) {
+    this._call = call;
+  }
+
+  get _orgWallet(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _hash(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+}
+
+export class SetOrgProfileDataHashCall__Outputs {
+  _call: SetOrgProfileDataHashCall;
+
+  constructor(call: SetOrgProfileDataHashCall) {
+    this._call = call;
+  }
+}
+
+export class SetOrgProfileHeaderAndImageHashCall extends ethereum.Call {
+  get inputs(): SetOrgProfileHeaderAndImageHashCall__Inputs {
+    return new SetOrgProfileHeaderAndImageHashCall__Inputs(this);
+  }
+
+  get outputs(): SetOrgProfileHeaderAndImageHashCall__Outputs {
+    return new SetOrgProfileHeaderAndImageHashCall__Outputs(this);
+  }
+}
+
+export class SetOrgProfileHeaderAndImageHashCall__Inputs {
+  _call: SetOrgProfileHeaderAndImageHashCall;
+
+  constructor(call: SetOrgProfileHeaderAndImageHashCall) {
+    this._call = call;
+  }
+
+  get _orgWallet(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _profileImageHash(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+
+  get _profileHeaderHash(): string {
+    return this._call.inputValues[2].value.toString();
+  }
+}
+
+export class SetOrgProfileHeaderAndImageHashCall__Outputs {
+  _call: SetOrgProfileHeaderAndImageHashCall;
+
+  constructor(call: SetOrgProfileHeaderAndImageHashCall) {
+    this._call = call;
+  }
+}
+
+export class SetOrgProfileHeaderHashCall extends ethereum.Call {
+  get inputs(): SetOrgProfileHeaderHashCall__Inputs {
+    return new SetOrgProfileHeaderHashCall__Inputs(this);
+  }
+
+  get outputs(): SetOrgProfileHeaderHashCall__Outputs {
+    return new SetOrgProfileHeaderHashCall__Outputs(this);
+  }
+}
+
+export class SetOrgProfileHeaderHashCall__Inputs {
+  _call: SetOrgProfileHeaderHashCall;
+
+  constructor(call: SetOrgProfileHeaderHashCall) {
+    this._call = call;
+  }
+
+  get _orgWallet(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _hash(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+}
+
+export class SetOrgProfileHeaderHashCall__Outputs {
+  _call: SetOrgProfileHeaderHashCall;
+
+  constructor(call: SetOrgProfileHeaderHashCall) {
+    this._call = call;
+  }
+}
+
+export class SetOrgProfileImageHashCall extends ethereum.Call {
+  get inputs(): SetOrgProfileImageHashCall__Inputs {
+    return new SetOrgProfileImageHashCall__Inputs(this);
+  }
+
+  get outputs(): SetOrgProfileImageHashCall__Outputs {
+    return new SetOrgProfileImageHashCall__Outputs(this);
+  }
+}
+
+export class SetOrgProfileImageHashCall__Inputs {
+  _call: SetOrgProfileImageHashCall;
+
+  constructor(call: SetOrgProfileImageHashCall) {
+    this._call = call;
+  }
+
+  get _orgWallet(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _hash(): string {
+    return this._call.inputValues[1].value.toString();
+  }
+}
+
+export class SetOrgProfileImageHashCall__Outputs {
+  _call: SetOrgProfileImageHashCall;
+
+  constructor(call: SetOrgProfileImageHashCall) {
     this._call = call;
   }
 }
@@ -606,6 +1201,40 @@ export class SetProfileImageHashCall__Outputs {
   _call: SetProfileImageHashCall;
 
   constructor(call: SetProfileImageHashCall) {
+    this._call = call;
+  }
+}
+
+export class UnfollowOrganisationCall extends ethereum.Call {
+  get inputs(): UnfollowOrganisationCall__Inputs {
+    return new UnfollowOrganisationCall__Inputs(this);
+  }
+
+  get outputs(): UnfollowOrganisationCall__Outputs {
+    return new UnfollowOrganisationCall__Outputs(this);
+  }
+}
+
+export class UnfollowOrganisationCall__Inputs {
+  _call: UnfollowOrganisationCall;
+
+  constructor(call: UnfollowOrganisationCall) {
+    this._call = call;
+  }
+
+  get _orgWallet(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+
+  get _userAddress(): Address {
+    return this._call.inputValues[1].value.toAddress();
+  }
+}
+
+export class UnfollowOrganisationCall__Outputs {
+  _call: UnfollowOrganisationCall;
+
+  constructor(call: UnfollowOrganisationCall) {
     this._call = call;
   }
 }

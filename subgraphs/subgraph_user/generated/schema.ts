@@ -127,4 +127,137 @@ export class User extends Entity {
   set pendingConnections(value: Array<Bytes>) {
     this.set("pendingConnections", Value.fromBytesArray(value));
   }
+
+  get following(): OrganisationLoader {
+    return new OrganisationLoader(
+      "User",
+      this.get("id")!.toString(),
+      "following",
+    );
+  }
+}
+
+export class Organisation extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save Organisation entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type Organisation must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`,
+      );
+      store.set("Organisation", id.toString(), this);
+    }
+  }
+
+  static loadInBlock(id: string): Organisation | null {
+    return changetype<Organisation | null>(
+      store.get_in_block("Organisation", id),
+    );
+  }
+
+  static load(id: string): Organisation | null {
+    return changetype<Organisation | null>(store.get("Organisation", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get organisationAddress(): Bytes {
+    let value = this.get("organisationAddress");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set organisationAddress(value: Bytes) {
+    this.set("organisationAddress", Value.fromBytes(value));
+  }
+
+  get profileDataHash(): string {
+    let value = this.get("profileDataHash");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set profileDataHash(value: string) {
+    this.set("profileDataHash", Value.fromString(value));
+  }
+
+  get profileImageHash(): string {
+    let value = this.get("profileImageHash");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set profileImageHash(value: string) {
+    this.set("profileImageHash", Value.fromString(value));
+  }
+
+  get profileHeaderHash(): string {
+    let value = this.get("profileHeaderHash");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
+  }
+
+  set profileHeaderHash(value: string) {
+    this.set("profileHeaderHash", Value.fromString(value));
+  }
+
+  get followedBy(): Array<string> {
+    let value = this.get("followedBy");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set followedBy(value: Array<string>) {
+    this.set("followedBy", Value.fromStringArray(value));
+  }
+}
+
+export class OrganisationLoader extends Entity {
+  _entity: string;
+  _field: string;
+  _id: string;
+
+  constructor(entity: string, id: string, field: string) {
+    super();
+    this._entity = entity;
+    this._id = id;
+    this._field = field;
+  }
+
+  load(): Organisation[] {
+    let value = store.loadRelated(this._entity, this._id, this._field);
+    return changetype<Organisation[]>(value);
+  }
 }

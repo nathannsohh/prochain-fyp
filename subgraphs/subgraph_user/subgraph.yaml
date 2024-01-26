@@ -27,4 +27,12 @@ dataSources:
         handler: handleUserUpdated
       - event: UserConnectionsUpdated(indexed address,address[],address[])
         handler: handleUserConnectionsUpdated
+      - event: OrganisationRegistered(indexed address,string,string,string)
+        handler: handleOrganisationRegistered
+      - event: OrganisationUpdated(indexed address,string,string)
+        handler: handleOrganisationUpdated
+      - event: OrganisationFollowed(indexed address,address)
+        handler: handleOrganisationFollowed
+      - event: OrganisationUnfollowed(indexed address,address)
+        handler: handleOrganisationUnfollowed
     file: ./mapping.ts

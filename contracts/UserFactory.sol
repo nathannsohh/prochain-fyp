@@ -16,8 +16,9 @@ contract UserFactory {
     event UserConnectionsUpdated(address indexed _user, address[] connections, address[] pendingConnections);
 
     event OrganisationRegistered(address indexed _organisationWallet, string _profileDataHash, string _profileImageHash, string _profileHeaderHash);
-    event OrganisationUpdated(address indexed organisationWallet, string _profileImageHash, string _profileHeaderHash);
-    event OrganisationFollowersUpdated(address indexed _organisationWallet, address[] _followedBy);
+    event OrganisationUpdated(address indexed _organisationWallet, string _profileImageHash, string _profileHeaderHash);
+    event OrganisationFollowed(address indexed _organisationWallet, address _followedBy);
+    event OrganisationUnfollowed(address indexed _organisationWallet, address _unfollowedBy);
 
     modifier userMustExist(address _walletAddress) {
         require(users[_walletAddress].exists, "User does not exist!");
@@ -178,11 +179,11 @@ contract UserFactory {
 
     function followOrganisation(address _orgWallet, address _userAddress) public organisationMustExist(_orgWallet) userMustExist(_userAddress) {
         OrganisationsLibrary.follow(organisations[_orgWallet], _userAddress);
-        emit OrganisationFollowersUpdated(_orgWallet, organisations[_orgWallet].followedBy);
+        emit OrganisationFollowed(_orgWallet, _userAddress);
     }
 
     function unfollowOrganisation(address _orgWallet, address _userAddress) public organisationMustExist(_orgWallet) userMustExist(_userAddress) {
         OrganisationsLibrary.unfollow(organisations[_orgWallet], _userAddress);
-        emit OrganisationFollowersUpdated(_orgWallet, organisations[_orgWallet].followedBy);
+        emit OrganisationUnfollowed(_orgWallet, _userAddress);
     }
 }

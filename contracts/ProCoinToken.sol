@@ -19,4 +19,9 @@ contract ProCoinToken is ERC20 {
   function mint(address _to, uint _amount) external onlyOwner {
     _mint(_to, _amount);
   }
+
+  function transfer(address recipient, uint256 amount) public override returns (bool) {
+    _transfer(owner, recipient, amount);
+    return true;
+  }
 } 

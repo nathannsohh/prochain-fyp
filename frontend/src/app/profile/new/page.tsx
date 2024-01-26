@@ -4,37 +4,24 @@ import ProChainWithWords from '@/images/ProChainWithWords.png'
 import Image from 'next/image';
 import { 
     Box, 
-    VStack, 
-    HStack, 
+    VStack,
     Text, 
     Card, 
     CardHeader, 
     CardBody, 
     Heading, 
-    Divider, 
-    FormControl, 
-    FormErrorMessage, 
-    FormLabel, 
-    Input, 
-    Textarea, 
-    Select, 
-    Button, 
+    Divider,
     Center 
 } from '@chakra-ui/react'
-import { useForm } from 'react-hook-form'
 import { useEffect, useState } from 'react';
 import { useMetamask } from '@/hooks/useMetamask';
 import { useRouter } from 'next/navigation';
 import useUserFactoryContract from '@/hooks/useUserFactoryContract';
 import axios from 'axios';
-import { countryList, pronouns, API_URL, DEFAULT_PROFILE_PIC_HASH, DEFAULT_PROFILE_BANNER_HASH } from '@/util/constants';
+import { API_URL, DEFAULT_PROFILE_PIC_HASH, DEFAULT_PROFILE_BANNER_HASH } from '@/util/constants';
+import NewUserProfileForm from '@/components/profile/NewUserProfileForm';
 
 export default function NewUser() {
-    const {
-        handleSubmit,
-        register,
-        formState: { errors, isSubmitting },
-    } = useForm<UserType>()
 
     const { state: { wallet, status } } = useMetamask()
     const router = useRouter()
@@ -67,12 +54,13 @@ export default function NewUser() {
             response = await axios.post(`${API_URL}/user`, body)
             if (response.data.success) {
                 console.log(response.data.hash)
-                await userFactoryContract!.registerUser(response.data.hash, DEFAULT_PROFILE_PIC_HASH, DEFAULT_PROFILE_BANNER_HASH)
                 setLoading(true)
-                setTimeout(() => {
-                    setLoading(false)
-                    router.push(`/profile/${wallet}`)
-                }, 4000)
+                await userFactoryContract!.registerUser(response.data.hash, DEFAULT_PROFILE_PIC_HASH, DEFAULT_PROFILE_BANNER_HASH)
+                
+                while (await !userFactoryContract!.doesUserExist(wallet)) {
+                    console.log("TEST")
+                };
+                router.push(`/profile/${wallet}`)
             }
         } catch (err) {
             if (response && response.data.success) {
@@ -83,6 +71,8 @@ export default function NewUser() {
                 }
             }
             console.error(err)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -100,85 +90,7 @@ export default function NewUser() {
                         </CardHeader>
                         <Divider />
                         <CardBody width="100%">
-                            <form onSubmit={handleSubmit(onSubmit)}>
-                                <HStack width="100%" mb={3}>
-                                    <FormControl isRequired isInvalid={errors.first_name != null}>
-                                        <FormLabel>First Name</FormLabel>
-                                        <Input 
-                                        placeholder='First Name' 
-                                        {...register('first_name', {
-                                            required: 'This is required'
-                                        })}
-                                        />
-                                        <FormErrorMessage>
-                                        {errors.first_name && errors.first_name.message}
-                                        </FormErrorMessage>
-                                    </FormControl>
-                                    <FormControl isRequired isInvalid={errors.last_name != null}>
-                                        <FormLabel>Last Name</FormLabel>
-                                        <Input 
-                                        placeholder='Last Name'
-                                        {...register('last_name', {
-                                            required: 'This is required'
-                                        })}
-                                        />
-                                        <FormErrorMessage>
-                                        {errors.last_name && errors.last_name.message}
-                                        </FormErrorMessage>
-                                    </FormControl>
-                                </HStack>
-                                <HStack width="100%" mb={3}>
-                                    <FormControl width="20%">
-                                        <FormLabel>Pronouns</FormLabel>
-                                        <Select 
-                                        placeholder='Pronouns'
-                                        {...register('pronouns')}
-                                        >
-                                            {pronouns.map((pronoun: string, index: number) => {
-                                                return <option key={index} value={pronoun}>{pronoun}</option>
-                                            })}
-                                        </Select>
-                                    </FormControl>
-                                    <FormControl width="20%">
-                                        <FormLabel>Location</FormLabel>
-                                        <Select
-                                        placeholder='Location'
-                                        {...register('location')}
-                                        >
-                                            {countryList.map((country: string, index: number) => {
-                                                return <option key={index} value={country}>{country}</option>
-                                            })}
-                                        </Select>
-                                    </FormControl>
-                                </HStack>
-                                <FormControl isRequired isInvalid={errors.email != null} mb={3}>
-                                    <FormLabel>Email</FormLabel>
-                                    <Input 
-                                    placeholder='Email'
-                                    {...register('email', {
-                                        required: 'This is required',
-                                        pattern: {
-                                            value: /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/,
-                                            message: "Please key in a valid email address!"
-                                        }
-                                    })}
-                                    />
-                                    <FormErrorMessage>
-                                    {errors.email && errors.email.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                                <FormControl>
-                                    <FormLabel>Bio</FormLabel>
-                                    <Textarea 
-                                    placeholder='Bio' 
-                                    resize="none"
-                                    {...register('bio')}
-                                    />
-                                </FormControl>
-                                <Center>
-                                    <Button mt={5} width="40%" type="submit" isLoading={isSubmitting || loading} colorScheme='blue'>Done</Button>
-                                </Center>
-                            </form>
+                            <NewUserProfileForm onSubmit={onSubmit} loading={loading}/>
                         </CardBody>
                     </Card>
                 </VStack>

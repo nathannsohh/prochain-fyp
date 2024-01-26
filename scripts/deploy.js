@@ -6,10 +6,14 @@ async function main() {
     const userLibrary = await hre.ethers.deployContract('UserLibrary');
     await userLibrary.waitForDeployment();
 
+    const organisationsLibrary = await hre.ethers.deployContract('OrganisationsLibrary');
+    await organisationsLibrary.waitForDeployment();
+
     // User Manager
     const UserFactoryContract = await hre.ethers.getContractFactory('UserFactory', {
         libraries: {
-            UserLibrary: userLibrary.target
+            UserLibrary: userLibrary.target,
+            OrganisationsLibrary: organisationsLibrary.target
         }
     })
     const userFactoryContract = await UserFactoryContract.deploy()
@@ -32,6 +36,7 @@ async function main() {
     const postFactoryContract = await PostFactoryContract.deploy(procoinTokenContract.target);
 
     console.log(`UserLibrary deployed to ${userLibrary.target}`)
+    console.log(`OrganisationLibrary deployed to ${organisationsLibrary.target}`)
     console.log(`UserFactory deployed to ${await userFactoryContract.getAddress()}`);
     console.log(`ProCoinToken deployed to ${procoinTokenContract.target}`);
     console.log(`PostFactory deployed to ${await postFactoryContract.getAddress()}`);

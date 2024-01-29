@@ -11,7 +11,8 @@ import { getDetailsFromUserAddress } from '@/util/user_util';
 import { useRouter } from "next/navigation";
 
 interface PostProps {
-    data: FeedPostType
+    data: FeedPostType,
+    ownProfileImaegHash: string
 }
 
 export default function Post(props: PostProps) {
@@ -195,7 +196,7 @@ export default function Post(props: PostProps) {
                 {
                     showComments &&
                     <>
-                        <CommentInput profileImageHash={props.data.profileImageHash} onComment={handleComment}/>
+                        <CommentInput profileImageHash={props.ownProfileImaegHash} onComment={handleComment}/>
                         {loadedComments.map((comment) => {
                             return <PostComment data={comment} />
                         })}

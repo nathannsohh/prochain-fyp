@@ -170,7 +170,7 @@ const Feed = () => {
                 loadUserPosts={() => {}}/>}
                 <Divider mt={3} borderColor="#C8C8C8"/>
             {shownPosts.map((post) => {
-                return <Post key={post.id} data={post}/>
+                return <Post key={post.id} data={post} ownProfileImaegHash={userData!.profile_picture_hash}/>
             })}
         </>
     )

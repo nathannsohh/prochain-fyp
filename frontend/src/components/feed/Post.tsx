@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 
 interface PostProps {
     data: FeedPostType,
-    ownProfileImaegHash: string
+    ownProfileImageHash: string
 }
 
 export default function Post(props: PostProps) {
@@ -196,7 +196,7 @@ export default function Post(props: PostProps) {
                 {
                     showComments &&
                     <>
-                        <CommentInput profileImageHash={props.ownProfileImaegHash} onComment={handleComment}/>
+                        <CommentInput profileImageHash={props.ownProfileImageHash} onComment={handleComment}/>
                         {loadedComments.map((comment) => {
                             return <PostComment data={comment} />
                         })}

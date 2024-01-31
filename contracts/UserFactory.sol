@@ -109,6 +109,7 @@ contract UserFactory {
         UserLibrary.acceptConnection(users[_userWallet], _connectionAddress);
         users[_connectionAddress].connections.push(_userWallet);
         emit UserConnectionsUpdated(_userWallet, users[_userWallet].connections, users[_userWallet].pendingConnections);
+        emit UserConnectionsUpdated(_connectionAddress, users[_connectionAddress].connections, users[_connectionAddress].pendingConnections);
     }
 
     function addConnectionRequest(address _userWallet, address _connectionAddress) public userMustExist(_userWallet) {

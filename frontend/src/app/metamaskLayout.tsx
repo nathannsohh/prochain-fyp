@@ -8,18 +8,62 @@ import MainHeader from "@/components/MainHeader";
 import { Box, Flex, HStack, Spacer } from "@chakra-ui/react";
 import useUserFactoryContract from "@/hooks/useUserFactoryContract";
 import LoginHeader from "@/components/LoginHeader";
+import axios from "axios";
+import { API_URL } from "@/util/constants";
+import { useAppDispatch } from "@/hooks/reduxHooks";
+import { updateSelf } from "./profile/profileSlice";
+import { useRouter, usePathname } from "next/navigation";
 
 const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
     const { dispatch, state: { wallet, status, isMetamaskInstalled } } = useMetamask();
     const listen = useListen();
     const userFactoryContract = useUserFactoryContract();
     const [isNewUser, setIsNewUser] = useState<Boolean | null>(null)
+    const [currentWallet, setCurrentWallet] = useState<string | null>(null)
+    const router = useRouter()
+    const reduxDispatch = useAppDispatch()
+    const pathname = usePathname()
 
     const handleUserExistence = async () => {
         try {
-            const response: Boolean | null = await userFactoryContract?.doesUserExist(wallet)
-            if (response !== undefined && response !== null) {
-                setIsNewUser(!response)
+            const userExists: Boolean | null = await userFactoryContract?.doesWalletExist(wallet)
+            if (userExists !== undefined && userExists !== null) {
+                setIsNewUser(!userExists)
+                if (!userExists) {
+                    router.push('/profile/new')
+                }
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    const getUserDetails = async () => {
+        try {
+            while(userFactoryContract === null){}
+
+            const [userProfile, numOfConnections] = await Promise.all([
+                userFactoryContract?.getUserProfile(wallet), 
+                userFactoryContract?.getNumberOfConnections(wallet)
+            ])
+            const userResult = await axios.get(`${API_URL}/user/${userProfile.profileDataHash}`)
+            if (userResult.data.success) {
+                const user: UserType = userResult.data.user
+                const userDetails = {
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    pronouns: user.pronouns,
+                    email: user.email,
+                    wallet_address: user.wallet_address,
+                    bio: user.bio,
+                    location: user.location,
+                    content_hash: user.content_hash,
+                    profile_picture_hash: userProfile.profileImageHash,
+                    profile_banner_hash: userProfile.profileHeaderHash
+                }
+                console.log("Updating from metamask layout")
+                reduxDispatch(updateSelf({... userDetails, connections: numOfConnections}))
+                setCurrentWallet(user.wallet_address)
             }
         } catch (e) {
             console.error(e)
@@ -51,9 +95,22 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
                 const { wallet, balance, provider, signer } = { wallet: null, balance: null, provider: null, signer: null}
                 dispatch({ type: "pageLoaded", isMetamaskInstalled, wallet, balance, provider, signer });
             }
-            handleUserExistence()
+
+            if (status === "idle") {
+                if (wallet === null) {
+                    console.log("metamask disconnect")
+                    if (pathname !== '/login') router.push('/login')
+                } else {
+                    console.log("useEffect in metamask layout")
+                    handleUserExistence()
+
+                    if (wallet != currentWallet) {
+                        getUserDetails()
+                    }
+                }
+            } 
           }
-    }, [wallet, status])
+    }, [wallet, status, pathname])
 
     const handleConnect = async () => {
         dispatch({ type: "loading" });
@@ -71,7 +128,6 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
     }
 
     const loggedIn: Boolean = wallet !== null && status === "idle" && isNewUser === false
-
     return (
         <>
             {loggedIn ? <MainHeader wallet={wallet!}/> : wallet === null && <LoginHeader metamaskIsInstalled={isMetamaskInstalled} handleConnect={handleConnect}/>}

@@ -45,26 +45,43 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
     const { isOpen: editProfileModalIsOpen, onOpen:editProfileModalOnOpen, onClose: editProfileModalOnClose } = useDisclosure();
 
     useEffect(() => {
-        if (status === "idle") {
-            if (wallet === null) router.push('/login')
-            
-            userFactoryContract?.doesUserExist(wallet).then((result) => {
-                if (!result) {
-                    router.push('/profile/new')
-                } else {
-                    getUserDetails()
-                    getPostData()
-                }
-            })
+        if (status === "idle" && wallet !== null) {
+            getPostData()
+            if (isOwnProfile) {
+                setUserData({
+                    first_name: profile.first_name!,
+                    last_name: profile.last_name!,
+                    pronouns: profile.pronouns,
+                    email: profile.email!,
+                    wallet_address: profile.wallet_address!,
+                    bio: profile.bio,
+                    location: profile.location,
+                    content_hash: profile.content_hash!,
+                    profile_picture_hash: profile.profile_picture_hash!,
+                    profile_banner_hash: profile.profile_banner_hash!
+                })
+                getNumberOfConnections()
+            } else {
+                getUserDetails();
+            }
         }
     }, [wallet, status])
 
+    const getNumberOfConnections = async () => {
+        try {
+            while (userFactoryContract === null);
+            const numOfConnections = await userFactoryContract!.getNumberOfConnections(wallet)
+            setUserConnections(numOfConnections)
+        } catch (e) {
+            console.error(e)
+        }
+    }
     
     const getUserDetails = async () => {
         try {
             const [userProfile, numOfConnections] = await Promise.all([
-                userFactoryContract?.getUserProfile(params.wallet_address), 
-                userFactoryContract?.getNumberOfConnections(params.wallet_address)
+                userFactoryContract!.getUserProfile(params.wallet_address), 
+                userFactoryContract!.getNumberOfConnections(params.wallet_address)
             ])
             const userResult = await axios.get(`${API_URL}/user/${userProfile.profileDataHash}`)
             if (userResult.data.success) {
@@ -87,10 +104,6 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                 }
                 setUserData(userDetails)
                 setUserConnections(numOfConnections)
-                if (wallet === params.wallet_address) {
-                    dispatch(updateSelf({... userDetails, connections: numOfConnections}))
-
-                } 
             }
         } catch (e) {
             console.error(e)
@@ -127,7 +140,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
                 return {...post, content: postResult.data.posts[index].content, time_posted: postResult.data.posts[index].time_posted}
             })
             setUserPosts(consolidatedPosts)
-            dispatch(updatePosts(consolidatedPosts))
+            // dispatch(updatePosts(consolidatedPosts))
         } catch (e) {
             console.error(e)
         }

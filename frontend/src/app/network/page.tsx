@@ -1,33 +1,26 @@
 'use client'
 import ConnectionsCard from "@/components/network/ConnectionsCard";
 import RequestCard from "@/components/network/RequestCard";
+import { useAppSelector } from "@/hooks/reduxHooks";
 import { useMetamask } from "@/hooks/useMetamask";
 import useUserManangerContract from "@/hooks/useUserFactoryContract";
 import { getArrayOfDetailsFromUserAddress, getUserConnectionDetails } from "@/util/user_util";
 import { Box } from "@chakra-ui/react"
 import { Contract } from "ethers";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function NetworkPage() {
     const { state: { wallet, status } } = useMetamask();
     const [pendingConnections, setPendingConnections] = useState<Array<UserDetails>>()
     const [connections, setConnections] = useState<Array<UserDetails>>()
-    const router = useRouter()
     const userFactoryContract: Contract | null = useUserManangerContract();
+    const ownProfile: ProfileState = useAppSelector((state) => state.ownProfile)
 
     useEffect(() => {
-        if (status === "idle") {
-            if (wallet === null) router.push('/login')
-            userFactoryContract?.doesUserExist(wallet).then((result) => {
-                if (!result) {
-                    router.push('/profile/new')
-                } else {
-                    getConnections()
-                }
-            })
+        if (status === "idle" && wallet !== null) {
+            getConnections()
         }
-    }, [wallet, status])
+    }, [wallet, status, ownProfile])
 
     const getConnections = async () => {
         let userConnections = await getUserConnectionDetails(wallet!)

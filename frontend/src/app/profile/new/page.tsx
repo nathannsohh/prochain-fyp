@@ -11,7 +11,8 @@ import {
     CardBody, 
     Heading, 
     Divider,
-    Center 
+    Center,
+    Button
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react';
 import { useMetamask } from '@/hooks/useMetamask';
@@ -27,6 +28,7 @@ export default function NewUser() {
     const router = useRouter()
     const userFactoryContract = useUserFactoryContract()
 
+    const [isUser, setIsUser] = useState<boolean>(true)
     const [loading, setLoading] = useState<boolean>(false)
 
     useEffect(() => {
@@ -40,10 +42,10 @@ export default function NewUser() {
         try {
             const response: boolean = await userFactoryContract!!.doesUserExist(wallet)
             if (response) {
-                router.push('/profile')
+                router.push(`/profile/${wallet}`)
             }
         } catch (e) {
-
+            console.error(e)
         }
     }
 
@@ -56,8 +58,9 @@ export default function NewUser() {
                 console.log(response.data.hash)
                 setLoading(true)
                 await userFactoryContract!.registerUser(response.data.hash, DEFAULT_PROFILE_PIC_HASH, DEFAULT_PROFILE_BANNER_HASH)
-                
-                while (await !userFactoryContract!.doesUserExist(wallet)) {
+                let userExists = await userFactoryContract!.doesWalletExist(wallet)
+                while (!userExists) {
+                    userExists = await userFactoryContract!.doesWalletExist(wallet)
                     console.log("TEST")
                 };
                 router.push(`/profile/${wallet}`)
@@ -74,6 +77,10 @@ export default function NewUser() {
         } finally {
             setLoading(false)
         }
+    }
+
+    const toggleForm = () => {
+        setIsUser(prevState => !prevState)
     }
 
     return (
@@ -93,6 +100,7 @@ export default function NewUser() {
                             <NewUserProfileForm onSubmit={onSubmit} loading={loading}/>
                         </CardBody>
                     </Card>
+                    <Button variant='link' colorScheme='gray' mt={3} fontSize={15} onClick={toggleForm}>{isUser ? "Register as ProChain Business account" : "Register as ProChain User account"}</Button>
                 </VStack>
             </Center>
         </Box>

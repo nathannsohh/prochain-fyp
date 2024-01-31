@@ -12,16 +12,16 @@ export default function JobPage() {
     const router = useRouter()
     const userFactoryContract: Contract | null = useUserManangerContract();
 
-    useEffect(() => {
-        if (status === "idle") {
-            if (wallet === null) router.push('/login')
-            userFactoryContract?.doesUserExist(wallet).then((result) => {
-                if (!result) {
-                    router.push('/profile/new')
-                }
-            })
-        }
-    }, [wallet, status])
+    // useEffect(() => {
+    //     if (status === "idle") {
+    //         if (wallet === null) router.push('/login')
+    //         userFactoryContract?.doesUserExist(wallet).then((result) => {
+    //             if (!result) {
+    //                 router.push('/profile/new')
+    //             }
+    //         })
+    //     }
+    // }, [wallet, status])
 
     return (
         <Box bg="#F6F6F6">

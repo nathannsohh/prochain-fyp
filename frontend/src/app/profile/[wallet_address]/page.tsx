@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import EditProfileModal from "@/components/profile/EditProfileModal";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
-import { updateSelf, updatePosts } from "../profileSlice";
+import { updateSelf, updatePosts } from "../../../redux_slices/profileSlice";
 import { API_URL, THE_GRAPH_URL } from "@/util/constants";
 
 export default function ProfilePage({ params }: { params: { wallet_address: string } }) {

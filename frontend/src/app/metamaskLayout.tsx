@@ -11,7 +11,7 @@ import LoginHeader from "@/components/LoginHeader";
 import axios from "axios";
 import { API_URL } from "@/util/constants";
 import { useAppDispatch } from "@/hooks/reduxHooks";
-import { updateSelf } from "./profile/profileSlice";
+import { updateSelf } from "../redux_slices/profileSlice";
 import { useRouter, usePathname } from "next/navigation";
 
 const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {

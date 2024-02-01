@@ -17,6 +17,7 @@ import { API_URL, THE_GRAPH_URL } from "@/util/constants";
 export default function ProfilePage({ params }: { params: { wallet_address: string } }) {
     const { state: { wallet, status } } = useMetamask();
     const ownProfile: ProfileState = useAppSelector((state) => state.ownProfile)
+    const profileType: Number = useAppSelector((state) => state.profileType)
     const {posts, connections, ...profile}: ProfileState = ownProfile
 
     const isOwnProfile: Boolean = profile.wallet_address !== null && profile.wallet_address === params.wallet_address

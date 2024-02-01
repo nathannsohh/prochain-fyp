@@ -12,6 +12,7 @@ import axios from "axios";
 import { API_URL } from "@/util/constants";
 import { useAppDispatch } from "@/hooks/reduxHooks";
 import { updateSelf } from "../redux_slices/profileSlice";
+import { updateType } from "@/redux_slices/profileTypeSlice";
 import { useRouter, usePathname } from "next/navigation";
 
 const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
@@ -36,6 +37,7 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
                 } else {
                     const type = await userFactoryContract?.getProfileType(wallet)
                     setIsOrganisation(type == 1)
+                    reduxDispatch(updateType(Number(type)))
                 }
             }
         } catch (e) {

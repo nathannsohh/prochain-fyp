@@ -3,7 +3,7 @@ import { useMemo } from "react"
 import { useMetamask } from "./useMetamask"
 import ABI from "@/../../artifacts/contracts/PostFactory.sol/PostFactory.json";
 
-const address = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9";
+const address = "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707";
 
 const usePostFactoryContract = () => {
     const { state } = useMetamask();

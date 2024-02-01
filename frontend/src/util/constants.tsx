@@ -257,9 +257,37 @@ export const pronouns: string[] = [
     "Not Applicable"
 ]
 
+export const industries: string[] = [
+	"Agriculture",
+	"Arts",
+	"Construction",
+	"Consumer Goods",
+	"Corporate Services",
+	"Design",
+	"Education",
+	"Energy & Mining",
+	"Entertainment",
+	"Finance",
+	"Hardware & Networking",
+	"Health Care",
+	"Legal",
+	"Manufacturing",
+	"Media & Communications",
+	"Nonprofit",
+	"Public Administration",
+	"Public Safety",
+	"Real Estate",
+	"Recreation & Travel",
+	"Retail",
+	"Software & IT Services",
+	"Transportation & Logistics",
+	"Wellness & Fitness"
+]
+
 export const API_URL: string = "http://localhost:8002"
 export const THE_GRAPH_URL: string = "http://127.0.0.1:8000/subgraphs/name"
 export const IPFS_URL: string = "http://127.0.0.1:5001/api/v0"
 
 export const DEFAULT_PROFILE_PIC_HASH = "QmRnu9BT3BPeYg8oB6Zj85N1E5njT99U8TfQgTJ2Ew53bE"
 export const DEFAULT_PROFILE_BANNER_HASH = "Qmc2Tv4mmoJQya6dMNNdKvEA2HiJ3Jigmg8etshtK1vKZv"
+export const DEFAULT_ORGANISATION_PROFILE_PIC_HASH = "QmXDr2W6jgzBrPfW2drif2Y6kcwVy8RtGG1mAEiNa3HwM4"

@@ -19,8 +19,9 @@ import { useMetamask } from '@/hooks/useMetamask';
 import { useRouter } from 'next/navigation';
 import useUserFactoryContract from '@/hooks/useUserFactoryContract';
 import axios from 'axios';
-import { API_URL, DEFAULT_PROFILE_PIC_HASH, DEFAULT_PROFILE_BANNER_HASH } from '@/util/constants';
+import { API_URL, DEFAULT_PROFILE_PIC_HASH, DEFAULT_PROFILE_BANNER_HASH, DEFAULT_ORGANISATION_PROFILE_PIC_HASH } from '@/util/constants';
 import NewUserProfileForm from '@/components/profile/NewUserProfileForm';
+import NewOrganisationProfileForm from '@/components/profile/NewOrganisationProfileForm';
 
 export default function NewUser() {
 
@@ -55,13 +56,11 @@ export default function NewUser() {
             const body = {...values, walletAddress: wallet}
             response = await axios.post(`${API_URL}/user`, body)
             if (response.data.success) {
-                console.log(response.data.hash)
                 setLoading(true)
                 await userFactoryContract!.registerUser(response.data.hash, DEFAULT_PROFILE_PIC_HASH, DEFAULT_PROFILE_BANNER_HASH)
                 let userExists = await userFactoryContract!.doesWalletExist(wallet)
                 while (!userExists) {
                     userExists = await userFactoryContract!.doesWalletExist(wallet)
-                    console.log("TEST")
                 };
                 router.push(`/profile/${wallet}`)
             }
@@ -69,6 +68,34 @@ export default function NewUser() {
             if (response && response.data.success) {
                 try {
                     await axios.delete(`${API_URL}/user/${response.data.hash}`)
+                } catch (e) {
+                    console.error(err);
+                }
+            }
+            console.error(err)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const onOrganisationSubmit = async (values: OrganisationType) => {
+        let response;
+        try {
+            const body = {...values, wallet_address: wallet, bio: ""}
+            response = await axios.post(`${API_URL}/organisation`, body)
+            if (response.data.success) {
+                setLoading(true)
+                await userFactoryContract!.registerOrganisation(response.data.hash, DEFAULT_ORGANISATION_PROFILE_PIC_HASH, DEFAULT_PROFILE_BANNER_HASH)
+                let orgExists = await userFactoryContract!.doesWalletExist(wallet)
+                while (!orgExists) {
+                    orgExists = await userFactoryContract!.doesWalletExist(wallet)
+                };
+                router.push(`/profile/${wallet}`)
+            }
+        } catch (err) {
+            if (response && response.data.success) {
+                try {
+                    await axios.delete(`${API_URL}/organisation/${response.data.hash}`)
                 } catch (e) {
                     console.error(err);
                 }
@@ -97,7 +124,7 @@ export default function NewUser() {
                         </CardHeader>
                         <Divider />
                         <CardBody width="100%">
-                            <NewUserProfileForm onSubmit={onSubmit} loading={loading}/>
+                            {isUser ? <NewUserProfileForm onSubmit={onSubmit} loading={loading}/> : <NewOrganisationProfileForm onSubmit={onOrganisationSubmit} loading={loading}/>}
                         </CardBody>
                     </Card>
                     <Button variant='link' colorScheme='gray' mt={3} fontSize={15} onClick={toggleForm}>{isUser ? "Register as ProChain Business account" : "Register as ProChain User account"}</Button>

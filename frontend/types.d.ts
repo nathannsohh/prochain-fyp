@@ -24,6 +24,18 @@ interface UserType {
   profile_banner_hash: string
 }
 
+interface OrganisationType {
+  company_name: string,
+  email: string,
+  wallet_address: string,
+  bio: string | null,
+  location: string | null,
+  industry: string,
+  content_hash: string,
+  profile_picture_hash: string,
+  profile_banner_hash: string
+}
+
 interface ProfileState {
   first_name: string | null,
   last_name: string | null,

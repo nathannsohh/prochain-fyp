@@ -5,7 +5,7 @@ import { useMetamask } from "@/hooks/useMetamask";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import MainHeader from "@/components/MainHeader";
-import { Box, Flex, HStack, Spacer } from "@chakra-ui/react";
+import { Box, Flex, Spacer } from "@chakra-ui/react";
 import useUserFactoryContract from "@/hooks/useUserFactoryContract";
 import LoginHeader from "@/components/LoginHeader";
 import axios from "axios";
@@ -19,6 +19,7 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
     const listen = useListen();
     const userFactoryContract = useUserFactoryContract();
     const [isNewUser, setIsNewUser] = useState<Boolean | null>(null)
+    const [isOrganisation, setIsOrganisation] = useState<Boolean | null>(null)
     const [currentWallet, setCurrentWallet] = useState<string | null>(null)
     const router = useRouter()
     const reduxDispatch = useAppDispatch()
@@ -26,11 +27,15 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
 
     const handleUserExistence = async () => {
         try {
+            while(userFactoryContract === null);
             const userExists: Boolean | null = await userFactoryContract?.doesWalletExist(wallet)
             if (userExists !== undefined && userExists !== null) {
                 setIsNewUser(!userExists)
                 if (!userExists) {
                     router.push('/profile/new')
+                } else {
+                    const type = await userFactoryContract?.getProfileType(wallet)
+                    setIsOrganisation(type == 1)
                 }
             }
         } catch (e) {
@@ -130,7 +135,7 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
     const loggedIn: Boolean = wallet !== null && status === "idle" && isNewUser === false
     return (
         <>
-            {loggedIn ? <MainHeader wallet={wallet!}/> : wallet === null && <LoginHeader metamaskIsInstalled={isMetamaskInstalled} handleConnect={handleConnect}/>}
+            {loggedIn ? <MainHeader wallet={wallet!} isOrganisation={isOrganisation}/> : wallet === null && <LoginHeader metamaskIsInstalled={isMetamaskInstalled} handleConnect={handleConnect}/>}
             <Box 
                 bg={ wallet !== null ? "#F6F6F6" : "#FFFFFF" } 
                 minHeight='100vh'

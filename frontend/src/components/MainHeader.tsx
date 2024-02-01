@@ -11,7 +11,8 @@ import { FaUserCircle } from "react-icons/fa";
 import RoutingButton from './RoutingButton.js'
 
 interface MainHeaderProps {
-    wallet: string
+    wallet: string,
+    isOrganisation: Boolean | null
 }
 
 export default function MainHeader(props: MainHeaderProps) {
@@ -41,10 +42,10 @@ export default function MainHeader(props: MainHeaderProps) {
                     </HStack>
                     <Spacer />
                     <RoutingButton icon={<AiFillHome size={25}/>} label="Home" route="/feed"/>
-                    <RoutingButton icon={<FaUserFriends size={26}/>} label="My Network" route="/network"/>
+                    {!props.isOrganisation && <RoutingButton icon={<FaUserFriends size={26}/>} label="My Network" route="/network"/>}
                     <RoutingButton icon={<BsFillSuitcaseLgFill size={25}/>} label="Jobs" route="jobs"/>
-                    <RoutingButton icon={<BiSolidMessageDetail size={25}/>} label="Messages" route="/feed"/>
-                    <RoutingButton icon={<IoNotificationsSharp size={25}/>} label="Notifications" route="/feed"/>
+                    {/* <RoutingButton icon={<BiSolidMessageDetail size={25}/>} label="Messages" route="/feed"/>
+                    <RoutingButton icon={<IoNotificationsSharp size={25}/>} label="Notifications" route="/feed"/> */}
                     <RoutingButton icon={<FaUserCircle size={25}/>} label="Me" route={`/profile/${props.wallet}`}/>
                 </HStack> 
                 <Spacer />

@@ -65,6 +65,33 @@ interface UserStateType  {
   profile_banner_hash: string
 }
 
+interface OrganisationProfileState {
+  company_name: string | null,
+  industry: string | null,
+  email: string | null,
+  wallet_address: string | null,
+  bio: string | null,
+  location: string | null,
+  followers: Number | null,
+  content_hash: string | null,
+  profile_picture_hash: string | null,
+  profile_banner_hash: string | null,
+  posts: Array<PostType> | null
+}
+
+interface OrganisationStateType {
+  company_name: string | null,
+  industry: null,
+  email: string,
+  wallet_address: string,
+  bio: string | null,
+  location: string | null,
+  followers: Number,
+  content_hash: string,
+  profile_picture_hash: string,
+  profile_banner_hash: string,
+}
+
 interface CommentType {
   id: string,
   commentContentHash: string,

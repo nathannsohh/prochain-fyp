@@ -47,7 +47,7 @@ exports.organisationRoutes = (app) => {
 
             response = {
                 success: true,
-                user: result.rows[0]
+                organisation: result.rows[0]
             }
             res.status(200).send(response)
         } catch (e) {

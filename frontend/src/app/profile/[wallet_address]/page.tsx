@@ -4,6 +4,7 @@ import { Box } from "@chakra-ui/react"
 import { useEffect } from "react";
 import { useAppSelector } from "@/hooks/reduxHooks";
 import UserProfile from "@/components/profile/UserProfile";
+import OrganisationProfile from "@/components/profile/OrganisationProfile";
 
 export default function ProfilePage({ params }: { params: { wallet_address: string } }) {
     const { state: { wallet, status } } = useMetamask();
@@ -34,8 +35,7 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
 
     return (
         <Box bg="#F6F6F6">
-            {profileType === 0 ? <UserProfile wallet_address={params.wallet_address}/> : <></>}
-            
+            {profileType === 0 ? <UserProfile wallet_address={params.wallet_address}/> : <OrganisationProfile wallet_address={params.wallet_address} />}
         </Box>
     )
 }

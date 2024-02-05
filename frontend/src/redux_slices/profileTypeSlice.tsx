@@ -5,7 +5,11 @@ export const profileTypeSlice = createSlice({
     initialState: 1,
     reducers: {
         updateType: (state, action: PayloadAction<number>) => {
-            state = action.payload
+            if (action.payload === undefined) {
+                return 0
+            } else {
+                return action.payload
+            }
         },
     }
 })

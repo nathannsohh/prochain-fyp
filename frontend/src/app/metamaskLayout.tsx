@@ -13,6 +13,7 @@ import { API_URL } from "@/util/constants";
 import { useAppDispatch } from "@/hooks/reduxHooks";
 import { updateSelf } from "../redux_slices/profileSlice";
 import { updateType } from "@/redux_slices/profileTypeSlice";
+import { updateSelf as updateOrganisation } from "@/redux_slices/organisationProfileSlice";
 import { useRouter, usePathname } from "next/navigation";
 
 const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
@@ -38,6 +39,7 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
                     const type = await userFactoryContract?.getProfileType(wallet)
                     setIsOrganisation(type == 1)
                     reduxDispatch(updateType(Number(type)))
+                    return type
                 }
             }
         } catch (e) {
@@ -68,9 +70,38 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
                     profile_picture_hash: userProfile.profileImageHash,
                     profile_banner_hash: userProfile.profileHeaderHash
                 }
-                console.log("Updating from metamask layout")
                 reduxDispatch(updateSelf({... userDetails, connections: numOfConnections}))
                 setCurrentWallet(user.wallet_address)
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    const getOrgDetails = async () => {
+        try {
+            while(userFactoryContract === null){}
+
+            const [orgProfile, numOfFollowers] = await Promise.all([
+                userFactoryContract!.getOrganisationProfile(wallet), 
+                userFactoryContract!.getNumberOfFollowers(wallet)
+            ])
+            const orgResult = await axios.get(`${API_URL}/organisation/${orgProfile.profileDataHash}`)
+            if (orgResult.data.success) {
+                const organisation: OrganisationType = orgResult.data.organisation
+                const orgDetails = {
+                    company_name: organisation.company_name,
+                    industry: organisation.industry,
+                    email: organisation.email,
+                    wallet_address: organisation.wallet_address,
+                    bio: organisation.bio,
+                    location: organisation.location,
+                    content_hash: organisation.content_hash,
+                    profile_picture_hash: orgProfile.profileImageHash,
+                    profile_banner_hash: orgProfile.profileHeaderHash
+                }
+                reduxDispatch(updateOrganisation({...orgDetails, followers: numOfFollowers}))
+                setCurrentWallet(organisation.wallet_address)
             }
         } catch (e) {
             console.error(e)
@@ -109,11 +140,12 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
                     if (pathname !== '/login') router.push('/login')
                 } else {
                     console.log("useEffect in metamask layout")
-                    handleUserExistence()
-
-                    if (wallet != currentWallet) {
-                        getUserDetails()
-                    }
+                    handleUserExistence().then((type) => {
+                        if (wallet != currentWallet) {
+                            console.log(type)
+                            type == 1 ? getOrgDetails() : getUserDetails()
+                        }
+                    })
                 }
             } 
           }

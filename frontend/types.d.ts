@@ -81,7 +81,7 @@ interface OrganisationProfileState {
 
 interface OrganisationStateType {
   company_name: string | null,
-  industry: null,
+  industry: string | null,
   email: string,
   wallet_address: string,
   bio: string | null,

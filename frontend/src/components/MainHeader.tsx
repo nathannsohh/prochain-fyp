@@ -44,7 +44,7 @@ export default function MainHeader(props: MainHeaderProps) {
                     <Spacer />
                     <RoutingButton icon={<AiFillHome size={25}/>} label="Home" route="/feed"/>
                     {!props.isOrganisation && <RoutingButton icon={<FaUserFriends size={26}/>} label="My Network" route="/network"/>}
-                    <RoutingButton icon={<BsFillSuitcaseLgFill size={25}/>} label="Jobs" route="jobs"/>
+                    <RoutingButton icon={<BsFillSuitcaseLgFill size={25}/>} label="Jobs" route="/jobs"/>
                     {/* {/* <RoutingButton icon={<BiSolidMessageDetail size={25}/>} label="Messages" route="/feed"/> */}
                     <WalletPopover wallet={props.wallet}/>
                     <RoutingButton icon={<FaUserCircle size={25}/>} label="Me" route={`/profile/${props.wallet}`}/>

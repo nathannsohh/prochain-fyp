@@ -9,6 +9,7 @@ import { BiSolidMessageDetail } from "react-icons/bi";
 import { IoNotificationsSharp } from "react-icons/io5";
 import { FaUserCircle } from "react-icons/fa";
 import RoutingButton from './RoutingButton.js'
+import WalletPopover from "./WalletPopover";
 
 interface MainHeaderProps {
     wallet: string,
@@ -44,8 +45,8 @@ export default function MainHeader(props: MainHeaderProps) {
                     <RoutingButton icon={<AiFillHome size={25}/>} label="Home" route="/feed"/>
                     {!props.isOrganisation && <RoutingButton icon={<FaUserFriends size={26}/>} label="My Network" route="/network"/>}
                     <RoutingButton icon={<BsFillSuitcaseLgFill size={25}/>} label="Jobs" route="jobs"/>
-                    {/* <RoutingButton icon={<BiSolidMessageDetail size={25}/>} label="Messages" route="/feed"/>
-                    <RoutingButton icon={<IoNotificationsSharp size={25}/>} label="Notifications" route="/feed"/> */}
+                    {/* {/* <RoutingButton icon={<BiSolidMessageDetail size={25}/>} label="Messages" route="/feed"/> */}
+                    <WalletPopover wallet={props.wallet}/>
                     <RoutingButton icon={<FaUserCircle size={25}/>} label="Me" route={`/profile/${props.wallet}`}/>
                 </HStack> 
                 <Spacer />

@@ -5,6 +5,7 @@ const User = require('./routes/user.js')
 const Post = require('./routes/post.js')
 const Comment = require('./routes/comments.js')
 const Organisation = require('./routes/organisations.js')
+const Job = require('./routes/jobs.js')
 
 const app = express()
 app.use(express.json())
@@ -20,7 +21,8 @@ User.userRoutes(app)
 Post.postRoutes(app)
 Comment.commentRoutes(app)
 Organisation.organisationRoutes(app)
+Job.jobsRoutes(app)
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`ProChain server listening on port ${port}`)
 })

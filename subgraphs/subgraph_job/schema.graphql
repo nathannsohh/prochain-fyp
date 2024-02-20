@@ -1,0 +1,8 @@
+type Job @entity {
+  id: ID!
+  jobId: BigInt!
+  jobHash: String!
+  owner: Bytes!
+  appliedBy: [Bytes!]!
+  status: BigInt!
+}

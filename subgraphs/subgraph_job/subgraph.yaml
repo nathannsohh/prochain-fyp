@@ -1,0 +1,32 @@
+specVersion: 0.0.4
+description: Job Subgraph
+
+schema:
+  file: ./schema.graphql
+
+dataSources:
+- kind: ethereum/contract
+  name: JobFactory
+  network: localhost
+  source:
+    address: '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853'
+    abi: JobFactory
+  mapping:
+    kind: ethereum/events
+    language: wasm/assemblyscript
+    apiVersion: 0.0.6
+    entities:
+      - JobFactory
+    abis:
+      - name: JobFactory
+        file: ./../../artifacts/contracts/JobFactory.sol/JobFactory.json
+    eventHandlers:
+      - event: JobCreated(uint256,string,address,uint256)
+        handler: handleJobCreated
+      - event: JobStatusUpdated(uint256,uint256)
+        handler: handleJobStatusUpdated
+      - event: JobApplied(uint256,address)
+        handler: handleJobApplied
+      - event: JobReset(uint256)
+        handler: handleJobReset
+    file: ./mapping.ts

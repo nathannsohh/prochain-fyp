@@ -28,6 +28,13 @@ contract JobFactory {
         uint _status
     );
 
+    event JobApplied(
+        uint _id,
+        address _applicantAddress
+    );
+
+    event JobReset(uint _id);
+
     function createJob(string memory _jobHash) public {
         // TODO: Update this value after testing
         require(procoin.balanceOf(msg.sender) >= 1, "Insufficient ProCoin to list a job!");
@@ -79,9 +86,13 @@ contract JobFactory {
 
         procoin.transferBack(msg.sender, 1);
         JobsLibrary.applyToJob(jobs[_jobId], msg.sender);
+
+        emit JobApplied(_jobId, msg.sender);
     }
 
     function resetJob(uint _jobId) public {
         JobsLibrary.resetJob(jobs[_jobId]);
+
+        emit JobReset(_jobId);
     }
 }

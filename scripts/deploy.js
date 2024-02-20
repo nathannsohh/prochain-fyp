@@ -35,11 +35,24 @@ async function main() {
     })
     const postFactoryContract = await PostFactoryContract.deploy(procoinTokenContract.target);
 
+    // Jobs Library
+    const jobsLibrary = await hre.ethers.deployContract('JobsLibrary');
+    await jobsLibrary.waitForDeployment();
+
+    // Jobs Factory
+    const JobFactoryContract = await hre.ethers.getContractFactory('JobFactory', {
+        libraries: {
+            JobsLibrary: jobsLibrary.target
+        }
+    })
+    const jobFactoryContract = await JobFactoryContract.deploy(procoinTokenContract.target);
+
     console.log(`UserLibrary deployed to ${userLibrary.target}`)
     console.log(`OrganisationLibrary deployed to ${organisationsLibrary.target}`)
     console.log(`UserFactory deployed to ${await userFactoryContract.getAddress()}`);
     console.log(`ProCoinToken deployed to ${procoinTokenContract.target}`);
     console.log(`PostFactory deployed to ${await postFactoryContract.getAddress()}`);
+    console.log(`JobFactory deployed to ${await jobFactoryContract.getAddress()}`);
 }
 main().catch((error) => {
     console.error(error);

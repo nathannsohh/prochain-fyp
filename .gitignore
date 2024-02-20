@@ -8,3 +8,5 @@ subgraphs/subgraph_post/artifacts
 subgraphs/subgraph_post/build
 subgraphs/subgraph_user/artifacts
 subgraphs/subgraph_user/build
+subgraphs/subgraph_job/artifacts
+subgraphs/subgraph_job/build

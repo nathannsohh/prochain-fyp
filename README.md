@@ -42,5 +42,9 @@ To deploy the posts subgraph, run:
 `$ cd subgraphs/subgraph_post`
 `$ graph create posts --node http://127.0.0.1:8020 && graph deploy posts --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020`
 
+To deploy the jobs subgraph, run:
+`$ cd subgraphs/subgraph_job`
+`$ graph create jobs --node http://127.0.0.1:8020 && graph deploy jobs --ipfs http://127.0.0.1:5001 --node http://127.0.0.1:8020`
+
 To generate any of the type mappings for either of the subgraphs, navigate to the respective subgraph folder and run:
 `$ graph codegen`

@@ -24,4 +24,8 @@ contract ProCoinToken is ERC20 {
     _transfer(owner, recipient, amount);
     return true;
   }
+
+  function transferBack(address sender, uint256 amount) public {
+    _transfer(sender, owner, amount);
+  }
 } 

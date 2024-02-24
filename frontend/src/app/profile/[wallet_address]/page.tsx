@@ -31,11 +31,12 @@ export default function ProfilePage({ params }: { params: { wallet_address: stri
             //     getUserDetails();
             // }
         }
-    }, [wallet, status])
+    }, [wallet, status, profileType])
 
     return (
         <Box bg="#F6F6F6">
-            {profileType === 0 ? <UserProfile wallet_address={params.wallet_address}/> : <OrganisationProfile wallet_address={params.wallet_address} />}
+            {profileType === 0 && <UserProfile wallet_address={params.wallet_address}/>}
+            {profileType === 1 && <OrganisationProfile wallet_address={params.wallet_address}/>}
         </Box>
     )
 }

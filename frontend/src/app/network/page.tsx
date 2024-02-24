@@ -26,12 +26,15 @@ export default function NetworkPage() {
         let userConnections = await getUserConnectionDetails(wallet!)
         let pendingConnectionsAddresses = []
         let connectionsAddresses = []
-
-        for (const address of userConnections!.pendingConnections) {
-            pendingConnectionsAddresses.push(`"${address}"`)
-        }
-        for (const address of userConnections!.connections) {
-            connectionsAddresses.push(`"${address}"`)
+        try {
+            for (const address of userConnections!.pendingConnections) {
+                pendingConnectionsAddresses.push(`"${address}"`)
+            }
+            for (const address of userConnections!.connections) {
+                connectionsAddresses.push(`"${address}"`)
+            }
+        } catch (e) {
+            console.error(e)
         }
 
         const [pendingConnections, connections] = await Promise.all([

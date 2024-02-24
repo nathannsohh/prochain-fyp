@@ -165,7 +165,7 @@ export default function UserProfile(props: UserProfileProps) {
                 getUserDetails();
             }
         }
-    }, [wallet, status])
+    }, [wallet, status, ownProfile])
 
     return (
         <>

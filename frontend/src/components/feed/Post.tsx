@@ -9,6 +9,7 @@ import { API_URL } from '@/util/constants';
 import PostComment from './PostComment';
 import { getDetailsFromUserAddress } from '@/util/user_util';
 import { useRouter } from "next/navigation";
+import { useAppSelector } from '@/hooks/reduxHooks';
 
 interface PostProps {
     data: FeedPostType,
@@ -30,6 +31,9 @@ export default function Post(props: PostProps) {
     const [numberOfComments, setNumberOfComments] = useState<number>(props.data.comments.length)
 
     const [mouseHover, setMouseHover] = useState<Boolean>(false)
+
+    const ownProfile: ProfileState = useAppSelector((state) => state.ownProfile)
+
 
     const router = useRouter()
 
@@ -97,7 +101,22 @@ export default function Post(props: PostProps) {
             })
             
             await postFactoryContract?.comment(Number(props.data.id), commentResponse.data.hash)
+            const newComment: FeedCommentType = {
+                name: ownProfile.first_name + ' ' + ownProfile.last_name,
+                bio: ownProfile.bio!,
+                time_posted: '',
+                content: comment,
+                profileImageHash: ownProfile.profile_picture_hash,
+                id: '',
+                commentContentHash: commentResponse.data.hash,
+                owner: ownProfile.wallet_address!
+            }
             setNumberOfComments(prevNumber => prevNumber + 1)
+            setLoadedComments(prevComments => {
+                prevComments.push(newComment)
+                return prevComments
+            })
+
         } catch (e) {
             if (commentResponse && commentResponse.data.success) {
                 try {

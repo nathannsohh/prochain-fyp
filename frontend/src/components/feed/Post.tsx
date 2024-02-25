@@ -10,6 +10,7 @@ import PostComment from './PostComment';
 import { getDetailsFromUserAddress } from '@/util/user_util';
 import { useRouter } from "next/navigation";
 import { useAppSelector } from '@/hooks/reduxHooks';
+import Image from 'next/image';
 
 interface PostProps {
     data: FeedPostType,
@@ -205,6 +206,11 @@ export default function Post(props: PostProps) {
                     </Text>
                     {isTruncated && !isSeeMore && <Button variant="link" onClick={seeMoreHandler}>See more...</Button>}
                     {isTruncated && isSeeMore && <Button variant="link" onClick={seeMoreHandler}>See less...</Button>}
+                    {props.data.postImageHash !== '' && 
+                        <Box position="relative" width='100%' height="500px">
+                            <Image src={`http://127.0.0.1:8080/ipfs/${props.data.postImageHash}`} alt={'Post Image'} layout="fill" objectFit="contain"/>
+                        </Box>
+                    }
                 </Box>
                 <Divider width="100%"/>
                 <HStack pl={7} pr={7} mt={3}>

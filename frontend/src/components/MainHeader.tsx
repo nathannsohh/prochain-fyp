@@ -10,6 +10,7 @@ import { IoNotificationsSharp } from "react-icons/io5";
 import { FaUserCircle } from "react-icons/fa";
 import RoutingButton from './RoutingButton.js'
 import WalletPopover from "./WalletPopover";
+import { useRouter } from "next/navigation.js";
 
 interface MainHeaderProps {
     wallet: string,
@@ -17,7 +18,7 @@ interface MainHeaderProps {
 }
 
 export default function MainHeader(props: MainHeaderProps) {
-
+    const router = useRouter()
     return (
         <Box 
             bg="#FFFFFF"
@@ -33,7 +34,9 @@ export default function MainHeader(props: MainHeaderProps) {
                 <Spacer />
                 <HStack spacing={0} width="950px">
                     <HStack mt={2} mb={2}>
-                        <Image src={ProChainLogo} alt="ProChain logo" width={35}/>
+                        <Box _hover={{cursor: 'pointer'}} onClick={() => router.push('/feed')}>
+                            <Image src={ProChainLogo} alt="ProChain logo" width={35}/>
+                        </Box>
                         <InputGroup ml={2}>
                             <InputLeftElement>
                                 <FiSearch />

@@ -6,8 +6,8 @@ exports.jobsRoutes = (app) => {
         let response;
         try {
             const query1 = {
-                text: "INSERT INTO jobs (job_title, location, time_posted, employment_type, job_level) VALUES($1, $2, NOW()::timestamp, $3, $4) returning id",
-                values: [req.body.job_title, req.body.location, req.body.employment_type, req.body.job_level]
+                text: "INSERT INTO jobs (job_title, location, time_posted, employment_type, job_level, job_description) VALUES($1, $2, NOW()::timestamp, $3, $4, $5) returning id",
+                values: [req.body.job_title, req.body.location, req.body.employment_type, req.body.job_level, req.body.job_description]
             }
             const result = await db.query(query1)
 
@@ -63,8 +63,8 @@ exports.jobsRoutes = (app) => {
         let response;
         try {
             const query = {
-                text: "UPDATE jobs SET job_title = $1, location = $2, employment_type = $3, job_level = $4 WHERE content_hash = $5 returning content_hash",
-                values: [req.body.job_title, req.body.location, req.body.employment_type, req.body.job_level, req.body.hash]
+                text: "UPDATE jobs SET job_title = $1, location = $2, employment_type = $3, job_level = $4, job_description = $5 WHERE content_hash = $6 returning content_hash",
+                values: [req.body.job_title, req.body.location, req.body.employment_type, req.body.job_level, req.body.job_description, req.body.hash]
             }
             const result = await db.query(query)
             response = {

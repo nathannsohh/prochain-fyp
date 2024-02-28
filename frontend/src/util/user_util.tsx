@@ -28,7 +28,7 @@ export async function getUserConnectionDetails(address: string): Promise<UserCon
 }
 
 export async function getDetailsFromUserAddress(addresses: Array<string>): Promise<Map<string, UserDetails> | undefined> {
-    const graphqlQuery = {
+    const graphqlQueryUsers = {
         "operationName": "getUsers",
         "query": `query getUsers {
                      users (
@@ -36,16 +36,32 @@ export async function getDetailsFromUserAddress(addresses: Array<string>): Promi
                     ) { userAddress profileDataHash profileImageHash }}`,
         "variables": {}
     }
+    const graphqlQueryOrgs = {
+        "operationName": "getOrgs",
+        "query": `query getOrgs {
+                     organisations (
+                        where: { organisationAddress_in: [${addresses}]}, 
+                    ) { organisationAddress profileDataHash profileImageHash }}`,
+        "variables": {}
+    }
     try {
-        const users = await axios.post(`${THE_GRAPH_URL}/users`, graphqlQuery)
-        let dataHashArray = []
+        const users = await axios.post(`${THE_GRAPH_URL}/users`, graphqlQueryUsers)
+        const orgs = await axios.post(`${THE_GRAPH_URL}/users`, graphqlQueryOrgs)
+        let userDataHashArray = []
         let profileImageMap = new Map<string, string>()
         for (const user of users.data.data.users) {
-            dataHashArray.push(`"${user.profileDataHash}"`)
+            userDataHashArray.push(`"${user.profileDataHash}"`)
             profileImageMap.set(user.userAddress, user.profileImageHash)
         }
-        const userData = await axios.get(`${API_URL}/users/[${dataHashArray}]`)
-        
+        const userData = await axios.get(`${API_URL}/users/[${userDataHashArray}]`)
+
+        let orgDataHashArray = []
+        for (const org of orgs.data.data.organisations) {
+            orgDataHashArray.push(`"${org.profileDataHash}"`)
+            profileImageMap.set(org.organisationAddress, org.profileImageHash)
+        }
+        const orgData = await axios.get(`${API_URL}/organisations/[${orgDataHashArray}]`)
+
         let output: Map<string, UserDetails> = new Map<string, UserDetails>()
         for (const user of userData.data.users) {
             output.set(user.wallet_address, {
@@ -53,6 +69,15 @@ export async function getDetailsFromUserAddress(addresses: Array<string>): Promi
                 bio: user.bio,
                 profileImageHash: profileImageMap.get(user.wallet_address)!,
                 address: user.wallet_address
+            })
+        }
+
+        for (const org of orgData.data.users) {
+            output.set(org.wallet_address, {
+                name: org.company_name,
+                bio: org.industry,
+                profileImageHash: profileImageMap.get(org.wallet_address)!,
+                address: org.wallet_address
             })
         }
         return output

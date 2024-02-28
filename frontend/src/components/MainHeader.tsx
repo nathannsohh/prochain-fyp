@@ -5,8 +5,6 @@ import { FiSearch } from "react-icons/fi";
 import { AiFillHome } from "react-icons/ai";
 import { FaUserFriends } from "react-icons/fa";
 import { BsFillSuitcaseLgFill } from "react-icons/bs";
-import { BiSolidMessageDetail } from "react-icons/bi";
-import { IoNotificationsSharp } from "react-icons/io5";
 import { FaUserCircle } from "react-icons/fa";
 import RoutingButton from './RoutingButton.js'
 import WalletPopover from "./WalletPopover";

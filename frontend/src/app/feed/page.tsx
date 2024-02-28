@@ -13,7 +13,11 @@ import { getDetailsFromUserAddress } from "@/util/user_util";
 const Feed = () => {
     const { state: { wallet, status } } = useMetamask();
 
+    const profileType: Number = useAppSelector((state) => state.profileType)
+ 
     const ownProfile: ProfileState = useAppSelector((state) => state.ownProfile)
+    const ownOrgProfile: OrganisationProfileState = useAppSelector((state) => state.orgProfile)
+
     const {posts, connections, ...profile}: ProfileState = ownProfile
 
     const [loadedPage, setLoadedPage] = useState<number | null>(null)
@@ -124,16 +128,19 @@ const Feed = () => {
             console.error(e)
         }
     }
-
     return (
         <>
-            <NewPostCard userData={userData} onNewPost={newPostModalOnOpen} />
+            <NewPostCard 
+                name={profileType == 1 ? ownOrgProfile!.company_name! : ownProfile!.first_name! + ' ' + ownProfile!.last_name!}  
+                bio={profileType == 1 ? ownOrgProfile!.industry! : ownProfile!.bio!}
+                profilePictureHash={profileType == 1 ? ownOrgProfile!.profile_picture_hash! : ownProfile!.profile_picture_hash!}
+                onNewPost={newPostModalOnOpen} />
             {newPostModalIsOpen && 
                 <ProfileNewPostModal 
                 isOpen={newPostModalIsOpen} 
                 onClose={newPostModalOnClose} 
-                profileName={userData?.first_name + ' ' + userData?.last_name} 
-                profilePictureHash={userData?.profile_picture_hash!}
+                profileName={profileType == 1 ? ownOrgProfile!.company_name! : ownProfile!.first_name! + ' ' + ownProfile!.last_name!} 
+                profilePictureHash={profileType == 1 ? ownOrgProfile!.profile_picture_hash! : ownProfile!.profile_picture_hash!}
                 triggerToast={triggerToast}
                 loadUserPosts={() => {}}/>}
                 <Divider mt={3} borderColor="#C8C8C8"/>

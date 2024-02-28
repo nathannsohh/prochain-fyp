@@ -1,18 +1,21 @@
-import { Card, CardBody, Grid, Box, HStack, Flex, Input, Button, Divider, InputGroup, InputLeftElement } from "@chakra-ui/react";
+import { Card, CardBody, Grid, Box, HStack, Flex, Input, Button, Divider, InputGroup, InputLeftElement, IconButton } from "@chakra-ui/react";
 import Jobs from "./Jobs";
 import { useState } from "react";
 import JobDescription from "./JobDescription";
 import { FiSearch } from "react-icons/fi";
 import { FaLocationDot } from "react-icons/fa6";
+import { IoMdArrowBack } from "react-icons/io";
+import { IoMdAdd } from "react-icons/io";
+import EditableJobDescription from "./EditableJobDescription";
 
-const JOBLIST = [1,2,3,4,5,6,7,8,9,10,1,1,1,1,1,1,1,1,1,1,1,1]
+const JOBLIST = [1,2,3,4,5]
 
-interface JobCardProps {
+interface OwnJobCardProps {
     isOrganisation: boolean,
     handleShowJob: () => void
 }
 
-export default function JobCard(props: JobCardProps) {
+export default function OwnJobCard(props: OwnJobCardProps) {
     const [selected, setSelected] = useState<number>(0)
 
     const handleJobClick = (index: number) => {
@@ -24,11 +27,12 @@ export default function JobCard(props: JobCardProps) {
             <Card height="100%">
                 <CardBody p={0} height="100%">
                     <HStack p={2}>
+                        <IconButton aria-label={"Back"} icon={<IoMdArrowBack />} onClick={props.handleShowJob}/>
                         <InputGroup width={"40%"}>
                             <InputLeftElement>
                                 <FiSearch />
                             </InputLeftElement>
-                            <Input placeholder="Search by title or company" variant="filled"/>
+                            <Input placeholder="Search by title" variant="filled"/>
                         </InputGroup>
                         <InputGroup width={"30%"}>
                             <InputLeftElement>
@@ -37,7 +41,7 @@ export default function JobCard(props: JobCardProps) {
                             <Input placeholder="Location" variant="filled"/>
                         </InputGroup>
                         <Button colorScheme="blue" borderRadius="18px" variant="outline">Search</Button>
-                        {props.isOrganisation && <Button colorScheme="blue" borderRadius="18px" ml={3} onClick={props.handleShowJob}>My Jobs</Button>}
+                        <Button colorScheme="blue" borderRadius="18px" onClick={props.handleShowJob} leftIcon={<IoMdAdd />}>New Job</Button>
                     </HStack>
                     <Divider />
                     <Flex>
@@ -45,7 +49,7 @@ export default function JobCard(props: JobCardProps) {
                             <Jobs jobList={JOBLIST} selected={selected} handleJobClick={handleJobClick}/>
                         </Box>
                         <Box width="58%">
-                            <JobDescription />
+                            <EditableJobDescription />
                         </Box>
                     </Flex>
                 </CardBody>

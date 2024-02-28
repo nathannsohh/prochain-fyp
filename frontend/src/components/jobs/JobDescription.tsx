@@ -4,7 +4,7 @@ import { FaBuilding } from "react-icons/fa";
 
 export default function JobDescription() {
     return (
-        <Box height="91vh" overflowY="scroll" p={5}>
+        <Box height="84vh" overflowY="scroll" p={5}>
            <Heading fontSize="23px" mb={1}>Frontend Engineer, Global CRM Engineering - 2024 Start</Heading>
            <Box fontSize={14}>
                 <Text>TikTok</Text>

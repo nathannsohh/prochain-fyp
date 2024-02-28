@@ -1,5 +1,6 @@
 'use client'
 import JobCard from "@/components/jobs/JobCard";
+import { useAppSelector } from "@/hooks/reduxHooks";
 import { useMetamask } from "@/hooks/useMetamask";
 import useUserManangerContract from "@/hooks/useUserFactoryContract";
 import { Box } from "@chakra-ui/react"
@@ -11,21 +12,11 @@ export default function JobPage() {
     const { state: { wallet, status } } = useMetamask();
     const router = useRouter()
     const userFactoryContract: Contract | null = useUserManangerContract();
-
-    // useEffect(() => {
-    //     if (status === "idle") {
-    //         if (wallet === null) router.push('/login')
-    //         userFactoryContract?.doesUserExist(wallet).then((result) => {
-    //             if (!result) {
-    //                 router.push('/profile/new')
-    //             }
-    //         })
-    //     }
-    // }, [wallet, status])
+    const profileType: Number = useAppSelector((state) => state.profileType)
 
     return (
         <Box bg="#F6F6F6">
-            <JobCard />
+            <JobCard isOrganisation={profileType == 1}/>
         </Box>
     )
 }

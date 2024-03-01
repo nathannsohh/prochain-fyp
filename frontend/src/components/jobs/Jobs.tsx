@@ -12,7 +12,7 @@ export default function Jobs(props: JobsProps) {
         <Box>
            {
             props.jobList.map((job, index) => {
-                return <Job selected={props.selected === index} index={index} handleJobClick={props.handleJobClick}/>
+                return <Job key={index} selected={props.selected === index} index={index} handleJobClick={props.handleJobClick} job={job}/>
             })
            } 
         </Box>

@@ -21,7 +21,7 @@ export default function JobPage() {
 
     return (
         <Box bg="#F6F6F6">
-            {!showMyJobs ? <JobCard isOrganisation={profileType == 1} handleShowJob={handleShowJob}/> : <OwnJobCard isOrganisation={profileType == 1} handleShowJob={handleShowJob}/>}
+            {!showMyJobs ? <JobCard isOrganisation={profileType == 1} handleShowJob={handleShowJob}/> : <OwnJobCard handleShowJob={handleShowJob}/>}
         </Box>
     )
 }

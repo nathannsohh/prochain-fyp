@@ -130,3 +130,18 @@ interface UserDetails {
   profileImageHash: string,
   address: string
 }
+
+interface OrgDetails {
+  company_name: string,
+  industry: string,
+  profileImageHash: string,
+  address: string
+}
+
+interface JobType {
+  job_title: string,
+  location: string,
+  employment_type: string,
+  job_level: string,
+  job_description: string
+}

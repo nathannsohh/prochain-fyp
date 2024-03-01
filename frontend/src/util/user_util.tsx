@@ -124,3 +124,38 @@ export async function getArrayOfDetailsFromUserAddress(addresses: Array<string>)
     }
 }
 
+export async function getDetailsFromOrgAddress(addresses: Array<string>): Promise<Map<string, OrgDetails> | undefined> {
+    const graphqlQueryOrgs = {
+        "operationName": "getOrgs",
+        "query": `query getOrgs {
+                     organisations (
+                        where: { organisationAddress_in: [${addresses}]}, 
+                    ) { organisationAddress profileDataHash profileImageHash }}`,
+        "variables": {}
+    }
+    try {
+        const orgs = await axios.post(`${THE_GRAPH_URL}/users`, graphqlQueryOrgs)
+        let profileImageMap = new Map<string, string>()
+
+        let orgDataHashArray = []
+        for (const org of orgs.data.data.organisations) {
+            orgDataHashArray.push(`"${org.profileDataHash}"`)
+            profileImageMap.set(org.organisationAddress, org.profileImageHash)
+        }
+        const orgData = await axios.get(`${API_URL}/organisations/[${orgDataHashArray}]`)
+
+        let output: Map<string, OrgDetails> = new Map<string, OrgDetails>()
+
+        for (const org of orgData.data.users) {
+            output.set(org.wallet_address, {
+                company_name: org.company_name,
+                industry: org.industry,
+                profileImageHash: profileImageMap.get(org.wallet_address)!,
+                address: org.wallet_address
+            })
+        }
+        return output
+    } catch (e) {
+        console.log(e)
+    }
+}

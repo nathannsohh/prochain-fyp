@@ -3,12 +3,35 @@ import { FaSuitcase } from "react-icons/fa6";
 import { FaBuilding } from "react-icons/fa";
 import { SiLevelsdotfyi } from "react-icons/si";
 import { COLOR_MAP } from "@/util/constants";
+import { GrStatusGood } from "react-icons/gr";
+import { RxCrossCircled } from "react-icons/rx";
+import useJobFactoryContract from "@/hooks/useJobFactoryContract";
+import { useState } from "react";
 
 interface EditableJobDescriptionProps {
-    job: any
+    job: any,
+    onStatusUpdate: () => void
 }
 
 export default function EditableJobDescription(props: EditableJobDescriptionProps) {
+    const [loading, setLoading] = useState<boolean>(false)
+
+    const jobFactoryContract = useJobFactoryContract()
+
+    const handleJobStatusChange = async () => {
+        try {
+            setLoading(true)
+            props.job.status == 0 ?
+                await jobFactoryContract?.closeJobApplication(props.job.id) :
+                await jobFactoryContract?.openJobApplication(props.job.id)
+            props.onStatusUpdate()
+        } catch (e) {
+            console.error(e)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <Box height="84vh" overflowY="scroll" p={5}>
            <Heading fontSize="23px" mb={1}>{props.job.job_title}</Heading>
@@ -16,6 +39,10 @@ export default function EditableJobDescription(props: EditableJobDescriptionProp
                 <Text>{props.job.company_name}</Text>
                 <Text>{props.job.location}</Text>
            </Box>
+           <HStack mt={3}>
+            <Icon as={props.job.status == 0 ? GrStatusGood : RxCrossCircled} boxSize={6} color="#666666" mr={1}/>
+            <Badge colorScheme={props.job.status == 0 ? "green" : "red"}>{props.job.status == 0 ? "Open" : "Closed"}</Badge>
+           </HStack>
            <HStack mt={3}>
             <Icon as={FaSuitcase} boxSize={6} color="#666666" mr={1}/>
             <Badge colorScheme={COLOR_MAP.get(props.job.employment_type)}>{props.job.employment_type}</Badge>
@@ -28,7 +55,11 @@ export default function EditableJobDescription(props: EditableJobDescriptionProp
             <Icon as={SiLevelsdotfyi} boxSize={6} color="#666666" mr={1}/>
             <Text fontSize={14} colorScheme="green">{props.job.job_level}</Text>
            </HStack>
-           <Button colorScheme="blue" borderRadius={18} mt={6}>Apply</Button>
+
+           <HStack>
+            <Button onClick={handleJobStatusChange} isLoading={loading} colorScheme={props.job.status == 0 ? "red" : "green"} borderRadius={18} mt={6} leftIcon={props.job.status == 1 ? <GrStatusGood /> : <RxCrossCircled />}>{props.job.status == 0 ? "Close Listing" : "Open Listing"}</Button>
+            <Button colorScheme="blue" borderRadius={18} mt={6} ml={2}>Edit</Button>
+           </HStack>
 
            <Box mt={7}>
             <Text fontSize={20} fontWeight="semibold">Job Description</Text>

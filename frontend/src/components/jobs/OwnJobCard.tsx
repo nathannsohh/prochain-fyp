@@ -14,8 +14,6 @@ import { API_URL, THE_GRAPH_URL } from "@/util/constants";
 import { getArrayOfJobHashes, getArrayOfJobOwners } from "@/util/util";
 import { getDetailsFromOrgAddress } from "@/util/user_util";
 
-const JOBLIST = [1,2,3,4,5]
-
 interface OwnJobCardProps {
     handleShowJob: () => void
 }
@@ -107,6 +105,17 @@ export default function OwnJobCard(props: OwnJobCardProps) {
         await getOwnJobs()
     }
 
+    const updateJobStatus = () => {
+        setOwnJobs( prevState => {
+            if (prevState[selected].status == 1) {
+                prevState[selected].status = 0
+            } else {
+                prevState[selected].status = 1
+            }
+            return prevState
+        })
+    }
+
     return (
         <Box flex={1} height="91vh">
             <Card height="100%">
@@ -134,7 +143,7 @@ export default function OwnJobCard(props: OwnJobCardProps) {
                             <Jobs jobList={ownJobs} selected={selected} handleJobClick={handleJobClick}/>
                         </Box>
                         <Box width="58%">
-                            {ownJobs.length > 0 && <EditableJobDescription job={ownJobs[selected]} />}
+                            {ownJobs.length > 0 && <EditableJobDescription job={ownJobs[selected]} onStatusUpdate={updateJobStatus}/>}
                         </Box>
                     </Flex>
                 </CardBody>

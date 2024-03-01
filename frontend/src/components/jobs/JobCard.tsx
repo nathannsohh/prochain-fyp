@@ -7,9 +7,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import { getDetailsFromOrgAddress } from "@/util/user_util";
 import axios from "axios";
 import { API_URL, THE_GRAPH_URL } from "@/util/constants";
-import { getArrayOfJobHashes, getArrayOfJobOwners } from "@/util/util";
-
-const JOBLIST = [1,2,3,4,5,6,7,8,9,10,1,1,1,1,1,1,1,1,1,1,1,1]
+import { convertToJobMap, getArrayOfJobHashes, getArrayOfJobOwners } from "@/util/util";
 
 interface JobCardProps {
     isOrganisation: boolean,
@@ -29,6 +27,7 @@ export default function JobCard(props: JobCardProps) {
             "operationName": "getJobs",
             "query": `query getJobs {
                          jobs (
+                            where: { status: 0}, 
                             orderBy: id,
                             orderDirection: desc
                         ) { id jobHash appliedBy owner status } }`,
@@ -41,17 +40,19 @@ export default function JobCard(props: JobCardProps) {
             const jobOwners = getArrayOfJobOwners(allJobs)
 
             const jobResult = await axios.get(`${API_URL}/jobs/[${jobHashes}]`)
+            const jobMap = convertToJobMap(jobResult.data.jobs)
             const jobOwnerDetails = await getDetailsFromOrgAddress(jobOwners)
 
             const consolidatedJobs = allJobs.map((job: any, index: number) => {
                 return {
                     ...job, 
-                    job_title: jobResult.data.jobs[index].job_title,
-                    job_description: jobResult.data.jobs[index].job_description,
-                    job_level: jobResult.data.jobs[index].job_level,
-                    employment_type: jobResult.data.jobs[index].employment_type,
-                    location: jobResult.data.jobs[index].location,
-                    time_posted: jobResult.data.jobs[index].time_posted, 
+                    job_title: jobMap.get(job.jobHash).job_title,
+                    job_description: jobMap.get(job.jobHash).job_description,
+                    job_level: jobMap.get(job.jobHash).job_level,
+                    employment_type: jobMap.get(job.jobHash).employment_type,
+                    location: jobMap.get(job.jobHash).location,
+                    time_posted: jobMap.get(job.jobHash).time_posted, 
+                    hash: jobMap.get(job.jobHash).content_hash,
                     profileImageHash: jobOwnerDetails?.get(job.owner)?.profileImageHash, 
                     company_name: jobOwnerDetails?.get(job.owner)?.company_name, 
                     industry: jobOwnerDetails?.get(job.owner)?.industry

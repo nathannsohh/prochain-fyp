@@ -5,7 +5,7 @@ export function handleJobCreated(event: JobCreated): void {
     let job = new Job(event.params._id.toString())
 
     job.jobId = event.params._id;
-    job.jobHash = event.params._id.toString();
+    job.jobHash = event.params._jobHash;
     job.appliedBy = [];
     job.owner = event.params._owner;
     job.status = event.params._status;

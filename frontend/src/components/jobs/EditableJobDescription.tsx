@@ -1,4 +1,4 @@
-import { Badge, Box, Button, HStack, Heading, Icon, Text } from "@chakra-ui/react";
+import { Badge, Box, Button, HStack, Heading, Icon, Text, useDisclosure } from "@chakra-ui/react";
 import { FaSuitcase } from "react-icons/fa6";
 import { FaBuilding } from "react-icons/fa";
 import { SiLevelsdotfyi } from "react-icons/si";
@@ -7,14 +7,18 @@ import { GrStatusGood } from "react-icons/gr";
 import { RxCrossCircled } from "react-icons/rx";
 import useJobFactoryContract from "@/hooks/useJobFactoryContract";
 import { useState } from "react";
+import EditJobModal from "./EditJobModal";
 
 interface EditableJobDescriptionProps {
     job: any,
-    onStatusUpdate: () => void
+    onStatusUpdate: () => void,
+    triggerToast: (title: string, description: string, status: "loading" | "info" | "warning" | "success" | "error" | undefined) => void,
+    updateJob: () => void
 }
 
 export default function EditableJobDescription(props: EditableJobDescriptionProps) {
     const [loading, setLoading] = useState<boolean>(false)
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
     const jobFactoryContract = useJobFactoryContract()
 
@@ -58,7 +62,7 @@ export default function EditableJobDescription(props: EditableJobDescriptionProp
 
            <HStack>
             <Button onClick={handleJobStatusChange} isLoading={loading} colorScheme={props.job.status == 0 ? "red" : "green"} borderRadius={18} mt={6} leftIcon={props.job.status == 1 ? <GrStatusGood /> : <RxCrossCircled />}>{props.job.status == 0 ? "Close Listing" : "Open Listing"}</Button>
-            <Button colorScheme="blue" borderRadius={18} mt={6} ml={2}>Edit</Button>
+            <Button colorScheme="blue" borderRadius={18} mt={6} ml={2} onClick={onOpen}>Edit</Button>
            </HStack>
 
            <Box mt={7}>
@@ -67,6 +71,8 @@ export default function EditableJobDescription(props: EditableJobDescriptionProp
                 {props.job.job_description}
             </Text>
            </Box>
+
+           {isOpen && <EditJobModal isOpen={isOpen} onClose={onClose} triggerToast={props.triggerToast} updateJob={props.updateJob} job={props.job}/>}
         </Box>
     )
 }

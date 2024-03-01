@@ -21,3 +21,13 @@ export const getArrayOfJobOwners = (jobData: any): Array<string>  => {
     }
     return jobOwnerArray
 }
+
+export const convertToJobMap = (jobData: any): Map<string, any> => {
+    let jobMap = new Map()
+
+    for (const job of jobData) {
+        jobMap.set(job.content_hash, job)
+    }
+
+    return jobMap
+}

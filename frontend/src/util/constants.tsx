@@ -291,6 +291,13 @@ export const employmentTypeList = [
 	"Contract"
 ]
 
+export const COLOR_MAP = new Map(Object.entries({
+    "Full-Time": "green",
+	"Part-Time": "orange",
+	"Internship": "blue",
+	"Contract": "purple"
+}))
+
 export const jobLevelList = [
 	"No Experience Required",
 	"Entry-Level",

@@ -2,17 +2,11 @@ import { Badge, Box, Button, HStack, Heading, Icon, Text } from "@chakra-ui/reac
 import { FaSuitcase } from "react-icons/fa6";
 import { FaBuilding } from "react-icons/fa";
 import { SiLevelsdotfyi } from "react-icons/si";
+import { COLOR_MAP } from "@/util/constants";
 
 interface EditableJobDescriptionProps {
     job: any
 }
-
-const COLOR_MAP = new Map(Object.entries({
-    "Full-Time": "green",
-	"Part-Time": "orange",
-	"Internship": "blue",
-	"Contract": "purple"
-}))
 
 export default function EditableJobDescription(props: EditableJobDescriptionProps) {
     return (

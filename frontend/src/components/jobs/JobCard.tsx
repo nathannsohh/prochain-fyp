@@ -91,7 +91,7 @@ export default function JobCard(props: JobCardProps) {
                     <Divider />
                     <Flex>
                         <Box width="42%" height="84vh" display="block" overflowY="scroll">
-                            <Jobs jobList={jobs} selected={selected} handleJobClick={handleJobClick}/>
+                            <Jobs jobList={jobs} selected={selected} handleJobClick={handleJobClick} isOwnJob={false}/>
                         </Box>
                         <Box width="58%">
                             {jobs.length > 0 && <JobDescription job={jobs[selected]}/>}

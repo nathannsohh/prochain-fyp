@@ -141,7 +141,7 @@ export default function OwnJobCard(props: OwnJobCardProps) {
                     <Divider />
                     <Flex>
                         <Box width="42%" height="84vh" display="block" overflowY="scroll">
-                            <Jobs jobList={ownJobs} selected={selected} handleJobClick={handleJobClick}/>
+                            <Jobs jobList={ownJobs} selected={selected} handleJobClick={handleJobClick} isOwnJob={true}/>
                         </Box>
                         <Box width="58%">
                             {ownJobs.length > 0 && <EditableJobDescription job={ownJobs[selected]} onStatusUpdate={updateJobStatus} triggerToast={triggerToast} updateJob={getOwnJobs}/>}

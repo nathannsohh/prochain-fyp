@@ -4,7 +4,8 @@ import Job from "./Job"
 interface JobsProps {
     jobList: Array<number>
     selected: number,
-    handleJobClick: (index: number) => void
+    handleJobClick: (index: number) => void,
+    isOwnJob: boolean
 }
 
 export default function Jobs(props: JobsProps) {
@@ -12,7 +13,7 @@ export default function Jobs(props: JobsProps) {
         <Box>
            {
             props.jobList.map((job, index) => {
-                return <Job key={index} selected={props.selected === index} index={index} handleJobClick={props.handleJobClick} job={job}/>
+                return <Job key={index} selected={props.selected === index} index={index} handleJobClick={props.handleJobClick} job={job} isOwnJob={props.isOwnJob}/>
             })
            } 
         </Box>

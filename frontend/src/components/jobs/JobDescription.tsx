@@ -3,12 +3,16 @@ import { FaSuitcase } from "react-icons/fa6";
 import { FaBuilding } from "react-icons/fa";
 import { SiLevelsdotfyi } from "react-icons/si";
 import { COLOR_MAP } from "@/util/constants";
+import { useAppSelector } from "@/hooks/reduxHooks";
+import { MdPeopleAlt } from "react-icons/md";
 
 interface JobDescriptionProps {
     job: any
 }
 
 export default function JobDescription(props: JobDescriptionProps) {
+    const profileType: Number = useAppSelector((state) => state.profileType)
+
     return (
         <Box height="84vh" overflowY="scroll" p={5}>
            <Heading fontSize="23px" mb={1}>{props.job.job_title}</Heading>
@@ -28,7 +32,11 @@ export default function JobDescription(props: JobDescriptionProps) {
             <Icon as={SiLevelsdotfyi} boxSize={6} color="#666666" mr={1}/>
             <Text fontSize={14} colorScheme="green">{props.job.job_level}</Text>
            </HStack>
-           <Button colorScheme="blue" borderRadius={18} mt={6}>Apply</Button>
+           <HStack mt={3}>
+            <Icon as={MdPeopleAlt} boxSize={6} color="#666666" mr={1}/>
+            <Text fontSize={14} colorScheme="green">{props.job.appliedBy.length} {props.job.appliedBy.length == 1 ? "applicant" : "applicants"}</Text>
+           </HStack>
+           {profileType == 0 && <Button colorScheme="blue" borderRadius={18} mt={6}>Apply</Button>}
 
            <Box mt={7}>
             <Text fontSize={20} fontWeight="semibold">Job Description</Text>

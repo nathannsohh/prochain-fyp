@@ -5,9 +5,11 @@ import { SiLevelsdotfyi } from "react-icons/si";
 import { COLOR_MAP } from "@/util/constants";
 import { GrStatusGood } from "react-icons/gr";
 import { RxCrossCircled } from "react-icons/rx";
+import { MdEdit } from "react-icons/md";
 import useJobFactoryContract from "@/hooks/useJobFactoryContract";
 import { useState } from "react";
 import EditJobModal from "./EditJobModal";
+import { MdPeopleAlt } from "react-icons/md";
 
 interface EditableJobDescriptionProps {
     job: any,
@@ -18,6 +20,7 @@ interface EditableJobDescriptionProps {
 
 export default function EditableJobDescription(props: EditableJobDescriptionProps) {
     const [loading, setLoading] = useState<boolean>(false)
+    const [resetLoading, setResetLoading] = useState<boolean>(false)
     const { isOpen, onOpen, onClose } = useDisclosure()
 
     const jobFactoryContract = useJobFactoryContract()
@@ -33,6 +36,19 @@ export default function EditableJobDescription(props: EditableJobDescriptionProp
             console.error(e)
         } finally {
             setLoading(false)
+        }
+    }
+
+    const handleJobReset = async () => {
+        try {
+            setResetLoading(true)
+            await jobFactoryContract?.resetJob(props.job.id)
+            props.triggerToast("Success", "Job has been reset!", "success")
+        } catch (e) {
+            console.error(e)
+            props.triggerToast("Error", "An error occured and the job was not reset. Try again later.", "error")
+        } finally {
+            setResetLoading(false)
         }
     }
 
@@ -59,10 +75,15 @@ export default function EditableJobDescription(props: EditableJobDescriptionProp
             <Icon as={SiLevelsdotfyi} boxSize={6} color="#666666" mr={1}/>
             <Text fontSize={14} colorScheme="green">{props.job.job_level}</Text>
            </HStack>
+           <HStack mt={3}>
+            <Icon as={MdPeopleAlt} boxSize={6} color="#666666" mr={1}/>
+            <Text fontSize={14} colorScheme="green">{props.job.appliedBy.length} {props.job.appliedBy.length == 1 ? "applicant" : "applicants"}</Text>
+           </HStack>
 
            <HStack>
             <Button onClick={handleJobStatusChange} isLoading={loading} colorScheme={props.job.status == 0 ? "red" : "green"} borderRadius={18} mt={6} leftIcon={props.job.status == 1 ? <GrStatusGood /> : <RxCrossCircled />}>{props.job.status == 0 ? "Close Listing" : "Open Listing"}</Button>
-            <Button colorScheme="blue" borderRadius={18} mt={6} ml={2} onClick={onOpen}>Edit</Button>
+            <Button colorScheme="blue" borderRadius={18} mt={6} ml={2} onClick={handleJobReset} isLoading={resetLoading}>Reset</Button>
+            <Button colorScheme="blue" variant="outline" borderRadius={18} mt={6} ml={2} onClick={onOpen} leftIcon={<MdEdit />}>Edit</Button>
            </HStack>
 
            <Box mt={7}>

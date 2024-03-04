@@ -5,13 +5,32 @@ import { SiLevelsdotfyi } from "react-icons/si";
 import { COLOR_MAP } from "@/util/constants";
 import { useAppSelector } from "@/hooks/reduxHooks";
 import { MdPeopleAlt } from "react-icons/md";
+import { useState } from "react";
+import useJobFactoryContract from "@/hooks/useJobFactoryContract";
 
 interface JobDescriptionProps {
-    job: any
+    job: any,
+    onApply: () => void
 }
 
 export default function JobDescription(props: JobDescriptionProps) {
     const profileType: Number = useAppSelector((state) => state.profileType)
+    const ownProfile: ProfileState = useAppSelector((state) => state.ownProfile)
+    const jobFactoryContract = useJobFactoryContract()
+
+    const [loading, setLoading] = useState<boolean>()
+
+    const handleApply = async () => {
+        try {
+            setLoading(true)
+            await jobFactoryContract?.applyToJob(props.job.id)
+            props.onApply()
+        } catch (e) {
+            console.error(e)
+        } finally {
+            setLoading(false)
+        }
+    }
 
     return (
         <Box height="84vh" overflowY="scroll" p={5}>
@@ -36,7 +55,15 @@ export default function JobDescription(props: JobDescriptionProps) {
             <Icon as={MdPeopleAlt} boxSize={6} color="#666666" mr={1}/>
             <Text fontSize={14} colorScheme="green">{props.job.appliedBy.length} {props.job.appliedBy.length == 1 ? "applicant" : "applicants"}</Text>
            </HStack>
-           {profileType == 0 && <Button colorScheme="blue" borderRadius={18} mt={6}>Apply</Button>}
+           {profileType == 0 && 
+           <Button 
+           colorScheme="blue" 
+           borderRadius={18} 
+           mt={6} 
+           onClick={handleApply} 
+           isLoading={loading}
+           isDisabled={props.job.appliedBy.includes(ownProfile.wallet_address)}
+           >{props.job.appliedBy.includes(ownProfile.wallet_address) ? "Applied" : "Apply"}</Button>}
 
            <Box mt={7}>
             <Text fontSize={20} fontWeight="semibold">Job Description</Text>

@@ -8,6 +8,7 @@ import { getDetailsFromOrgAddress } from "@/util/user_util";
 import axios from "axios";
 import { API_URL, THE_GRAPH_URL } from "@/util/constants";
 import { convertToJobMap, getArrayOfJobHashes, getArrayOfJobOwners } from "@/util/util";
+import { useAppSelector } from "@/hooks/reduxHooks";
 
 interface JobCardProps {
     isOrganisation: boolean,
@@ -17,7 +18,8 @@ interface JobCardProps {
 export default function JobCard(props: JobCardProps) {
     const [selected, setSelected] = useState<number>(0)
     const [jobs, setJobs] = useState<any[]>([])
-
+    const ownProfile: ProfileState = useAppSelector((state) => state.ownProfile)
+    
     const handleJobClick = (index: number) => {
         setSelected(index)
     }
@@ -64,6 +66,13 @@ export default function JobCard(props: JobCardProps) {
         }
     }
 
+    const handleApply = () => {
+        setJobs(prevJobs => {
+            prevJobs[selected].appliedBy.push(ownProfile.wallet_address)
+            return prevJobs
+        })
+    }
+
     useEffect(() => {
         getJobs();
     }, [])
@@ -94,7 +103,7 @@ export default function JobCard(props: JobCardProps) {
                             <Jobs jobList={jobs} selected={selected} handleJobClick={handleJobClick} isOwnJob={false}/>
                         </Box>
                         <Box width="58%">
-                            {jobs.length > 0 && <JobDescription job={jobs[selected]}/>}
+                            {jobs.length > 0 && <JobDescription job={jobs[selected]} onApply={handleApply}/>}
                         </Box>
                     </Flex>
                 </CardBody>

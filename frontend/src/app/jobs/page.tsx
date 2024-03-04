@@ -10,8 +10,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function JobPage() {
-    const { state: { wallet, status } } = useMetamask();
-
     const profileType: Number = useAppSelector((state) => state.profileType)
     const [showMyJobs, setShowMyJobs] = useState<boolean>(false)
 

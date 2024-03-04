@@ -1,3 +1,4 @@
+import { useAppSelector } from "@/hooks/reduxHooks";
 import { Box, VStack, HStack, Text, IconButton, Button, Spacer, Center } from "@chakra-ui/react"
 import Image from "next/image"
 import { MdEdit } from "react-icons/md";
@@ -18,6 +19,8 @@ const formatAddress = (address: String | undefined): String | null => {
 }
 
 export default function ProfileHead(props: ProfileHeadProps) {
+    const profileType: Number = useAppSelector((state) => state.profileType)
+    
     return (
         <Box 
         width="100%" 
@@ -55,10 +58,10 @@ export default function ProfileHead(props: ProfileHeadProps) {
                 </Box>
                     <Spacer />
                     {props.ownProfile ? <IconButton onClick={ props.onEditProfile } icon={<MdEdit />} aria-label=""/> : 
-                    !props.isConnected ? <Button colorScheme="blue" variant="ghost" onClick={props.onConnect}>Connect +</Button> : 
+                    profileType == 0 && (!props.isConnected ? <Button colorScheme="blue" variant="ghost" onClick={props.onConnect}>Connect +</Button> : 
                     <Box bg="#EEEEEE" p={1} borderRadius="10px" pl="20px" pr="20px">
                         <Text fontSize="16px" color="#555353">Connected</Text>
-                    </Box>}
+                    </Box>)}
                 </HStack>
                 <Box bg="#C6EAFF" p={1} borderRadius="20px" pl="20px" pr="20px">
                     <Text fontSize="13px" fontWeight="bold" color="#818181">{formatAddress(props.userData?.wallet_address)}</Text>

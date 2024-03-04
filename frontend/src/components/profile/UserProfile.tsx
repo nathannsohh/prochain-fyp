@@ -22,6 +22,7 @@ export default function UserProfile(props: UserProfileProps) {
     const ownProfile: ProfileState = useAppSelector((state) => state.ownProfile)
     const {posts, connections, ...profile}: ProfileState = ownProfile
     const isOwnProfile: Boolean = profile.wallet_address !== null && profile.wallet_address === props.wallet_address
+    const profileType: Number = useAppSelector((state) => state.profileType)
     
     const [userData, setUserData] = useState<UserType | null>(isOwnProfile ? {
         first_name: profile.first_name!,
@@ -96,7 +97,7 @@ export default function UserProfile(props: UserProfileProps) {
                     profile_picture_hash: userProfile.profileImageHash,
                     profile_banner_hash: userProfile.profileHeaderHash
                 }
-                if (!isOwnProfile) {
+                if (!isOwnProfile && profileType == 0) {
                     const isConnection = await userFactoryContract?.isConnection(profile.wallet_address!, props.wallet_address)
                     setIsConnection(isConnection)
                 }

@@ -108,13 +108,35 @@ exports.organisationRoutes = (app) => {
         let response;
         try {
             const query = {
-                text: "UPDATE organisations SET company_name = $1, email = $2, bio = $3, location = $4, industry = $5 WHERE content_hash = $6 RETURNING content_hash",
-                values: [req.body.company_name, req.body.email, req.body.bio, req.body.location, req.body.industry, req.body.content_hash] 
+                text: "UPDATE organisations SET company_name = $1, email = $2, location = $3, industry = $4 WHERE content_hash = $5 RETURNING content_hash",
+                values: [req.body.company_name, req.body.email, req.body.location, req.body.industry, req.body.content_hash] 
             }
             const result = await db.query(query)
             response = {
                 success: true,
                 message: `Organisation of hash ${result.rows[0].content_hash} updated!`
+            }
+            res.status(200).send(response)
+        } catch (e) {
+            response = {
+                success: false,
+                message: e.message
+            }
+            res.status(400).send(response)
+        }
+    })
+
+    app.put('/organisation/about', async (req, res) => {
+        let response;
+        try {
+            const query = {
+                text: "UPDATE organisations SET bio = $1 WHERE wallet_address = $2 RETURNING wallet_address",
+                values: [req.body.about, req.body.wallet_address]
+            }
+            const result = await db.query(query)
+            response = {
+                success: true,
+                message: `About of Organisation of address ${result.rows[0].wallet_address} updated!`
             }
             res.status(200).send(response)
         } catch (e) {

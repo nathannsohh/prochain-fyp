@@ -125,4 +125,26 @@ exports.userRoutes = (app) => {
             res.status(400).send(response)
         }
     })
+
+    app.put('/user/about', async (req, res) => {
+        let response;
+        try {
+            const query = {
+                text: "UPDATE users SET about = $1 WHERE wallet_address = $2 RETURNING wallet_address",
+                values: [req.body.about, req.body.wallet_address]
+            }
+            const result = await db.query(query)
+            response = {
+                success: true,
+                message: `About of User of address ${result.rows[0].wallet_address} updated!`
+            }
+            res.status(200).send(response)
+        } catch (e) {
+            response = {
+                success: false,
+                message: e.message
+            }
+            res.status(400).send(response)
+        }
+    })
 }

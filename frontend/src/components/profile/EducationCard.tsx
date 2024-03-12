@@ -1,6 +1,4 @@
 import { Button, Card, CardBody, CardHeader, Center, HStack, Heading, Spacer, Text } from "@chakra-ui/react";
-import { Ropa_Sans } from "next/font/google";
-import { MdEdit } from "react-icons/md";
 import Education from "./Education";
 
 interface EducationCardProps {
@@ -13,7 +11,7 @@ interface EducationCardProps {
 
 export default function EducationCard(props: EducationCardProps) {
     return (
-        <Card pt={2} pb={0} borderRadius="20px" border="1px" borderColor="#C5C1C1" minHeight="215px" mb={4} overflow="hidden" bg="#FCFCFC">
+        <Card pt={1} pb={0} borderRadius="20px" border="1px" borderColor="#C5C1C1" minHeight="215px" mb={4} overflow="hidden" bg="#FCFCFC">
             <CardHeader pb={0} pl={6} pr={6}>
                 <HStack>
                     <Heading fontSize="23px" fontWeight="600">Education</Heading>

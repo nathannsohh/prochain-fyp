@@ -305,6 +305,14 @@ export const jobLevelList = [
 	"Senior-Level"
 ]
 
+export const educationTypes = [
+	"High School",
+	"Associate's Degree",
+	"Bachelor's Degree",
+	"Master's Degree",
+	"Doctoral Degree"
+]
+
 export const API_URL: string = "http://localhost:8002"
 export const THE_GRAPH_URL: string = "http://127.0.0.1:8000/subgraphs/name"
 export const IPFS_URL: string = "http://127.0.0.1:5001/api/v0"

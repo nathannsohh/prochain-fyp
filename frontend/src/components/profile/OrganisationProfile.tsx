@@ -12,6 +12,7 @@ import OrganisationProfileHead from "./OrganisationProfileHead";
 import ProfilePostCard from "./ProfilePostCard";
 import ProfileNewPostModal from "./ProfileNewPostModal";
 import EditOrgProfileModal from "./EditOrgProfileModal";
+import AboutCard from "./AboutCard";
 
 interface OrganisationProfileProps {
     wallet_address: string
@@ -176,6 +177,7 @@ export default function OrganisationProfile(props: OrganisationProfileProps) {
     return (
         <>
             <OrganisationProfileHead orgData={orgData} onEditProfile={editProfileModalOnOpen} followers={orgFollowers} ownProfile={isOwnProfile} isFollowed={isFollower} onFollow={followHandler} onUnfollow={unfollowHandler}/>
+            <AboutCard ownProfile={isOwnProfile} />
             <ProfilePostCard posts={orgPosts} profileName={orgData?.company_name!} ownProfile={isOwnProfile} onNewPost={newPostModalOnOpen}/>
             {newPostModalIsOpen && 
                 <ProfileNewPostModal 

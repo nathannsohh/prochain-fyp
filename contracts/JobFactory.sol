@@ -48,9 +48,9 @@ contract JobFactory {
         newJob.jobHash = _jobHash;
         newJob.owner = msg.sender;
         newJob.appliedBy = appliedBy;
-        newJob.status = JobsLibrary.JobStatus.OPEN;
+        newJob.status = JobsLibrary.JobStatus.CLOSED;
 
-        emit JobCreated(jobCount, _jobHash, msg.sender, 0);
+        emit JobCreated(jobCount, _jobHash, msg.sender, 1);
     }
 
     function getNumberOfApplications(uint _jobId) public view returns (uint) {

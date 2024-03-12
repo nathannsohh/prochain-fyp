@@ -36,6 +36,15 @@ interface OrganisationType {
   profile_banner_hash: string
 }
 
+interface EducationType {
+  school_name: string,
+  start: string,
+  end: string | null,
+  type: string,
+  field: string | null,
+  about: string | null
+}
+
 interface ProfileState {
   first_name: string | null,
   last_name: string | null,

@@ -15,6 +15,7 @@ import { updateSelf } from "@/redux_slices/profileSlice";
 import AboutCard from "./AboutCard";
 import EducationCard from "./EducationCard";
 import EducationModal from "./EducationModal";
+import EditAboutModal from "./EditAboutModal";
 
 interface UserProfileProps {
     wallet_address: string
@@ -29,15 +30,16 @@ export default function UserProfile(props: UserProfileProps) {
     
     const [userData, setUserData] = useState<UserType | null>(isOwnProfile ? {
         first_name: profile.first_name!,
-            last_name: profile.last_name!,
-            pronouns: profile.pronouns,
-            email: profile.email!,
-            wallet_address: profile.wallet_address!,
-            bio: profile.bio,
-            location: profile.location,
-            content_hash: profile.content_hash!,
-            profile_picture_hash: profile.profile_picture_hash!,
-            profile_banner_hash: profile.profile_banner_hash!
+        last_name: profile.last_name!,
+        pronouns: profile.pronouns,
+        email: profile.email!,
+        wallet_address: profile.wallet_address!,
+        bio: profile.bio,
+        location: profile.location,
+        content_hash: profile.content_hash!,
+        profile_picture_hash: profile.profile_picture_hash!,
+        profile_banner_hash: profile.profile_banner_hash!,
+        about: profile.about
     } : null)
     const [userPosts, setUserPosts] = useState<Array<PostType> | null>(isOwnProfile ? posts : null)
     const [userConnections, setUserConnections] = useState<Number | null>(isOwnProfile ? connections : null)
@@ -52,6 +54,7 @@ export default function UserProfile(props: UserProfileProps) {
     const { isOpen: newPostModalIsOpen, onOpen: newPostModalOnOpen, onClose: newPostModalOnClose } = useDisclosure();
     const { isOpen: editProfileModalIsOpen, onOpen: editProfileModalOnOpen, onClose: editProfileModalOnClose } = useDisclosure();
     const { isOpen: newEducationModalIsOpen, onOpen: newEducationModalOnOpen, onClose: newEducationModalOnClose } = useDisclosure();
+    const { isOpen: editAboutModalIsOpen, onOpen: editAboutModalOnOpen, onClose: editAboutModalOnClose } = useDisclosure();
 
 
     const getPostData = async () => {
@@ -76,7 +79,6 @@ export default function UserProfile(props: UserProfileProps) {
                 return {...post, content: postResult.data.posts[index].content, time_posted: postResult.data.posts[index].time_posted}
             })
             setUserPosts(consolidatedPosts)
-            // dispatch(updatePosts(consolidatedPosts))
         } catch (e) {
             console.error(e)
         }
@@ -101,7 +103,8 @@ export default function UserProfile(props: UserProfileProps) {
                     location: user.location,
                     content_hash: user.content_hash,
                     profile_picture_hash: userProfile.profileImageHash,
-                    profile_banner_hash: userProfile.profileHeaderHash
+                    profile_banner_hash: userProfile.profileHeaderHash,
+                    about: user.about
                 }
                 if (!isOwnProfile && profileType == 0) {
                     const isConnection = await userFactoryContract?.isConnection(profile.wallet_address!, props.wallet_address)
@@ -181,7 +184,8 @@ export default function UserProfile(props: UserProfileProps) {
                     location: profile.location,
                     content_hash: profile.content_hash!,
                     profile_picture_hash: profile.profile_picture_hash!,
-                    profile_banner_hash: profile.profile_banner_hash!
+                    profile_banner_hash: profile.profile_banner_hash!,
+                    about: profile.about
                 })
                 getNumberOfConnections()
             } else {
@@ -193,7 +197,7 @@ export default function UserProfile(props: UserProfileProps) {
     return (
         <>
             <ProfileHead userData={userData} onEditProfile={editProfileModalOnOpen} connections={userConnections} ownProfile={isOwnProfile} isConnected={isConnection} onConnect={connectHandler}/>
-            <AboutCard ownProfile={isOwnProfile} />
+            <AboutCard ownProfile={isOwnProfile} about={userData?.about!} onEdit={editAboutModalOnOpen}/>
             <ProfilePostCard posts={userPosts} profileName={userData?.first_name + ' ' + userData?.last_name} ownProfile={isOwnProfile} onNewPost={newPostModalOnOpen}/>
             <EducationCard ownProfile={isOwnProfile} onNewEducation={newEducationModalOnOpen} educationData={userEducation} triggerToast={triggerToast} onEducationUpdate={getEducationOfUser}/>
             {newPostModalIsOpen && 
@@ -222,6 +226,17 @@ export default function UserProfile(props: UserProfileProps) {
                     updateUserEducation={getEducationOfUser}
                     educationData={null}
                 />}
+            {editAboutModalIsOpen && 
+                <EditAboutModal
+                    isOpen={editAboutModalIsOpen}
+                    onClose={editAboutModalOnClose}
+                    triggerToast={triggerToast}
+                    userAddress={props.wallet_address}
+                    updateAbout={getUserDetails} 
+                    about={userData?.about!}
+                    profileType={0}
+                />
+            }
         </>
     )
 }

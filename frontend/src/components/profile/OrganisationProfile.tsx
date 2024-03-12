@@ -13,6 +13,7 @@ import ProfilePostCard from "./ProfilePostCard";
 import ProfileNewPostModal from "./ProfileNewPostModal";
 import EditOrgProfileModal from "./EditOrgProfileModal";
 import AboutCard from "./AboutCard";
+import EditAboutModal from "./EditAboutModal";
 
 interface OrganisationProfileProps {
     wallet_address: string
@@ -46,6 +47,7 @@ export default function OrganisationProfile(props: OrganisationProfileProps) {
 
     const { isOpen: newPostModalIsOpen, onOpen: newPostModalOnOpen, onClose: newPostModalOnClose } = useDisclosure();
     const { isOpen: editProfileModalIsOpen, onOpen:editProfileModalOnOpen, onClose: editProfileModalOnClose } = useDisclosure();
+    const { isOpen: editAboutModalIsOpen, onOpen: editAboutModalOnOpen, onClose: editAboutModalOnClose } = useDisclosure();
 
     const getPostData = async () => {
         const graphqlQuery = {
@@ -177,7 +179,7 @@ export default function OrganisationProfile(props: OrganisationProfileProps) {
     return (
         <>
             <OrganisationProfileHead orgData={orgData} onEditProfile={editProfileModalOnOpen} followers={orgFollowers} ownProfile={isOwnProfile} isFollowed={isFollower} onFollow={followHandler} onUnfollow={unfollowHandler}/>
-            <AboutCard ownProfile={isOwnProfile} />
+            <AboutCard ownProfile={isOwnProfile} about={orgData?.bio!} onEdit={editAboutModalOnOpen}/>
             <ProfilePostCard posts={orgPosts} profileName={orgData?.company_name!} ownProfile={isOwnProfile} onNewPost={newPostModalOnOpen}/>
             {newPostModalIsOpen && 
                 <ProfileNewPostModal 
@@ -195,6 +197,17 @@ export default function OrganisationProfile(props: OrganisationProfileProps) {
                     orgData={orgData!} 
                     updateOrgData={updateOrgData}
                     followers={orgFollowers}/>}
+            {editAboutModalIsOpen && 
+                <EditAboutModal
+                    isOpen={editAboutModalIsOpen}
+                    onClose={editAboutModalOnClose}
+                    triggerToast={triggerToast}
+                    userAddress={props.wallet_address}
+                    updateAbout={getOrgDetails} 
+                    about={orgData?.bio!}
+                    profileType={1}
+                />
+            }
         </>
     )
 }

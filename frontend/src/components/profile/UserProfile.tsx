@@ -12,6 +12,9 @@ import axios from "axios";
 import { API_URL, THE_GRAPH_URL } from "@/util/constants";
 import { useMetamask } from "@/hooks/useMetamask";
 import { updateSelf } from "@/redux_slices/profileSlice";
+import AboutCard from "./AboutCard";
+import EducationCard from "./EducationCard";
+import EducationModal from "./EducationModal";
 
 interface UserProfileProps {
     wallet_address: string
@@ -38,6 +41,7 @@ export default function UserProfile(props: UserProfileProps) {
     } : null)
     const [userPosts, setUserPosts] = useState<Array<PostType> | null>(isOwnProfile ? posts : null)
     const [userConnections, setUserConnections] = useState<Number | null>(isOwnProfile ? connections : null)
+    const [userEducation, setUserEducation] = useState<any[]>([])
     const [isConnection, setIsConnection] = useState<Boolean | null>(null)
     const userFactoryContract: Contract | null = useUserFactoryContract();
     const toast = useToast()
@@ -46,7 +50,9 @@ export default function UserProfile(props: UserProfileProps) {
     const dispatch = useAppDispatch()
 
     const { isOpen: newPostModalIsOpen, onOpen: newPostModalOnOpen, onClose: newPostModalOnClose } = useDisclosure();
-    const { isOpen: editProfileModalIsOpen, onOpen:editProfileModalOnOpen, onClose: editProfileModalOnClose } = useDisclosure();
+    const { isOpen: editProfileModalIsOpen, onOpen: editProfileModalOnOpen, onClose: editProfileModalOnClose } = useDisclosure();
+    const { isOpen: newEducationModalIsOpen, onOpen: newEducationModalOnOpen, onClose: newEducationModalOnClose } = useDisclosure();
+
 
     const getPostData = async () => {
         const graphqlQuery = {
@@ -119,6 +125,21 @@ export default function UserProfile(props: UserProfileProps) {
         }
     }
 
+    const getEducationOfUser = async () => {
+        try {
+            let response = await axios.get(`${API_URL}/education/${props.wallet_address}`)
+            response.data.education.sort((a: any, b: any) => {
+                const dateA = new Date(a.start) as any;
+                const dateB = new Date(b.start) as any;
+            
+                return dateB - dateA;
+            });
+            setUserEducation(response.data.education)
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
     const triggerToast = (title: string, description: string, status: "loading" | "info" | "warning" | "success" | "error" | undefined) => {
         toast({
             title: title,
@@ -148,6 +169,7 @@ export default function UserProfile(props: UserProfileProps) {
     useEffect(() => {
         if (status === "idle" && wallet !== null) {
             getPostData()
+            getEducationOfUser()
             if (isOwnProfile) {
                 setUserData({
                     first_name: profile.first_name!,
@@ -171,7 +193,9 @@ export default function UserProfile(props: UserProfileProps) {
     return (
         <>
             <ProfileHead userData={userData} onEditProfile={editProfileModalOnOpen} connections={userConnections} ownProfile={isOwnProfile} isConnected={isConnection} onConnect={connectHandler}/>
+            <AboutCard ownProfile={isOwnProfile} />
             <ProfilePostCard posts={userPosts} profileName={userData?.first_name + ' ' + userData?.last_name} ownProfile={isOwnProfile} onNewPost={newPostModalOnOpen}/>
+            <EducationCard ownProfile={isOwnProfile} onNewEducation={newEducationModalOnOpen} educationData={userEducation} triggerToast={triggerToast} onEducationUpdate={getEducationOfUser}/>
             {newPostModalIsOpen && 
                 <ProfileNewPostModal 
                     isOpen={newPostModalIsOpen} 
@@ -189,6 +213,15 @@ export default function UserProfile(props: UserProfileProps) {
                     userData={userData!} 
                     updateUserData={updateUserData}
                     connections={userConnections}/>}
+            {newEducationModalIsOpen && 
+                <EducationModal 
+                    isOpen={newEducationModalIsOpen}
+                    onClose={newEducationModalOnClose}
+                    triggerToast={triggerToast}
+                    userAddress={userData?.wallet_address!}
+                    updateUserEducation={getEducationOfUser}
+                    educationData={null}
+                />}
         </>
     )
 }

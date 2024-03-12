@@ -14,7 +14,8 @@ export const profileSlice = createSlice({
         content_hash: null,
         profile_picture_hash: null,
         profile_banner_hash: null,
-        posts: null
+        posts: null,
+        about: null
     } as ProfileState,
     reducers: {
         updateSelf: (state, action: PayloadAction<UserStateType>) => {
@@ -30,6 +31,7 @@ export const profileSlice = createSlice({
             state.content_hash = user.content_hash
             state.profile_banner_hash = user.profile_banner_hash
             state.profile_picture_hash = user.profile_picture_hash
+            state.about = user.about
         },
         removeSelf: (state) => {
             state.first_name = null
@@ -44,6 +46,7 @@ export const profileSlice = createSlice({
             state.posts = null
             state.profile_banner_hash = null
             state.profile_picture_hash = null
+            state.about = null
         },
         updatePosts: (state, action: PayloadAction<Array<PostType>>) => {
             state.posts = action.payload

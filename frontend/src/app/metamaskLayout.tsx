@@ -68,7 +68,8 @@ const MetamaskLayout = ({ children }: { children: React.ReactNode }) => {
                     location: user.location,
                     content_hash: user.content_hash,
                     profile_picture_hash: userProfile.profileImageHash,
-                    profile_banner_hash: userProfile.profileHeaderHash
+                    profile_banner_hash: userProfile.profileHeaderHash,
+                    about: user.about
                 }
                 reduxDispatch(updateSelf({... userDetails, connections: numOfConnections}))
                 setCurrentWallet(user.wallet_address)

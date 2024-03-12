@@ -21,7 +21,8 @@ interface UserType {
   location: string | null,
   content_hash: string,
   profile_picture_hash: string,
-  profile_banner_hash: string
+  profile_banner_hash: string,
+  about: string | null
 }
 
 interface OrganisationType {
@@ -58,6 +59,7 @@ interface ProfileState {
   profile_picture_hash: string | null,
   profile_banner_hash: string | null,
   posts: Array<PostType> | null
+  about: string | null
 }
 
 interface UserStateType  {
@@ -71,7 +73,8 @@ interface UserStateType  {
   connections: Number,
   content_hash: string,
   profile_picture_hash: string,
-  profile_banner_hash: string
+  profile_banner_hash: string,
+  about: string | null
 }
 
 interface OrganisationProfileState {

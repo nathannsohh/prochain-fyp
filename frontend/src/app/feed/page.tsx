@@ -36,7 +36,8 @@ const Feed = () => {
             location: profile.location,
             content_hash: profile.content_hash!,
             profile_picture_hash: profile.profile_picture_hash!,
-            profile_banner_hash: profile.profile_banner_hash!
+            profile_banner_hash: profile.profile_banner_hash!,
+            about: profile.about
     } : null)
     const [shownPosts, setShownPosts] = useState<Array<FeedPostType>>([])
 
@@ -54,7 +55,8 @@ const Feed = () => {
             location: profile.location,
             content_hash: profile.content_hash!,
             profile_picture_hash: profile.profile_picture_hash!,
-            profile_banner_hash: profile.profile_banner_hash!
+            profile_banner_hash: profile.profile_banner_hash!,
+            about: profile.about
         })
     }, [wallet, status, ownProfile])
 

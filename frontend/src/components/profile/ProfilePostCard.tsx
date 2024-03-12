@@ -12,12 +12,12 @@ export default function ProfilePostCard(props: ProfilePostCardProps) {
     const hasPosts: Boolean = props.posts === null ? false : props.posts.length > 0 
 
     return ( 
-        <Card pt={2} pb={0} borderRadius="20px" border="1px" borderColor="#C5C1C1" minHeight="215px" maxHeight="450px" mb={3} overflow="hidden" bg="#FCFCFC">
+        <Card pt={2} pb={0} borderRadius="20px" border="1px" borderColor="#C5C1C1" minHeight="215px" maxHeight="450px" mb={4} overflow="hidden" bg="#FCFCFC">
             <CardHeader pb={0} pl={6} pr={6}>
                 <HStack>
                     <Heading fontSize="23px" fontWeight="600">Posts</Heading>
                     <Spacer />
-                    <Button colorScheme="blue" onClick={props.onNewPost}>+ New Post</Button>
+                    {props.ownProfile && <Button colorScheme="blue" onClick={props.onNewPost}>+ New Post</Button>}
                 </HStack>
             </CardHeader>
             <CardBody p={0}>

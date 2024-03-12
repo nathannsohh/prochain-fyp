@@ -94,7 +94,7 @@ export default function OrganisationProfile(props: OrganisationProfileProps) {
                     profile_picture_hash: orgProfile.profileImageHash,
                     profile_banner_hash: orgProfile.profileHeaderHash
                 }
-                if (!isOwnProfile) {
+                if (!isOwnProfile && profile.company_name !== null) {
                     const isConnection = await userFactoryContract?.isFollower(profile.wallet_address!, props.wallet_address)
                     setIsFollower(isConnection)
                 }
@@ -155,7 +155,7 @@ export default function OrganisationProfile(props: OrganisationProfileProps) {
     useEffect(() => {
         if (status === "idle" && wallet !== null) {
             getPostData()
-            if (isOwnProfile) {
+            if (isOwnProfile && profile.company_name !== null) {
                 setOrgData({
                     company_name: profile.company_name!,
                     industry: profile.industry!,
@@ -169,7 +169,7 @@ export default function OrganisationProfile(props: OrganisationProfileProps) {
                 })
                 getNumberOfFollowers()
             } else {
-                getOrgDetails();
+                getOrgDetails()
             }
         }
     }, [wallet, status])

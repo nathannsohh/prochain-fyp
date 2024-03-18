@@ -10,3 +10,5 @@ subgraphs/subgraph_user/artifacts
 subgraphs/subgraph_user/build
 subgraphs/subgraph_job/artifacts
 subgraphs/subgraph_job/build
+subgraphs/subgraph_job_experience/artifacts
+subgraphs/subgraph_job_experience/build

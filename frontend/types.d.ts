@@ -46,6 +46,43 @@ interface EducationType {
   about: string | null
 }
 
+interface WorkExperienceType {
+  company_name: string,
+  start: string,
+  end: string | null,
+  title: string,
+  about: string | null,
+  type: string
+}
+
+interface WorkExperience {
+  id: string,
+  company_name: string,
+  start: string,
+  end: string,
+  title: string,
+  about: string | null,
+  type: string,
+  company_image_hash: string | null,
+  status: "0" | "1" | "2",
+  company_address: string,
+  content_hash: string
+}
+
+interface Verification {
+  id: string,
+  start: string,
+  end: string,
+  title: string,
+  about: string | null,
+  type: string,
+  user_image_hash: string | null,
+  user_name: string | null,
+  status: "0" | "1" | "2",
+  user_address: string,
+  content_hash: string
+}
+
 interface ProfileState {
   first_name: string | null,
   last_name: string | null,

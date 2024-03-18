@@ -6,6 +6,7 @@ import { AiFillHome } from "react-icons/ai";
 import { FaUserFriends } from "react-icons/fa";
 import { BsFillSuitcaseLgFill } from "react-icons/bs";
 import { FaUserCircle } from "react-icons/fa";
+import { FaCheckCircle } from "react-icons/fa";
 import RoutingButton from './RoutingButton.js'
 import WalletPopover from "./WalletPopover";
 import { useRouter } from "next/navigation.js";
@@ -46,7 +47,7 @@ export default function MainHeader(props: MainHeaderProps) {
                     <RoutingButton icon={<AiFillHome size={25}/>} label="Home" route="/feed"/>
                     {!props.isOrganisation && <RoutingButton icon={<FaUserFriends size={26}/>} label="My Network" route="/network"/>}
                     <RoutingButton icon={<BsFillSuitcaseLgFill size={25}/>} label="Jobs" route="/jobs"/>
-                    {/* {/* <RoutingButton icon={<BiSolidMessageDetail size={25}/>} label="Messages" route="/feed"/> */}
+                    {props.isOrganisation && <RoutingButton icon={<FaCheckCircle size={25}/>} label="Verify" route="/verify"/>}
                     <WalletPopover wallet={props.wallet}/>
                     <RoutingButton icon={<FaUserCircle size={25}/>} label="Me" route={`/profile/${props.wallet}`}/>
                 </HStack> 

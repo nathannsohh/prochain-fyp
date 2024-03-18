@@ -47,6 +47,7 @@ export async function getDetailsFromUserAddress(addresses: Array<string>): Promi
     try {
         const users = await axios.post(`${THE_GRAPH_URL}/users`, graphqlQueryUsers)
         const orgs = await axios.post(`${THE_GRAPH_URL}/users`, graphqlQueryOrgs)
+        console.log(users)
         let userDataHashArray = []
         let profileImageMap = new Map<string, string>()
         for (const user of users.data.data.users) {

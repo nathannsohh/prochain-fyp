@@ -14,6 +14,14 @@ export const getArrayOfJobHashes = (jobData: any): Array<string>  => {
     return jobHashArray
 }
 
+export const getArrayOfJobExperience = (jobExpData: any[]): string[] => {
+    let jobExpHashArray = []
+    for (const jobExp of jobExpData) {
+        jobExpHashArray.push(`"${jobExp.jobExpHash}"`)
+    }
+    return jobExpHashArray
+}
+
 export const getArrayOfJobOwners = (jobData: any): Array<string>  => {
     let jobOwnerArray = []
     for (const job of jobData) {

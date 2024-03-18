@@ -7,6 +7,7 @@ const Comment = require('./routes/comments.js')
 const Organisation = require('./routes/organisations.js')
 const Job = require('./routes/jobs.js')
 const Education = require('./routes/education.js')
+const JobExperience = require('./routes/job_experience.js')
 
 const app = express()
 app.use(express.json())
@@ -24,6 +25,7 @@ Comment.commentRoutes(app)
 Organisation.organisationRoutes(app)
 Job.jobsRoutes(app)
 Education.educationRoutes(app)
+JobExperience.jobExperienceRoutes(app)
 
 app.listen(port, () => {
   console.log(`ProChain server listening on port ${port}`)

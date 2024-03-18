@@ -36,6 +36,28 @@ exports.organisationRoutes = (app) => {
         }
     })
 
+    app.get('/organisation/query/:query', async (req, res) => {
+        let response;
+        try {
+            const query = {
+                text: `SELECT company_name, wallet_address FROM organisations WHERE company_name ILIKE $1`,
+                values: [`${req.params.query}%`]
+            }
+            const result = await db.query(query)
+            response = {
+                success: true,
+                orgs: result.rows
+            }
+            res.status(200).send(response)
+        } catch (e) {
+            response = {
+                success: false,
+                message: e.message
+            }
+            res.status(400).send(response)
+        }
+    })
+
     app.get('/organisation/:hash', async (req, res) => {
         let response;
         try {
@@ -147,4 +169,6 @@ exports.organisationRoutes = (app) => {
             res.status(400).send(response)
         }
     })
+
+    
 }

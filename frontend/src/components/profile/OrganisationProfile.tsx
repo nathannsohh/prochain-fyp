@@ -23,7 +23,7 @@ export default function OrganisationProfile(props: OrganisationProfileProps) {
     const { state: { wallet, status } } = useMetamask();
     const ownProfile: OrganisationProfileState = useAppSelector((state) => state.orgProfile)
     const {posts, followers, ...profile}: OrganisationProfileState = ownProfile
-    const isOwnProfile: Boolean = profile.wallet_address !== null && profile.wallet_address === props.wallet_address
+    const isOwnProfile: Boolean = wallet === props.wallet_address
     
     const [orgData, setOrgData] = useState<OrganisationType | null>(isOwnProfile ? {
         company_name: profile.company_name!,
@@ -99,7 +99,7 @@ export default function OrganisationProfile(props: OrganisationProfileProps) {
                     followers: numOfFollowers
                 }
                 if (!isOwnProfile && profile.company_name !== null) {
-                    const isConnection = await userFactoryContract?.isFollower(profile.wallet_address!, props.wallet_address)
+                    const isConnection = await userFactoryContract?.isFollower(profile.wallet_address!, wallet)
                     setIsFollower(isConnection)
                 }
                 dispatch(updateSelf(orgDetails))

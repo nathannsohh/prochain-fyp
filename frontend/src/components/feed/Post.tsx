@@ -201,7 +201,7 @@ export default function Post(props: PostProps) {
                             <Text fontSize={13} color="#7D7D7D" height={5}>{getTimeDifference(props.data.time_posted)}</Text>
                         </VStack>
                     </HStack>
-                    <Text mt={3} noOfLines={isSeeMore ? undefined : 3} ref={containerRef}>
+                    <Text mt={3} noOfLines={isSeeMore ? undefined : 3} ref={containerRef} whiteSpace="pre-wrap">
                         {props.data.content}
                     </Text>
                     {isTruncated && !isSeeMore && <Button variant="link" onClick={seeMoreHandler}>See more...</Button>}

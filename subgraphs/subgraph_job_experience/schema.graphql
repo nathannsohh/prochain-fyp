@@ -1,0 +1,8 @@
+type JobExperience @entity {
+  id: ID!
+  jobExpId: BigInt!
+  jobExpHash: String!
+  owner: Bytes!
+  orgAddress: Bytes!
+  status: BigInt!
+}

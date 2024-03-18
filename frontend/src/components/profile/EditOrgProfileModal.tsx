@@ -73,38 +73,69 @@ export default function EditOrgProfileModal(props: EditOrgProfileModalProps) {
             }
 
             // handle update of profile picture
-            if (newProfileImage) {
-                const formData = new FormData();
+            if (newProfileImage && newProfileBanner) {
+                let formData = new FormData();
                 formData.append('file', newProfileImage);
 
-                const response = await axios.post(`${IPFS_URL}/add`, formData, {
+                let response = await axios.post(`${IPFS_URL}/add`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 })
-                if (response.data.Hash) {
-                    await userFactoryContract?.setOrgProfileImageHash(props.orgData.wallet_address, response.data.Hash)
-                    showToast = true
-                    body = {...body, profile_picture_hash: response.data.Hash}
-                }
-            }
-            
-            // handle update of profile banner
-            if (newProfileBanner) {
-                const formData = new FormData();
+                const profileImageHash = response.data.Hash;
+
+                formData = new FormData();
                 formData.append('file', newProfileBanner);
 
-                const response = await axios.post(`${IPFS_URL}/add`, formData, {
+                response = await axios.post(`${IPFS_URL}/add`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 })
-                if (response.data.Hash) {
-                    await userFactoryContract?.setOrgProfileHeaderHash(props.orgData.wallet_address, response.data.Hash)
-                    showToast = true
-                    body = {...body, profile_banner_hash: response.data.Hash}
+                const profileHeaderHash = response.data.Hash;
+
+                await userFactoryContract?.setOrgProfileHeaderAndImageHash(props.orgData.wallet_address, profileImageHash, profileHeaderHash);
+                showToast = true
+                body = {
+                    ...body,
+                    profile_banner_hash: profileHeaderHash,
+                    profile_picture_hash: profileImageHash
+                }
+            } else {
+                if (newProfileImage) {
+                    const formData = new FormData();
+                    formData.append('file', newProfileImage);
+    
+                    const response = await axios.post(`${IPFS_URL}/add`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                    if (response.data.Hash) {
+                        await userFactoryContract?.setOrgProfileImageHash(props.orgData.wallet_address, response.data.Hash)
+                        showToast = true
+                        body = {...body, profile_picture_hash: response.data.Hash}
+                    }
+                }
+                
+                // handle update of profile banner
+                if (newProfileBanner) {
+                    const formData = new FormData();
+                    formData.append('file', newProfileBanner);
+    
+                    const response = await axios.post(`${IPFS_URL}/add`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                    if (response.data.Hash) {
+                        await userFactoryContract?.setOrgProfileHeaderHash(props.orgData.wallet_address, response.data.Hash)
+                        showToast = true
+                        body = {...body, profile_banner_hash: response.data.Hash}
+                    }
                 }
             }
+
             props.updateOrgData(body)
 
             if (showToast) {

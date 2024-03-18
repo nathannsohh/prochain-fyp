@@ -72,38 +72,68 @@ export default function EditProfileModal(props: EditProfileModalProps) {
             }
 
             // handle update of profile picture
-            if (newProfileImage) {
-                const formData = new FormData();
+            if (newProfileImage && newProfileBanner) {
+                let formData = new FormData();
                 formData.append('file', newProfileImage);
 
-                const response = await axios.post(`${IPFS_URL}/add`, formData, {
+                let response = await axios.post(`${IPFS_URL}/add`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 })
-                if (response.data.Hash) {
-                    await userFactoryContract?.setProfileImageHash(props.userData.wallet_address, response.data.Hash)
-                    showToast = true
-                    body = {...body, profile_picture_hash: response.data.Hash}
+                const profileImageHash = response.data.Hash;
+                formData = new FormData();
+                formData.append('file', newProfileBanner);
+                
+                response = await axios.post(`${IPFS_URL}/add`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                const profileHeaderHash = response.data.Hash;
+
+                await userFactoryContract?.setProfileHeaderAndImageHash(props.userData.wallet_address, profileImageHash, profileHeaderHash);
+                showToast = true
+                body = {
+                    ...body,
+                    profile_banner_hash: profileHeaderHash,
+                    profile_picture_hash: profileImageHash
+                }
+            } else {
+                if (newProfileImage) {
+                    const formData = new FormData();
+                    formData.append('file', newProfileImage);
+    
+                    const response = await axios.post(`${IPFS_URL}/add`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                    if (response.data.Hash) {
+                        await userFactoryContract?.setProfileImageHash(props.userData.wallet_address, response.data.Hash)
+                        showToast = true
+                        body = {...body, profile_picture_hash: response.data.Hash}
+                    }
+                }
+                // handle update of profile banner
+                if (newProfileBanner) {
+                    const formData = new FormData();
+                    formData.append('file', newProfileBanner);
+    
+                    const response = await axios.post(`${IPFS_URL}/add`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                    if (response.data.Hash) {
+                        await userFactoryContract?.setProfileHeaderHash(props.userData.wallet_address, response.data.Hash)
+                        showToast = true
+                        body = {...body, profile_banner_hash: response.data.Hash}
+                    }
                 }
             }
             
-            // handle update of profile banner
-            if (newProfileBanner) {
-                const formData = new FormData();
-                formData.append('file', newProfileBanner);
-
-                const response = await axios.post(`${IPFS_URL}/add`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                })
-                if (response.data.Hash) {
-                    await userFactoryContract?.setProfileHeaderHash(props.userData.wallet_address, response.data.Hash)
-                    showToast = true
-                    body = {...body, profile_banner_hash: response.data.Hash}
-                }
-            }
+            
             props.updateUserData(body)
 
             if (showToast) {
@@ -111,6 +141,7 @@ export default function EditProfileModal(props: EditProfileModalProps) {
             }
             props.onClose()
         } catch (e) {
+            console.error(e)
             props.triggerToast("Error", "Something went wrong and your profile was not updated.", "error")
         }
     }

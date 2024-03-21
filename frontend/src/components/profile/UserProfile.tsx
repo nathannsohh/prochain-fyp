@@ -116,7 +116,7 @@ export default function UserProfile(props: UserProfileProps) {
                 return {
                     id: exp.id,
                     company_address: exp.orgAddress,
-                    company_name: jobExpDetails.get(exp.jobExpHash).company_name,
+                    company_name: exp.orgAddress === ethers.ZeroAddress ? jobExpDetails.get(exp.jobExpHash).company_name : orgDetails?.get(exp.orgAddress)?.company_name,
                     start: jobExpDetails.get(exp.jobExpHash).start,
                     end: jobExpDetails.get(exp.jobExpHash).end,
                     title: jobExpDetails.get(exp.jobExpHash).title,

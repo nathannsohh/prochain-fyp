@@ -6,7 +6,7 @@ export const useListen = () => {
 
   return () => {
     window.ethereum.on("accountsChanged", async (newAccounts: string[]) => {
-      if (newAccounts.length > 0) {
+      if (newAccounts.length > 0 && provider !== null) {
         // upon receiving a new wallet, we'll request again the balance to synchronize the UI.
         const newBalance = await window.ethereum!.request({
           method: "eth_getBalance",
@@ -18,7 +18,7 @@ export const useListen = () => {
           wallet: newAccounts[0],
           balance: newBalance,
           provider: provider!,
-          signer: signer!
+          signer: await provider!.getSigner()
         });
       } else {
         // if the length is 0, then the user has disconnected from the wallet UI

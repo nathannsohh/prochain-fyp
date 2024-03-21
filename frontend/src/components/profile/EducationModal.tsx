@@ -90,7 +90,7 @@ export default function NewEducationModal(props: EducationModalProps) {
         <Modal isOpen={props.isOpen} onClose={props.onClose}>
             <ModalOverlay />
             <ModalContent maxW="50%">
-                <ModalHeader>Add Education</ModalHeader>
+                <ModalHeader>{props.educationData !== null ? "Edit Education" : "Add Education"}</ModalHeader>
                 <ModalCloseButton />
                 <form onSubmit={handleSubmit(submitHandler)}>
                     <ModalBody>

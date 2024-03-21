@@ -124,7 +124,7 @@ export default function WorkExperienceModal(props: WorkExperienceModalProps) {
         <Modal isOpen={props.isOpen} onClose={props.onClose}>
             <ModalOverlay />
             <ModalContent maxW="50%">
-                <ModalHeader>Add Work Experience</ModalHeader>
+                <ModalHeader>{props.workExperienceData !== null ? "Edit" : "Add"} Work Experience</ModalHeader>
                 <ModalCloseButton />
                 <form onSubmit={handleSubmit(submitHandler)} autoComplete="off">
                     <ModalBody>

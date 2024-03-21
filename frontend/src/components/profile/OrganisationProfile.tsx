@@ -98,11 +98,11 @@ export default function OrganisationProfile(props: OrganisationProfileProps) {
                     profile_banner_hash: orgProfile.profileHeaderHash,
                     followers: numOfFollowers
                 }
-                if (!isOwnProfile && profile.company_name !== null) {
-                    const isConnection = await userFactoryContract?.isFollower(profile.wallet_address!, wallet)
+                if (!isOwnProfile && orgDetails.company_name !== null) {
+                    const isConnection = await userFactoryContract?.isFollower(orgDetails.wallet_address, wallet)
                     setIsFollower(isConnection)
                 }
-                dispatch(updateSelf(orgDetails))
+                if (isOwnProfile) dispatch(updateSelf(orgDetails))
                 setOrgData(orgDetails)
                 setOrgFollowers(numOfFollowers)
             }

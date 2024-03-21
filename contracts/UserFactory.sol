@@ -30,6 +30,11 @@ contract UserFactory {
         _;
     }
 
+    modifier walletMustExist(address _walletAddress) {
+        require(users[_walletAddress].exists || organisations[_walletAddress].exists, "Wallet does not exist!");
+        _;
+    }
+
     // ############################## UTILITY FUNCTIONS ############################## 
 
     function doesWalletExist(address _walletAddress) public view returns (bool) {
@@ -155,7 +160,7 @@ contract UserFactory {
         return OrganisationsLibrary.getNumberOfFollowers(organisations[_orgWallet]);
     }
 
-    function isFollower(address _orgWallet, address _userWallet) public view userMustExist(_userWallet) organisationMustExist(_orgWallet) returns (bool) {
+    function isFollower(address _orgWallet, address _userWallet) public view walletMustExist(_userWallet) organisationMustExist(_orgWallet) returns (bool) {
         return OrganisationsLibrary.isFollower(organisations[_orgWallet], _userWallet);
     }
 

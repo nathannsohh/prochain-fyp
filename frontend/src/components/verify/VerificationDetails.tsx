@@ -1,4 +1,4 @@
-import { Avatar, Badge, Box, Button, Flex, HStack, Heading, Icon, Spacer, Text } from "@chakra-ui/react";
+import { Avatar, Box, Button, Flex, HStack, Heading, Spacer, Text, useToast } from "@chakra-ui/react";
 import { useState } from "react";
 
 import useJobExperienceFactoryContract from "@/hooks/useJobExperienceFactoryContract";
@@ -12,15 +12,29 @@ export default function VerificationDetails(props: VerificationDetailsProps) {
 
     const [verifyLoading, setVerifyLoading] = useState<boolean>()
     const [rejectLoading, setRejectLoading] = useState<boolean>()
+    const toast = useToast()
     const jobExperienceFactoryContract = useJobExperienceFactoryContract()
+
+    const triggerToast = (title: string, description: string, status: "loading" | "info" | "warning" | "success" | "error" | undefined) => {
+        toast({
+            title: title,
+            description: description,
+            status: status,
+            duration: 4000,
+            variant: 'subtle',
+            position: 'bottom-left'
+        })
+    }
 
     const handleVerify = async () => {
         try {
             setVerifyLoading(true)
             await jobExperienceFactoryContract?.verifyExperience(Number(props.verification.id))
-            props.onRejectOrUpdate()
+            await props.onRejectOrUpdate()
+            triggerToast("Success", "Job Experience successfully verified!", "success")
         } catch (e) {
             console.error(e)
+            triggerToast("Error", "An error occured. Please try again later.", "error")
         } finally {
             setVerifyLoading(false)
         }
@@ -30,11 +44,13 @@ export default function VerificationDetails(props: VerificationDetailsProps) {
         try {
             setRejectLoading(true)
             await jobExperienceFactoryContract?.rejectExperience(Number(props.verification.id))
-            props.onRejectOrUpdate()
+            await props.onRejectOrUpdate()
+            triggerToast("Success", "Job Experience successfully rejected!", "success")
         } catch (e) {
             console.error(e)
+            triggerToast("Error", "An error occured. Please try again later.", "error")
         } finally {
-            setVerifyLoading(false)
+            setRejectLoading(false)
         }
     }
 

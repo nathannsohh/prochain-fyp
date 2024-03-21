@@ -1,21 +1,17 @@
-import { Card, CardBody, Grid, Box, HStack, Flex, Input, Button, Divider, InputGroup, InputLeftElement } from "@chakra-ui/react";
+import { Card, CardBody, Box, Flex } from "@chakra-ui/react";
 import Verification from "./Verification";
 import { useEffect, useState } from "react";
 import VerificationDetails from "./VerificationDetails";
-import { FiSearch } from "react-icons/fi";
-import { FaLocationDot } from "react-icons/fa6";
-import { getArrayOfDetailsFromUserAddress, getDetailsFromOrgAddress, getDetailsFromUserAddress } from "@/util/user_util";
+import { getDetailsFromUserAddress } from "@/util/user_util";
 import axios from "axios";
 import { API_URL, THE_GRAPH_URL } from "@/util/constants";
-import { convertToJobMap, getArrayOfJobExperience, getArrayOfJobHashes, getArrayOfJobOwners } from "@/util/util";
-import { useAppSelector } from "@/hooks/reduxHooks";
+import { getArrayOfJobExperience } from "@/util/util";
 import { useMetamask } from "@/hooks/useMetamask";
 
 export default function VerifyCard() {
     const { state: { wallet } } = useMetamask();
     const [selected, setSelected] = useState<number>(0)
     const [verifications, setVerifications] = useState<Verification[]>([])
-    const ownProfile: ProfileState = useAppSelector((state) => state.ownProfile)
     
     const handleJobClick = (index: number) => {
         setSelected(index)
@@ -76,9 +72,8 @@ export default function VerifyCard() {
     }
 
     useEffect(() => {
-        console.log("Test")
         getVerifications();
-    }, [])
+    }, [wallet])
 
     return (
         <Box flex={1} height="91vh">

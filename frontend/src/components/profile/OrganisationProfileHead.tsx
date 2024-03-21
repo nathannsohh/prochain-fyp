@@ -15,9 +15,8 @@ interface OrganisationProfileHeadProps {
 const formatAddress = (address: String | undefined): String | null => {
     if (address === undefined) return null
 
-    return address!.slice(0, 5) + "..." + address!.slice(-4)
+    return address?.slice(0, 5) + "..." + address?.slice(-4)
 }
-
 export default function OrganisationProfileHead(props: OrganisationProfileHeadProps) {
     return (
         <Box 
@@ -56,7 +55,7 @@ export default function OrganisationProfileHead(props: OrganisationProfileHeadPr
                 </Box>
                     <Spacer />
                     {props.ownProfile ? <IconButton onClick={ props.onEditProfile } icon={<MdEdit />} aria-label=""/> : 
-                    <Button colorScheme={props.isFollowed ? "red" : "blue"} variant={props.isFollowed ? undefined: "ghost"} onClick={props.isFollowed? props.onUnfollow : props.onFollow}>{props.isFollowed ? "Unfollow" : "Connect +"}</Button>}
+                    <Button colorScheme={props.isFollowed ? "red" : "blue"} variant={props.isFollowed ? undefined: "ghost"} onClick={props.isFollowed? props.onUnfollow : props.onFollow}>{props.isFollowed ? "Unfollow" : "Follow +"}</Button>}
                 </HStack>
                 <Box bg="#C6EAFF" p={1} borderRadius="20px" pl="20px" pr="20px">
                     <Text fontSize="13px" fontWeight="bold" color="#818181">{formatAddress(props.orgData?.wallet_address)}</Text>

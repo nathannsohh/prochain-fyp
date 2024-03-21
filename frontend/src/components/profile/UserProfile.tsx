@@ -28,7 +28,7 @@ export default function UserProfile(props: UserProfileProps) {
     const { state: { wallet, status } } = useMetamask();
     const ownProfile: ProfileState = useAppSelector((state) => state.ownProfile)
     const {posts, connections, ...profile}: ProfileState = ownProfile
-    const isOwnProfile: Boolean = profile.wallet_address !== null && profile.wallet_address === props.wallet_address
+    const isOwnProfile: Boolean = wallet !== null && wallet === props.wallet_address
     const profileType: Number = useAppSelector((state) => state.profileType)
     
     const [userData, setUserData] = useState<UserType | null>(isOwnProfile ? {

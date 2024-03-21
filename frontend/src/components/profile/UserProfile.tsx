@@ -258,7 +258,13 @@ export default function UserProfile(props: UserProfileProps) {
             <AboutCard ownProfile={isOwnProfile} about={userData?.about!} onEdit={editAboutModalOnOpen}/>
             <ProfilePostCard posts={userPosts} profileName={userData?.first_name + ' ' + userData?.last_name} ownProfile={isOwnProfile} onNewPost={newPostModalOnOpen}/>
             <EducationCard ownProfile={isOwnProfile} onNewEducation={newEducationModalOnOpen} educationData={userEducation} triggerToast={triggerToast} onEducationUpdate={getEducationOfUser}/>
-            <WorkExperienceCard ownProfile={isOwnProfile} onNewExperience={newWorkExperienceModalOnOpen} experienceData={userExperience} triggerToast={triggerToast} onExperienceUpdate={getJobExperienceData}/>
+            <WorkExperienceCard ownProfile={isOwnProfile} onNewExperience={newWorkExperienceModalOnOpen} experienceData={userExperience} triggerToast={triggerToast} 
+                onExperienceUpdate={async () => {
+                    setTimeout(async () => {
+                        await getJobExperienceData()
+                    }, 2000)
+                }}
+            />
             {newPostModalIsOpen && 
                 <ProfileNewPostModal 
                     isOpen={newPostModalIsOpen} 
@@ -301,7 +307,11 @@ export default function UserProfile(props: UserProfileProps) {
                     isOpen={newWorkExperienceModalIsOpen}
                     onClose={newWorkExperienceModalOnClose}
                     triggerToast={triggerToast}
-                    updateWorkExperience={getJobExperienceData}
+                    updateWorkExperience={async () => {
+                        setTimeout(async () => {
+                            await getJobExperienceData()
+                        }, 2000)
+                    }}
                     workExperienceData={null}
                 />
             }

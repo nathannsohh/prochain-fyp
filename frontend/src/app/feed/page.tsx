@@ -125,7 +125,7 @@ const Feed = () => {
                 }
             })
             setLoadedPage(page)
-            setShownPosts(prevState => prevState.concat(consolidatedPosts))
+            setShownPosts(consolidatedPosts)
         } catch (e) {
             console.error(e)
         }

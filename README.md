@@ -32,6 +32,7 @@ $ npx hardhat node --hostname 0.0.0.0
 
 ### The Graph Node
 To run the local graph node through this docker image, the following is required to be installed on the system:
+- Docker - [Docker Installation](https://docs.docker.com/engine/install/)
 - Rust (latest stable) - [Rust Installation](https://www.rust-lang.org/tools/install)
 - PostgreSQL - [PostgreSQL Installation](https://www.postgresql.org/download/)
 - IPFS - [IPFS Installation](https://docs.ipfs.tech/install/)

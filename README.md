@@ -12,6 +12,8 @@ A total of 6 terminals are required to run this application
 
 Run the terminals in this order to ensure a smooth environment set up.
 
+On top of this, make sure a PostgreSQL database is also running and the database and tables are set up by running the database.sql script.
+
 ### Frontend
 ```
 $ cd frontend
